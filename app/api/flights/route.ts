@@ -16,6 +16,9 @@ const createFlightSchema = z.object({
   pricePerSeat: z.number().positive(),
   fareTiers: z.string().optional(), // JSON string
   aircraftType: z.string().optional(),
+  baggage: z.string().optional(),
+  meal: z.boolean().optional().default(false),
+  category: z.string().optional(),
 });
 
 /**

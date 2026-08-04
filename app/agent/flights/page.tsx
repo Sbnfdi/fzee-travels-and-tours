@@ -1,8 +1,18 @@
 'use client';
 
-import { useState, useEffect } from 'react';
-import { Plane, Search, ArrowRight, CheckCircle2, AlertCircle } from 'lucide-react';
+import { useState, useEffect, Fragment } from 'react';
+import { Plane, Search, CalendarDays } from 'lucide-react';
 import { useRouter } from 'next/navigation';
+
+const formatDate = (dateString: string) => {
+  const d = new Date(dateString);
+  return d.toLocaleDateString('en-GB', { day: '2-digit', month: 'short', year: 'numeric' });
+};
+
+const formatTime = (dateString: string) => {
+  const d = new Date(dateString);
+  return d.toLocaleTimeString('en-GB', { hour: '2-digit', minute: '2-digit' });
+};
 
 interface FlightItem {
   id: string;
@@ -18,17 +28,28 @@ interface FlightItem {
   pricePerSeat: number;
   currentFare: number;
   aircraftType: string;
-  fareTiers: string | null;
+  baggage: string | null;
+  meal: boolean;
+  category: string | null;
 }
+
+const TABS = [
+  'All Types',
+  'UAE One Way',
+  'KSA One Way',
+  'Oman One Way',
+  'Bahrain One Way',
+  'Umrah',
+  'Qatar One Way',
+  'UK One Way',
+];
 
 export default function AgentFlightsPage() {
   const router = useRouter();
   const [flights, setFlights] = useState<FlightItem[]>([]);
   const [search, setSearch] = useState('');
+  const [activeTab, setActiveTab] = useState('All Types');
   const [loading, setLoading] = useState(true);
-  const [bookingMessage, setBookingMessage] = useState('');
-  const [bookingError, setBookingError] = useState('');
-  const [bookingId, setBookingId] = useState<string | null>(null);
 
   useEffect(() => {
     const fetchFlights = async () => {
@@ -49,104 +70,158 @@ export default function AgentFlightsPage() {
     fetchFlights();
   }, []);
 
-  const handleBookFlight = (flight: FlightItem) => {
-    router.push(`/agent/flights/${flight.id}/book`);
+  const handleBookFlight = (flightId: string) => {
+    router.push(`/agent/flights/${flightId}/book`);
   };
 
-  const filteredFlights = flights.filter(
-    (f) =>
-      f.airline.toLowerCase().includes(search.toLowerCase()) ||
-      f.departureCity.toLowerCase().includes(search.toLowerCase()) ||
-      f.arrivalCity.toLowerCase().includes(search.toLowerCase()) ||
-      f.flightNumber.toLowerCase().includes(search.toLowerCase())
-  );
+  // 1. Filter by category
+  let filtered = flights;
+  if (activeTab !== 'All Types') {
+    filtered = filtered.filter(f => f.category === activeTab);
+  }
+
+  // 2. Filter by search
+  if (search.trim()) {
+    const q = search.toLowerCase();
+    filtered = filtered.filter(
+      (f) =>
+        f.airline.toLowerCase().includes(q) ||
+        f.departureCity.toLowerCase().includes(q) ||
+        f.arrivalCity.toLowerCase().includes(q) ||
+        f.flightNumber.toLowerCase().includes(q)
+    );
+  }
+
+  // 3. Group by airline + route
+  const grouped = filtered.reduce((acc, flight) => {
+    const route = `${flight.departureCity}-${flight.arrivalCity}`;
+    const key = `${flight.airline}__${route}`;
+    if (!acc[key]) {
+      acc[key] = { airline: flight.airline, route, flights: [] };
+    }
+    acc[key].flights.push(flight);
+    return acc;
+  }, {} as Record<string, { airline: string; route: string; flights: FlightItem[] }>);
 
   return (
-    <div className="space-y-8 text-foreground">
-      {/* Header */}
-      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 border-b border-border pb-6">
-        <div>
-          <h1 className="text-3xl font-black text-foreground tracking-tight">Flight Ticketing Engine</h1>
-          <p className="text-muted-foreground mt-1">Search international & domestic flight schedules with live seat availability in PKR</p>
+    <div className="space-y-6 text-foreground pb-20">
+      
+      {/* Top Search Bar */}
+      <div className="flex flex-col sm:flex-row items-center justify-between gap-4 bg-white p-4 rounded-xl border border-slate-200 shadow-sm">
+        <div className="flex items-center gap-2 text-[#F07A30] font-bold text-lg">
+          <Plane className="w-5 h-5 fill-current" />
+          <span>FZEE TICKETING</span>
         </div>
-
-        <div className="relative w-full sm:w-80">
-          <Search className="w-4 h-4 text-muted-foreground absolute left-3.5 top-1/2 -translate-y-1/2" />
-          <input
-            type="text"
-            value={search}
-            onChange={(e) => setSearch(e.target.value)}
-            placeholder="Search airline or city (e.g. Lahore, Dubai)..."
-            className="w-full pl-10 pr-4 py-2.5 rounded-xl border border-input bg-card text-foreground text-sm focus:outline-none focus:ring-2 focus:ring-primary/50"
-          />
+        <div className="flex items-center gap-2">
+          <label className="flex items-center gap-2 text-sm text-slate-600 font-medium cursor-pointer">
+            <input type="checkbox" className="w-4 h-4 rounded border-slate-300 text-primary focus:ring-primary/20" />
+            Advance Search
+          </label>
+          <div className="relative">
+            <CalendarDays className="w-4 h-4 text-slate-400 absolute left-3 top-1/2 -translate-y-1/2" />
+            <input type="date" className="pl-9 pr-3 py-1.5 text-sm border border-slate-200 rounded-md focus:outline-none focus:border-[#1C4E80]" />
+          </div>
+          <div className="relative">
+            <Search className="w-4 h-4 text-slate-400 absolute left-3 top-1/2 -translate-y-1/2" />
+            <input
+              type="text"
+              placeholder="Search by Keyword"
+              value={search}
+              onChange={(e) => setSearch(e.target.value)}
+              className="pl-9 pr-3 py-1.5 text-sm border border-slate-200 rounded-md focus:outline-none focus:border-[#1C4E80] w-48"
+            />
+          </div>
         </div>
       </div>
 
-      {bookingMessage && (
-        <div className="p-4 bg-primary/10 border border-primary/30 rounded-xl text-primary font-medium text-sm flex items-center gap-3">
-          <CheckCircle2 className="w-5 h-5 shrink-0" />
-          <span>{bookingMessage}</span>
-        </div>
-      )}
-
-      {bookingError && (
-        <div className="p-4 bg-destructive/10 border border-destructive/30 rounded-xl text-destructive font-medium text-sm flex items-center gap-3">
-          <AlertCircle className="w-5 h-5 shrink-0" />
-          <span>{bookingError}</span>
-        </div>
-      )}
-
-      {/* Flight Cards */}
-      <div className="space-y-4">
-        {filteredFlights.map((flight) => (
-          <div key={flight.id} className="bg-card rounded-2xl border border-border p-6 shadow-sm hover:border-primary/40 transition flex flex-col sm:flex-row sm:items-center justify-between gap-6">
-            <div className="space-y-3">
-              <div className="flex items-center gap-3">
-                <div className="w-9 h-9 rounded-lg bg-primary/10 text-primary flex items-center justify-center font-bold">
-                  <Plane className="w-5 h-5" />
-                </div>
-                <div>
-                  <h3 className="font-bold text-base text-foreground">{flight.airline}</h3>
-                  <p className="text-xs text-muted-foreground font-mono">Flight #{flight.flightNumber}{flight.pnr ? ` • PNR: ${flight.pnr}` : ''}</p>
-                </div>
-              </div>
-
-              <div className="flex items-center gap-6 pt-2 text-sm font-semibold text-foreground">
-                <div>
-                  <span className="text-xs font-bold uppercase text-muted-foreground block">Departure</span>
-                  <span className="text-foreground">{flight.departureCity}</span>
-                </div>
-
-                <div className="text-center text-muted-foreground">
-                  <span className="text-xs">{Math.floor(flight.duration / 60)}h {flight.duration % 60}m</span>
-                  <div className="w-20 h-0.5 bg-primary/40 my-1" />
-                  <span className="text-[10px] uppercase font-bold text-primary">Direct Flight</span>
-                </div>
-
-                <div>
-                  <span className="text-xs font-bold uppercase text-muted-foreground block">Arrival</span>
-                  <span className="text-foreground">{flight.arrivalCity}</span>
-                </div>
-              </div>
-            </div>
-
-            <div className="sm:text-right border-t sm:border-t-0 sm:border-l border-border pt-4 sm:pt-0 sm:pl-6 space-y-2 shrink-0">
-              <span className="text-xs text-muted-foreground font-bold uppercase block">{flight.availableSeats} Seats Left</span>
-              <div className="text-2xl font-black text-primary">PKR {(flight.currentFare || flight.pricePerSeat).toLocaleString()}</div>
-              {flight.fareTiers && (
-                <span className="text-[10px] text-muted-foreground font-semibold block">⚡ Dynamic pricing — fare may fluctuate</span>
-              )}
-              <button
-                disabled={bookingId === flight.id}
-                onClick={() => handleBookFlight(flight)}
-                className="w-full px-5 py-2.5 bg-primary text-primary-foreground font-bold rounded-xl hover:bg-primary/90 transition shadow-md shadow-primary/20 text-xs inline-flex items-center justify-center gap-2 disabled:opacity-50"
-              >
-                <span>{bookingId === flight.id ? 'Booking Ticket...' : 'Book Ticket'}</span>
-                <ArrowRight className="w-4 h-4" />
-              </button>
-            </div>
-          </div>
+      {/* Tabs */}
+      <div className="flex items-center gap-2 overflow-x-auto pb-2 scrollbar-hide">
+        {TABS.map(tab => (
+          <button
+            key={tab}
+            onClick={() => setActiveTab(tab)}
+            className={`whitespace-nowrap px-4 py-2 rounded border text-sm font-semibold transition ${
+              activeTab === tab 
+                ? 'bg-[#1C4E80] text-white border-[#1C4E80]' 
+                : 'bg-white text-slate-600 border-slate-200 hover:bg-slate-50'
+            }`}
+          >
+            {tab}
+          </button>
         ))}
+      </div>
+
+      {/* Main Table */}
+      <div className="bg-white rounded-xl shadow-sm border border-slate-200 overflow-hidden">
+        <div className="overflow-x-auto w-full">
+          <table className="w-full text-left text-sm border-collapse whitespace-nowrap">
+            <thead>
+              <tr className="bg-[#1C4E80] text-white">
+                <th className="px-4 py-3 font-semibold">Date</th>
+                <th className="px-4 py-3 font-semibold">Flight#</th>
+                <th className="px-4 py-3 font-semibold">Origin-Destination</th>
+                <th className="px-4 py-3 font-semibold">Time</th>
+                <th className="px-4 py-3 font-semibold">Baggage</th>
+                <th className="px-4 py-3 font-semibold">Meal</th>
+                <th className="px-4 py-3 font-semibold">Price</th>
+                <th className="px-4 py-3 font-semibold text-center">Action</th>
+              </tr>
+            </thead>
+            {loading ? (
+              <tbody>
+                <tr>
+                  <td colSpan={8} className="p-8 text-center text-slate-500">Loading flights...</td>
+                </tr>
+              </tbody>
+            ) : Object.keys(grouped).length === 0 ? (
+              <tbody>
+                <tr>
+                  <td colSpan={8} className="p-8 text-center text-slate-500">No flights found matching your criteria.</td>
+                </tr>
+              </tbody>
+            ) : (
+              Object.values(grouped).map((group, gIndex) => (
+                <tbody key={gIndex}>
+                  {/* Group Header */}
+                  <tr className="bg-[#fdf8f5] border-b border-slate-100">
+                    <td colSpan={8} className="py-4 text-center">
+                      <div className="flex items-center justify-center gap-2 font-black text-lg">
+                        <span className="text-[#e20613]">{group.airline}</span>
+                        <span className="text-slate-800">{group.route}</span>
+                      </div>
+                    </td>
+                  </tr>
+                  
+                  {/* Flight Rows */}
+                  {group.flights.map((f, i) => (
+                    <tr key={f.id} className={`border-b border-slate-100 hover:bg-blue-50/50 transition ${i % 2 === 0 ? 'bg-white' : 'bg-slate-50'}`}>
+                      <td className="px-4 py-3 text-[#147b91] font-semibold flex items-center gap-1.5">
+                        <Plane className="w-3.5 h-3.5" />
+                        {formatDate(f.departureTime)}
+                      </td>
+                      <td className="px-4 py-3 font-medium">{f.flightNumber}</td>
+                      <td className="px-4 py-3">{f.departureCity}-{f.arrivalCity}</td>
+                      <td className="px-4 py-3 text-slate-600">
+                        {formatTime(f.departureTime)}-{formatTime(f.arrivalTime)}
+                      </td>
+                      <td className="px-4 py-3 font-bold text-slate-700">{f.baggage || '20 KG'}</td>
+                      <td className="px-4 py-3 font-medium text-slate-600">{f.meal ? 'Yes' : 'No'}</td>
+                      <td className="px-4 py-3 font-bold text-slate-800">PKR {(f.currentFare || f.pricePerSeat).toLocaleString()}</td>
+                      <td className="px-4 py-3 text-center">
+                        <button
+                          onClick={() => handleBookFlight(f.id)}
+                          className="bg-[#F07A30] hover:bg-[#d96620] text-white px-5 py-1.5 rounded shadow-sm font-bold text-sm transition"
+                        >
+                          Book now
+                        </button>
+                      </td>
+                    </tr>
+                  ))}
+                </tbody>
+              ))
+            )}
+          </table>
+        </div>
       </div>
     </div>
   );
