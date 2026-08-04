@@ -33,16 +33,10 @@ interface FlightItem {
   category: string | null;
 }
 
-const TABS = [
-  'All Types',
-  'UAE One Way',
-  'KSA One Way',
-  'Oman One Way',
-  'Bahrain One Way',
-  'Umrah',
-  'Qatar One Way',
-  'UK One Way',
-];
+interface CategoryItem {
+  id: string;
+  name: string;
+}
 
 export default function AgentFlightsPage() {
   const router = useRouter();
@@ -51,14 +45,27 @@ export default function AgentFlightsPage() {
   const [activeTab, setActiveTab] = useState('All Types');
   const [loading, setLoading] = useState(true);
 
+  const [categories, setCategories] = useState<CategoryItem[]>([]);
+
   useEffect(() => {
-    const fetchFlights = async () => {
+    const fetchData = async () => {
       try {
-        const res = await fetch('/api/flights');
-        if (res.ok) {
-          const data = await res.json();
+        const [flightsRes, categoriesRes] = await Promise.all([
+          fetch('/api/flights'),
+          fetch('/api/flights/categories')
+        ]);
+        
+        if (flightsRes.ok) {
+          const data = await flightsRes.json();
           if (data.success && Array.isArray(data.flights)) {
             setFlights(data.flights);
+          }
+        }
+
+        if (categoriesRes.ok) {
+          const catData = await categoriesRes.json();
+          if (catData.success && Array.isArray(catData.categories)) {
+            setCategories(catData.categories);
           }
         }
       } catch (err) {
@@ -67,7 +74,7 @@ export default function AgentFlightsPage() {
         setLoading(false);
       }
     };
-    fetchFlights();
+    fetchData();
   }, []);
 
   const handleBookFlight = (flightId: string) => {
@@ -136,17 +143,27 @@ export default function AgentFlightsPage() {
 
       {/* Tabs */}
       <div className="flex items-center gap-2 overflow-x-auto pb-2 scrollbar-hide">
-        {TABS.map(tab => (
+        <button
+          onClick={() => setActiveTab('All Types')}
+          className={`whitespace-nowrap px-4 py-2 rounded border text-sm font-semibold transition ${
+            activeTab === 'All Types' 
+              ? 'bg-[#1C4E80] text-white border-[#1C4E80]' 
+              : 'bg-white text-slate-600 border-slate-200 hover:bg-slate-50'
+          }`}
+        >
+          All Types
+        </button>
+        {categories.map(cat => (
           <button
-            key={tab}
-            onClick={() => setActiveTab(tab)}
+            key={cat.id}
+            onClick={() => setActiveTab(cat.name)}
             className={`whitespace-nowrap px-4 py-2 rounded border text-sm font-semibold transition ${
-              activeTab === tab 
+              activeTab === cat.name 
                 ? 'bg-[#1C4E80] text-white border-[#1C4E80]' 
                 : 'bg-white text-slate-600 border-slate-200 hover:bg-slate-50'
             }`}
           >
-            {tab}
+            {cat.name}
           </button>
         ))}
       </div>
