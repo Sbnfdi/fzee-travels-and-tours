@@ -44,6 +44,11 @@ export default function AdminFlightsPage() {
     { upToSeat: 200, price: 120000 },
   ]);
 
+  // Additional fields
+  const [baggage, setBaggage] = useState('20 KG');
+  const [meal, setMeal] = useState(false);
+  const [category, setCategory] = useState('All Types');
+
   const fetchFlights = async () => {
     try {
       const res = await fetch('/api/flights');
@@ -81,6 +86,7 @@ export default function AdminFlightsPage() {
     setDepartureCity(''); setArrivalCity('');
     setPricePerSeat(100000); setTotalSeats(200);
     setFareTiers([{ upToSeat: 100, price: 90000 }, { upToSeat: 200, price: 120000 }]);
+    setBaggage('20 KG'); setMeal(false); setCategory('All Types');
   };
 
   const handleAdd = async (e: React.FormEvent) => {
@@ -97,6 +103,7 @@ export default function AdminFlightsPage() {
           arrivalTime: new Date(Date.now() + 6 * 60 * 60 * 1000).toISOString(),
           duration: 360, totalSeats, availableSeats: totalSeats, pricePerSeat,
           fareTiers: fareTiers.length > 0 ? JSON.stringify(fareTiers) : undefined,
+          baggage, meal, category,
         }),
       });
 
@@ -202,6 +209,34 @@ export default function AdminFlightsPage() {
                 <div>
                   <label className="block text-xs font-bold uppercase tracking-wider text-foreground mb-1.5">Base Price (PKR)</label>
                   <input type="number" value={pricePerSeat} onChange={(e) => setPricePerSeat(Number(e.target.value))} className="w-full px-4 py-3 rounded-xl border border-input bg-background text-foreground text-sm font-bold focus:outline-none focus:ring-2 focus:ring-primary/50" required />
+                </div>
+              </div>
+
+              {/* Baggage, Meal, Category */}
+              <div className="grid grid-cols-3 gap-4">
+                <div>
+                  <label className="block text-xs font-bold uppercase tracking-wider text-foreground mb-1.5">Baggage</label>
+                  <input type="text" value={baggage} onChange={(e) => setBaggage(e.target.value)} placeholder="20+7 KG" className="w-full px-4 py-3 rounded-xl border border-input bg-background text-foreground text-sm focus:outline-none focus:ring-2 focus:ring-primary/50" />
+                </div>
+                <div>
+                  <label className="block text-xs font-bold uppercase tracking-wider text-foreground mb-1.5">Meal</label>
+                  <select value={meal ? 'yes' : 'no'} onChange={(e) => setMeal(e.target.value === 'yes')} className="w-full px-4 py-3 rounded-xl border border-input bg-background text-foreground text-sm focus:outline-none focus:ring-2 focus:ring-primary/50">
+                    <option value="no">No</option>
+                    <option value="yes">Yes</option>
+                  </select>
+                </div>
+                <div>
+                  <label className="block text-xs font-bold uppercase tracking-wider text-foreground mb-1.5">Category</label>
+                  <select value={category} onChange={(e) => setCategory(e.target.value)} className="w-full px-4 py-3 rounded-xl border border-input bg-background text-foreground text-sm focus:outline-none focus:ring-2 focus:ring-primary/50">
+                    <option value="All Types">All Types</option>
+                    <option value="UAE One Way">UAE One Way</option>
+                    <option value="KSA One Way">KSA One Way</option>
+                    <option value="Oman One Way">Oman One Way</option>
+                    <option value="Bahrain One Way">Bahrain One Way</option>
+                    <option value="Umrah">Umrah</option>
+                    <option value="Qatar One Way">Qatar One Way</option>
+                    <option value="UK One Way">UK One Way</option>
+                  </select>
                 </div>
               </div>
 
