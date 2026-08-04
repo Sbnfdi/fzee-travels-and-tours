@@ -18,67 +18,7 @@ export async function GET(req: NextRequest) {
       orderBy: { country: 'asc' },
     });
 
-    if (visaServices.length === 0) {
-      const defaultVisas = [
-        {
-          id: 'visa-1',
-          country: 'Saudi Arabia',
-          visaType: 'Umrah E-Visa / Tourist Visa',
-          processingDays: 2,
-          pricePerPerson: 48000,
-          currency: 'PKR',
-          requirements: JSON.stringify(['Original Passport (6 Months Validity)', 'Passport Size Photo', 'CNIC Copy']),
-          description: 'Instant 1-Year Multiple Entry Umrah & Tourist Visa with Medical Insurance included.',
-          status: 'active',
-        },
-        {
-          id: 'visa-2',
-          country: 'United Arab Emirates (UAE)',
-          visaType: '30-Day Tourist E-Visa',
-          processingDays: 3,
-          pricePerPerson: 32000,
-          currency: 'PKR',
-          requirements: JSON.stringify(['Passport First Page Scan', 'Passport Size Photo', 'Return Ticket Copy']),
-          description: 'Single Entry 30-Day Express Dubai/Abu Dhabi E-Visa with guaranteed approval.',
-          status: 'active',
-        },
-        {
-          id: 'visa-3',
-          country: 'Turkey',
-          visaType: 'Sticker / E-Visa Processing',
-          processingDays: 7,
-          pricePerPerson: 42000,
-          currency: 'PKR',
-          requirements: JSON.stringify(['Passport', '6-Month Bank Statement', 'Employment Letter / FBR Tax Return']),
-          description: 'Full appointment booking, document preparation, and submission for Turkey Visa.',
-          status: 'active',
-        },
-        {
-          id: 'visa-4',
-          country: 'United Kingdom (UK)',
-          visaType: '6-Month Visitor Visa Consultation',
-          processingDays: 15,
-          pricePerPerson: 65000,
-          currency: 'PKR',
-          requirements: JSON.stringify(['Passport', 'Bank Statement', 'Property & Business Documents', 'Travel History']),
-          description: 'End-to-end UK visa application form filing, cover letter drafting & biometrics appointment.',
-          status: 'active',
-        },
-      ];
 
-      for (const v of defaultVisas) {
-        await prisma.visaService.upsert({
-          where: { id: v.id },
-          update: {},
-          create: v,
-        });
-      }
-
-      visaServices = await prisma.visaService.findMany({
-        where: { status: 'active' },
-        orderBy: { country: 'asc' },
-      });
-    }
 
     return NextResponse.json({ success: true, visaServices, data: visaServices });
   } catch (error) {

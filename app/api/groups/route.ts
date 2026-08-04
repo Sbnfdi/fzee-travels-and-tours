@@ -17,70 +17,7 @@ export async function GET(request: NextRequest) {
       orderBy: { startDate: 'asc' },
     });
 
-    // Seed default group tours in DB if database has no groups yet
-    if (groups.length === 0 && !destination) {
-      const defaultAgency = await prisma.agency.findFirst();
-      if (defaultAgency) {
-        const sampleTours = [
-          {
-            id: 'group-1',
-            name: '14-Day Umrah Executive Group Package',
-            destination: 'Makkah & Madinah, Saudi Arabia',
-            duration: 14,
-            startDate: new Date('2026-09-15'),
-            endDate: new Date('2026-09-29'),
-            totalSlots: 40,
-            availableSlots: 28,
-            pricePerPerson: 320000,
-            currency: 'PKR',
-            status: 'open',
-            agencyId: defaultAgency.id,
-          },
-          {
-            id: 'group-2',
-            name: '7-Day Skardu Autumn Paradise Expedition',
-            destination: 'Skardu & Shangrila, Pakistan',
-            duration: 7,
-            startDate: new Date('2026-10-05'),
-            endDate: new Date('2026-10-12'),
-            totalSlots: 25,
-            availableSlots: 14,
-            pricePerPerson: 145000,
-            currency: 'PKR',
-            status: 'open',
-            agencyId: defaultAgency.id,
-          },
-          {
-            id: 'group-3',
-            name: '5-Day Dubai Luxury City & Desert Group Package',
-            destination: 'Dubai, UAE',
-            duration: 5,
-            startDate: new Date('2026-11-10'),
-            endDate: new Date('2026-11-15'),
-            totalSlots: 30,
-            availableSlots: 20,
-            pricePerPerson: 210000,
-            currency: 'PKR',
-            status: 'open',
-            agencyId: defaultAgency.id,
-          },
-        ];
 
-        for (const t of sampleTours) {
-          await prisma.group.upsert({
-            where: { id: t.id },
-            update: {},
-            create: t,
-          });
-        }
-
-        groups = await prisma.group.findMany({
-          where,
-          include: { agency: { include: { user: true } } },
-          orderBy: { startDate: 'asc' },
-        });
-      }
-    }
 
     return NextResponse.json({
       success: true,
