@@ -1,9 +1,25 @@
+require('dotenv').config();
+const { createClient } = require('@libsql/client');
+const { PrismaLibSQL } = require('@prisma/adapter-libsql');
 const { PrismaClient } = require('@prisma/client');
 const bcrypt = require('bcryptjs');
 
-const prisma = new PrismaClient();
-
 async function main() {
+  const url = process.env.TURSO_DATABASE_URL;
+  const authToken = process.env.TURSO_AUTH_TOKEN;
+
+  let prisma;
+
+  if (url && authToken) {
+    console.log('🔗 Connecting to Turso cloud database...');
+    const libsql = createClient({ url, authToken });
+    const adapter = new PrismaLibSQL(libsql);
+    prisma = new PrismaClient({ adapter });
+  } else {
+    console.log('🔗 Connecting to local SQLite database...');
+    prisma = new PrismaClient();
+  }
+
   console.log('Seeding demo accounts for all 7 user roles...');
   const passwordHash = await bcrypt.hash('admin123', 10);
   const agentPasswordHash = await bcrypt.hash('agent123', 10);
@@ -46,83 +62,31 @@ async function main() {
     },
     {
       email: 'customer@fzeetravels.com',
-      name: 'Valued Customer',
-      password: agentPasswordHash,
+      name: 'Demo Customer',
+      password: passwordHash,
       role: 'CUSTOMER',
       phone: '+92 300 0000006',
     },
   ];
 
-  for (const u of usersToSeed) {
+  for (const user of usersToSeed) {
     await prisma.user.upsert({
-      where: { email: u.email },
-      update: { password: u.password, role: u.role, name: u.name },
-      create: u,
+      where: { email: user.email },
+      update: {},
+      create: user,
     });
-    console.log(`✓ Seeded ${u.role}: ${u.email}`);
-  }
-
-  // Create demo agent
-  const agentEmail = 'agent@fzeetravels.com';
-  const existingAgentUser = await prisma.user.findUnique({ where: { email: agentEmail } });
-
-  if (!existingAgentUser) {
-    const user = await prisma.user.create({
-      data: {
-        email: agentEmail,
-        name: 'Demo Travel Agent',
-        password: agentPasswordHash,
-        role: 'TRAVEL_AGENT',
-        phone: '+92 333 9453658',
-      },
-    });
-
-    const agency = await prisma.agency.create({
-      data: {
-        userId: user.id,
-        businessName: 'Fzee Partner Travel Agency',
-        businessRegistration: 'REG-884920',
-        taxId: 'TAX-99401',
-        registrationDocument: 'doc.pdf',
-        address: 'Main Boulevard, Gulberg III',
-        city: 'Lahore',
-        country: 'Pakistan',
-        postalCode: '54000',
-        phone: '+92 333 9453658',
-        status: 'approved',
-        creditLimit: 100000,
-      },
-    });
-
-    await prisma.agent.create({
-      data: {
-        userId: user.id,
-        agencyId: agency.id,
-        commissionRate: 10,
-        walletBalance: 50000,
-        status: 'active',
-      },
-    });
-
-    await prisma.wallet.create({
-      data: {
-        agencyId: agency.id,
-        balance: 50000,
-        creditLimit: 100000,
-      },
-    });
-
-    console.log(`✓ Seeded TRAVEL_AGENT: ${agentEmail}`);
+    console.log(`✓ Seeded ${user.role}: ${user.email}`);
   }
 
   console.log('\nAll role accounts ready for login!');
+  console.log('\nLogin credentials:');
+  console.log('  Email:    superadmin@fzeetravels.com');
+  console.log('  Password: admin123');
+
+  await prisma.$disconnect();
 }
 
-main()
-  .catch((e) => {
-    console.error(e);
-    process.exit(1);
-  })
-  .finally(async () => {
-    await prisma.$disconnect();
-  });
+main().catch(err => {
+  console.error('Seed error:', err);
+  process.exit(1);
+});
