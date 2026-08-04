@@ -74,9 +74,9 @@ const sampleTours: TourGroup[] = [
 ];
 
 export default function AvailableToursPage() {
-  const [tours, setTours] = useState<TourGroup[]>(sampleTours);
+  const [tours, setTours] = useState<TourGroup[]>([]);
   const [search, setSearch] = useState('');
-  const [loading, setLoading] = useState(false);
+  const [loading, setLoading] = useState(true);
 
   useEffect(() => {
     const fetchGroups = async () => {
@@ -84,7 +84,7 @@ export default function AvailableToursPage() {
         const res = await fetch('/api/groups');
         if (res.ok) {
           const data = await res.json();
-          if (data.success && Array.isArray(data.groups) && data.groups.length > 0) {
+          if (data.success && Array.isArray(data.groups)) {
             setTours(data.groups);
           }
         }
@@ -142,7 +142,7 @@ export default function AvailableToursPage() {
 
               <p className="text-sm text-muted-foreground leading-relaxed">{tour.description}</p>
 
-              <div className="grid grid-cols-3 gap-3 pt-2 text-xs font-semibold text-foreground border-t border-border/60">
+              <div className="flex flex-col sm:flex-row flex-wrap sm:items-center gap-3 sm:gap-6 pt-2 text-xs font-semibold text-foreground border-t border-border/60">
                 <div className="flex items-center gap-2">
                   <Clock className="w-4 h-4 text-primary shrink-0" />
                   <span>{tour.duration} Days</span>
@@ -166,7 +166,7 @@ export default function AvailableToursPage() {
 
               <Link
                 href={`/agent/bookings/new?groupId=${tour.id}&title=${encodeURIComponent(tour.name)}&price=${tour.pricePerPerson}`}
-                className="px-5 py-2.5 bg-primary text-primary-foreground font-bold rounded-xl hover:bg-primary/90 transition shadow-md shadow-primary/20 inline-flex items-center gap-2 text-sm"
+                className="px-4 py-2 sm:px-5 sm:py-2.5 bg-primary text-primary-foreground font-bold rounded-xl hover:bg-primary/90 transition shadow-md shadow-primary/20 inline-flex items-center justify-center gap-2 text-sm mt-3 sm:mt-0 w-full sm:w-auto"
               >
                 <span>Book Package</span>
                 <ArrowRight className="w-4 h-4" />

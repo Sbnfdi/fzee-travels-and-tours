@@ -281,7 +281,7 @@ export default function AdminFlightsPage() {
             </div>
             <form onSubmit={handleAddFlight} className="space-y-4">
               {/* Flight # & PNR */}
-              <div className="grid grid-cols-2 gap-4">
+              <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                 <div>
                   <label className="block text-xs font-bold uppercase tracking-wider text-foreground mb-1.5">Flight #</label>
                   <input type="text" value={flightNumber} onChange={(e) => setFlightNumber(e.target.value)} placeholder="PK-735" className="w-full px-4 py-3 rounded-xl border border-input bg-background text-foreground text-sm focus:outline-none focus:ring-2 focus:ring-primary/50" required />
@@ -299,7 +299,7 @@ export default function AdminFlightsPage() {
               </div>
 
               {/* Route */}
-              <div className="grid grid-cols-2 gap-4">
+              <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                 <div>
                   <label className="block text-xs font-bold uppercase tracking-wider text-foreground mb-1.5">From</label>
                   <input type="text" value={departureCity} onChange={(e) => setDepartureCity(e.target.value)} placeholder="Lahore" className="w-full px-4 py-3 rounded-xl border border-input bg-background text-foreground text-sm focus:outline-none focus:ring-2 focus:ring-primary/50" required />
@@ -311,7 +311,7 @@ export default function AdminFlightsPage() {
               </div>
 
               {/* Seats & Base Price */}
-              <div className="grid grid-cols-2 gap-4">
+              <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                 <div>
                   <label className="block text-xs font-bold uppercase tracking-wider text-foreground mb-1.5">Total Seats</label>
                   <input type="number" value={totalSeats} onChange={(e) => setTotalSeats(Number(e.target.value))} className="w-full px-4 py-3 rounded-xl border border-input bg-background text-foreground text-sm font-bold focus:outline-none focus:ring-2 focus:ring-primary/50" required />
@@ -323,7 +323,7 @@ export default function AdminFlightsPage() {
               </div>
 
               {/* Baggage, Meal, Category */}
-              <div className="grid grid-cols-3 gap-4">
+              <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
                 <div>
                   <label className="block text-xs font-bold uppercase tracking-wider text-foreground mb-1.5">Baggage</label>
                   <input type="text" value={baggage} onChange={(e) => setBaggage(e.target.value)} placeholder="20+7 KG" className="w-full px-4 py-3 rounded-xl border border-input bg-background text-foreground text-sm focus:outline-none focus:ring-2 focus:ring-primary/50" />
