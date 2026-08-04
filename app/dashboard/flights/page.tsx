@@ -268,7 +268,8 @@ export default function AdminFlightsPage() {
             <p className="text-xs">Click &quot;Add Flight&quot; to add a flight schedule.</p>
           </div>
         ) : (
-          <table className="w-full text-left border-collapse text-sm">
+          <div className="overflow-x-auto w-full">
+<table className="w-full text-left border-collapse text-sm">
             <thead>
               <tr className="border-b border-border bg-muted/40 text-xs uppercase font-bold text-muted-foreground">
                 <th className="px-6 py-4">Flight #</th>
@@ -325,6 +326,7 @@ export default function AdminFlightsPage() {
               })}
             </tbody>
           </table>
+</div>
         )}
       </div>
     </div>

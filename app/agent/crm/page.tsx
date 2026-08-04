@@ -196,7 +196,8 @@ export default function AgentCRMPage() {
             <p className="text-xs">Click &quot;Log New Lead / Activity&quot; to add your first client interaction.</p>
           </div>
         ) : (
-          <table className="w-full text-left border-collapse text-sm">
+          <div className="overflow-x-auto w-full">
+<table className="w-full text-left border-collapse text-sm">
             <thead>
               <tr className="border-b border-border bg-muted/40 text-xs uppercase font-bold text-muted-foreground">
                 <th className="px-6 py-4">Type</th>
@@ -247,6 +248,7 @@ export default function AgentCRMPage() {
               ))}
             </tbody>
           </table>
+</div>
         )}
       </div>
     </div>

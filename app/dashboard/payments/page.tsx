@@ -129,7 +129,8 @@ export default function AdminPaymentsPage() {
             </p>
           </div>
         ) : (
-          <table className="w-full text-left border-collapse text-sm">
+          <div className="overflow-x-auto w-full">
+<table className="w-full text-left border-collapse text-sm">
             <thead>
               <tr className="border-b border-border bg-muted/40 text-xs uppercase font-bold text-muted-foreground">
                 <th className="px-6 py-4">Agency</th>
@@ -182,6 +183,7 @@ export default function AdminPaymentsPage() {
               ))}
             </tbody>
           </table>
+</div>
         )}
       </div>
     </div>

@@ -148,7 +148,8 @@ export default function AdminVisaPage() {
             <p className="text-xs">Click &quot;Add Visa Service&quot; to configure one.</p>
           </div>
         ) : (
-          <table className="w-full text-left border-collapse text-sm">
+          <div className="overflow-x-auto w-full">
+<table className="w-full text-left border-collapse text-sm">
             <thead>
               <tr className="border-b border-border bg-muted/40 text-xs uppercase font-bold text-muted-foreground">
                 <th className="px-6 py-4">Country</th>
@@ -174,6 +175,7 @@ export default function AdminVisaPage() {
               ))}
             </tbody>
           </table>
+</div>
         )}
       </div>
     </div>

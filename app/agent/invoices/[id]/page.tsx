@@ -334,7 +334,8 @@ export default function InvoiceDetailPage() {
             <div className="space-y-3">
               <span className="text-[10px] font-black uppercase tracking-widest text-gray-400 block">Service Breakdown & Pricing</span>
               <div className="border border-gray-200 rounded-xl overflow-hidden">
-                <table className="w-full text-left border-collapse text-xs">
+                <div className="overflow-x-auto w-full">
+<table className="w-full text-left border-collapse text-xs">
                   <thead>
                     <tr className="print-table-th bg-gray-100 border-b border-gray-200 font-black text-gray-600 uppercase tracking-wider text-[10px]">
                       <th className="px-5 py-3.5 w-12 text-center">#</th>
@@ -359,6 +360,7 @@ export default function InvoiceDetailPage() {
                     ))}
                   </tbody>
                 </table>
+</div>
               </div>
             </div>
 
@@ -397,7 +399,8 @@ export default function InvoiceDetailPage() {
               <div className="space-y-3 pt-4 page-break-inside-avoid">
                 <span className="text-[10px] font-black uppercase tracking-widest text-gray-400 block">Registered Travelers Manifest</span>
                 <div className="border border-gray-200 rounded-xl overflow-hidden">
-                  <table className="w-full text-left border-collapse text-xs">
+                  <div className="overflow-x-auto w-full">
+<table className="w-full text-left border-collapse text-xs">
                     <thead>
                       <tr className="print-table-th bg-gray-100 border-b border-gray-200 font-black text-gray-600 uppercase tracking-wider text-[10px]">
                         <th className="px-4 py-2.5 w-10 text-center">#</th>
@@ -417,6 +420,7 @@ export default function InvoiceDetailPage() {
                       ))}
                     </tbody>
                   </table>
+</div>
                 </div>
               </div>
             )}

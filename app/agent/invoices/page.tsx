@@ -75,7 +75,8 @@ export default function InvoicesPage() {
             <p className="text-xs text-muted-foreground max-w-sm mx-auto">Invoices are automatically generated when you submit and confirm group tour bookings.</p>
           </div>
         ) : (
-          <table className="w-full text-left border-collapse text-sm">
+          <div className="overflow-x-auto w-full">
+<table className="w-full text-left border-collapse text-sm">
             <thead>
               <tr className="border-b border-border bg-muted/40 text-xs uppercase font-bold text-muted-foreground">
                 <th className="px-6 py-4">Invoice #</th>
@@ -109,6 +110,7 @@ export default function InvoicesPage() {
               ))}
             </tbody>
           </table>
+</div>
         )}
       </div>
     </div>
