@@ -1,3 +1,5 @@
+import path from 'path';
+
 /** @type {import('next').NextConfig} */
 const nextConfig = {
   typescript: {
@@ -5,6 +7,9 @@ const nextConfig = {
   },
   images: {
     unoptimized: true,
+  },
+  outputFileTracingIncludes: {
+    '/api/**/*': ['./prisma/dev.db', './prisma/schema.prisma'],
   },
 }
 
