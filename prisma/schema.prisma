@@ -1,0 +1,391 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+datasource db {
+  provider = "sqlite"
+  url      = env("DATABASE_URL")
+}
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+// ============= USERS & ROLES =============
+model User {
+  id            String     @id @default(cuid())
+  email         String     @unique
+  name          String
+  password      String
+  role          String     @default("CUSTOMER")  // SUPER_ADMIN, ADMIN, FINANCE_ADMIN, BOOKING_MANAGER, SUPPORT_STAFF, TRAVEL_AGENT, CUSTOMER
+  profileImage  String?
+  phone         String?
+  createdAt     DateTime   @default(now())
+  updatedAt     DateTime   @updatedAt
+  
+  // Relations
+  agency        Agency?
+  admin         Admin?
+  agent         Agent?
+  notifications Notification[]
+  auditLogs     AuditLog[]
+  
+  @@index([email])
+}
+
+model Admin {
+  id            String   @id @default(cuid())
+  userId        String   @unique
+  user          User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  permissions   String   // JSON array of permission strings
+  createdAt     DateTime @default(now())
+  updatedAt     DateTime @updatedAt
+}
+
+model Agent {
+  id                String   @id @default(cuid())
+  userId            String   @unique
+  user              User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  agencyId          String
+  agency            Agency   @relation("AgencyAgents", fields: [agencyId], references: [id], onDelete: Cascade)
+  commissionRate    Float    @default(0)
+  walletBalance     Float    @default(0)
+  status            String   @default("active") // active, inactive, suspended
+  createdAt         DateTime @default(now())
+  updatedAt         DateTime @updatedAt
+  
+  // Relations
+  bookings          Booking[]
+  payments          Payment[]
+  walletTopUps      WalletTopUp[]
+  
+  @@index([agencyId])
+}
+
+// ============= AGENCIES =============
+model Agency {
+  id                    String   @id @default(cuid())
+  userId                String   @unique
+  user                  User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  businessName          String
+  businessRegistration  String
+  taxId                 String
+  registrationDocument  String   // File path
+  businessLicense       String?  // File path
+  address               String
+  city                  String
+  country               String
+  postalCode            String
+  phone                 String
+  website               String?
+  bankAccountName       String?
+  bankName              String?
+  bankAccountNumber     String?
+  bankIFSC              String?
+  bankRoutingNumber     String?
+  creditLimit           Float    @default(50000)
+  status                String   @default("pending") // pending, approved, rejected, suspended
+  registrationApprovedAt DateTime?
+  rejectionReason       String?
+  createdAt             DateTime @default(now())
+  updatedAt             DateTime @updatedAt
+  
+  // Relations
+  agents                Agent[]  @relation("AgencyAgents")
+  groups                Group[]
+  bookings              Booking[]
+  payments              Payment[]
+  walletTopUps          WalletTopUp[]
+  invoices              Invoice[]
+  wallet                Wallet?
+  crmActivities         CRMActivity[]
+  
+  @@index([status])
+}
+
+// ============= GROUPS & TOURS =============
+model Group {
+  id                String   @id @default(cuid())
+  name              String
+  destination       String
+  description       String?
+  itinerary         String?  // JSON format
+  duration          Int      // Number of days
+  startDate         DateTime
+  endDate           DateTime
+  totalSlots        Int
+  availableSlots    Int
+  pricePerPerson    Float
+  currency          String   @default("PKR")
+  image             String?  // File path
+  status            String   @default("open") // open, closed, cancelled
+  agencyId          String
+  agency            Agency   @relation(fields: [agencyId], references: [id], onDelete: Cascade)
+  createdAt         DateTime @default(now())
+  updatedAt         DateTime @updatedAt
+  
+  // Relations
+  bookings          Booking[]
+  reservations      Reservation[]
+  
+  @@index([agencyId])
+  @@index([status])
+}
+
+model Reservation {
+  id        String   @id @default(cuid())
+  groupId   String
+  group     Group    @relation(fields: [groupId], references: [id], onDelete: Cascade)
+  customerId String  // Email or name of reserved person
+  reservedSlots Int
+  status    String   @default("active") // active, cancelled
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+  
+  @@index([groupId])
+}
+
+// ============= BOOKINGS =============
+model Booking {
+  id                    String   @id @default(cuid())
+  bookingNumber         String   @unique
+  groupId               String?
+  group                 Group?   @relation(fields: [groupId], references: [id])
+  hotelId               String?
+  hotel                 Hotel?   @relation(fields: [hotelId], references: [id])
+  flightId              String?
+  flight                Flight?  @relation(fields: [flightId], references: [id])
+  visaId                String?
+  visa                  VisaService? @relation(fields: [visaId], references: [id])
+  bookingType           String   @default("GROUP") // GROUP, HOTEL, FLIGHT, VISA
+  agencyId              String
+  agency                Agency   @relation(fields: [agencyId], references: [id])
+  agentId               String
+  agent                 Agent    @relation(fields: [agentId], references: [id])
+  numberOfPax           Int
+  totalAmount           Float
+  commission            Float
+  status                String   @default("pending") // pending, confirmed, cancelled, completed
+  passengerDetails      String   // JSON array of passenger objects
+  specialRequests       String?
+  createdAt             DateTime @default(now())
+  updatedAt             DateTime @updatedAt
+  
+  // Relations
+  payments              Payment[]
+  invoices              Invoice[]
+  
+  @@index([agencyId])
+  @@index([agentId])
+  @@index([status])
+}
+
+// ============= PAYMENTS =============
+model Payment {
+  id                String   @id @default(cuid())
+  bookingId         String
+  booking           Booking  @relation(fields: [bookingId], references: [id], onDelete: Cascade)
+  agencyId          String
+  agency            Agency   @relation(fields: [agencyId], references: [id])
+  agentId           String
+  agent             Agent    @relation(fields: [agentId], references: [id])
+  amount            Float
+  method            String   // bank_transfer, cheque, cash, credit, wallet
+  transactionId     String?
+  bankName          String?
+  proofDocument     String?  // File path to payment proof
+  status            String   @default("pending") // pending, submitted, underReview, approved, rejected, refunded
+  submittedAt       DateTime?
+  reviewedAt        DateTime?
+  reviewedBy        String?  // Admin user ID
+  notes             String?
+  createdAt         DateTime @default(now())
+  updatedAt         DateTime @updatedAt
+  
+  @@index([bookingId])
+  @@index([agencyId])
+  @@index([status])
+}
+
+// ============= WALLET & TOPUPS =============
+model Wallet {
+  id            String   @id @default(cuid())
+  agencyId      String   @unique
+  agency        Agency   @relation(fields: [agencyId], references: [id], onDelete: Cascade)
+  balance       Float    @default(0)
+  creditLimit   Float    @default(50000)
+  lastUpdated   DateTime @updatedAt
+  
+  @@index([agencyId])
+}
+
+model WalletTopUp {
+  id                String   @id @default(cuid())
+  agencyId          String
+  agency            Agency   @relation(fields: [agencyId], references: [id], onDelete: Cascade)
+  agentId           String
+  agent             Agent    @relation(fields: [agentId], references: [id], onDelete: Cascade)
+  amount            Float
+  proofDocument     String?  // File path to payment proof
+  status            String   @default("pending") // pending, approved, rejected
+  submittedAt       DateTime @default(now())
+  approvedAt        DateTime?
+  approvedBy        String?  // Admin user ID
+  notes             String?
+  createdAt         DateTime @default(now())
+  updatedAt         DateTime @updatedAt
+  
+  @@index([agencyId])
+  @@index([status])
+}
+
+// ============= HOTELS & ACCOMMODATIONS =============
+model Hotel {
+  id            String   @id @default(cuid())
+  name          String
+  city          String
+  country       String
+  address       String
+  starRating    Int      // 1-5
+  pricePerNight Float
+  currency      String   @default("PKR")
+  image         String?  // File path
+  description   String?
+  amenities     String?  // JSON array
+  roomTypes     String?  // JSON array
+  contactPerson String?
+  phone         String?
+  email         String?
+  createdAt     DateTime @default(now())
+  updatedAt     DateTime @updatedAt
+  
+  // Relations
+  bookings      Booking[]
+  
+  @@index([city])
+}
+
+// ============= FLIGHTS =============
+model Flight {
+  id                String   @id @default(cuid())
+  flightNumber      String
+  pnr               String?  // PNR (Passenger Name Record)
+  airline           String
+  departureCity     String
+  arrivalCity       String
+  departureTime     DateTime
+  arrivalTime       DateTime
+  duration          Int      // Minutes
+  totalSeats        Int
+  availableSeats    Int
+  pricePerSeat      Float
+  fareTiers         String?  // JSON: [{ "upToSeat": 10, "price": 100000 }, { "upToSeat": 20, "price": 120000 }]
+  currency          String   @default("PKR")
+  aircraftType      String?
+  status            String   @default("active")
+  createdAt         DateTime @default(now())
+  updatedAt         DateTime @updatedAt
+  
+  // Relations
+  bookings          Booking[]
+  
+  @@index([departureCity])
+  @@index([arrivalCity])
+}
+
+// ============= VISA SERVICES =============
+model VisaService {
+  id            String   @id @default(cuid())
+  country       String
+  visaType      String
+  processingDays Int
+  pricePerPerson Float
+  currency      String   @default("PKR")
+  requirements  String?  // JSON array
+  description   String?
+  status        String   @default("active")
+  createdAt     DateTime @default(now())
+  updatedAt     DateTime @updatedAt
+  
+  // Relations
+  bookings      Booking[]
+  
+  @@index([country])
+}
+
+// ============= INVOICES =============
+model Invoice {
+  id              String   @id @default(cuid())
+  invoiceNumber   String   @unique
+  bookingId       String
+  booking         Booking  @relation(fields: [bookingId], references: [id], onDelete: Cascade)
+  agencyId        String
+  agency          Agency   @relation(fields: [agencyId], references: [id])
+  subtotal        Float
+  tax             Float
+  discount        Float    @default(0)
+  totalAmount     Float
+  currency        String   @default("PKR")
+  issueDate       DateTime @default(now())
+  dueDate         DateTime
+  status          String   @default("draft") // draft, issued, paid, overdue, cancelled
+  pdfPath         String?  // File path to generated PDF
+  notes           String?
+  createdAt       DateTime @default(now())
+  updatedAt       DateTime @updatedAt
+  
+  @@index([bookingId])
+  @@index([agencyId])
+  @@index([status])
+}
+
+// ============= CRM =============
+model CRMActivity {
+  id            String   @id @default(cuid())
+  agencyId      String
+  agency        Agency   @relation(fields: [agencyId], references: [id], onDelete: Cascade)
+  type          String   // email, call, meeting, note
+  subject       String
+  description   String?
+  contactName   String?
+  contactEmail  String?
+  dueDate       DateTime?
+  status        String   @default("open") // open, completed, cancelled
+  createdBy     String
+  createdAt     DateTime @default(now())
+  updatedAt     DateTime @updatedAt
+  
+  @@index([agencyId])
+  @@index([status])
+}
+
+// ============= NOTIFICATIONS =============
+model Notification {
+  id        String   @id @default(cuid())
+  userId    String
+  user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  type      String   // booking, payment, message, alert
+  title     String
+  content   String
+  link      String?
+  read      Boolean  @default(false)
+  createdAt DateTime @default(now())
+  
+  @@index([userId])
+  @@index([read])
+}
+
+// ============= AUDIT LOGS =============
+model AuditLog {
+  id        String   @id @default(cuid())
+  userId    String
+  user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  action    String   // create, update, delete, approve, reject
+  entity    String   // booking, payment, invoice, agency, etc.
+  entityId  String
+  changes   String?  // JSON of what changed
+  ipAddress String?
+  createdAt DateTime @default(now())
+  
+  @@index([userId])
+  @@index([entity])
+}
