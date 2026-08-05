@@ -1,5 +1,6 @@
 import { Analytics } from '@vercel/analytics/next'
 import type { Metadata, Viewport } from 'next'
+import { FloatingSupportHub } from '@/components/support/floating-support-hub'
 import './globals.css'
 
 export const metadata: Metadata = {
@@ -47,6 +48,7 @@ export default function RootLayout({
       </head>
       <body className="antialiased font-['Plus_Jakarta_Sans',sans-serif]">
         {children}
+        <FloatingSupportHub />
         {process.env.NODE_ENV === 'production' && <Analytics />}
       </body>
     </html>

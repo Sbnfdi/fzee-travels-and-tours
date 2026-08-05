@@ -2,6 +2,8 @@
 
 import Link from 'next/link';
 import { Plane } from 'lucide-react';
+import { WhatsAppIcon } from '@/components/support/whatsapp-button';
+import { getWhatsAppUrl, WHATSAPP_CONFIG } from '@/lib/whatsapp';
 
 export function Footer() {
   return (
@@ -75,11 +77,40 @@ export function Footer() {
 
           {/* Contact */}
           <div className="space-y-4">
-            <h3 className="font-bold text-sm text-foreground uppercase tracking-wider">Contact Us</h3>
-            <ul className="space-y-2 text-sm text-muted-foreground">
-              <li className="font-medium text-foreground">Fzee Travels and Tours</li>
-              <li>Support & Inquiries</li>
-              <li className="text-primary font-semibold">info@fzeetravels.com</li>
+            <h3 className="font-bold text-sm text-foreground uppercase tracking-wider">Contact & Support</h3>
+            <ul className="space-y-3 text-sm">
+              <li>
+                <a
+                  href={getWhatsAppUrl('Hello Fzee Travels! I would like to make an inquiry.', 'primary')}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="flex items-center gap-2 text-muted-foreground hover:text-[#25D366] transition-colors group"
+                >
+                  <WhatsAppIcon className="w-4 h-4 text-[#25D366] group-hover:scale-110 transition-transform" />
+                  <div>
+                    <span className="block text-xs font-semibold text-foreground">Customer Support</span>
+                    <span className="text-xs font-mono text-[#25D366]">{WHATSAPP_CONFIG.primary.displayNumber}</span>
+                  </div>
+                </a>
+              </li>
+              <li>
+                <a
+                  href={getWhatsAppUrl('Hello! I am an agent inquiring about B2B registration.', 'secondary')}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="flex items-center gap-2 text-muted-foreground hover:text-[#25D366] transition-colors group"
+                >
+                  <WhatsAppIcon className="w-4 h-4 text-[#25D366] group-hover:scale-110 transition-transform" />
+                  <div>
+                    <span className="block text-xs font-semibold text-foreground">B2B Agent Desk</span>
+                    <span className="text-xs font-mono text-[#25D366]">{WHATSAPP_CONFIG.secondary.displayNumber}</span>
+                  </div>
+                </a>
+              </li>
+              <li className="pt-1 text-xs text-muted-foreground">
+                <span className="block font-medium text-foreground">Email</span>
+                <span className="text-primary font-semibold">info@fzeetravels.com</span>
+              </li>
             </ul>
           </div>
         </div>

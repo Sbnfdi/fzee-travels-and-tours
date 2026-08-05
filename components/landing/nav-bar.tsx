@@ -3,6 +3,7 @@
 import Link from 'next/link';
 import { useState } from 'react';
 import { Menu, X, Plane } from 'lucide-react';
+import { WhatsAppButton } from '@/components/support/whatsapp-button';
 
 export function NavBar() {
   const [isOpen, setIsOpen] = useState(false);
@@ -23,19 +24,22 @@ export function NavBar() {
           </Link>
 
           {/* Desktop Menu */}
-          <div className="hidden md:flex items-center gap-8 font-medium">
-            <Link href="#features" className="text-muted-foreground hover:text-foreground transition-colors">
+          <div className="hidden md:flex items-center gap-6 font-medium">
+            <Link href="#features" className="text-muted-foreground hover:text-foreground transition-colors text-sm">
               Features
             </Link>
-            <Link href="#testimonials" className="text-muted-foreground hover:text-foreground transition-colors">
+            <Link href="#testimonials" className="text-muted-foreground hover:text-foreground transition-colors text-sm">
               Testimonials
             </Link>
-            <Link href="/login" className="text-foreground hover:text-primary transition-colors font-semibold">
+            <WhatsAppButton variant="solid" size="sm">
+              WhatsApp Support
+            </WhatsAppButton>
+            <Link href="/login" className="text-foreground hover:text-primary transition-colors font-semibold text-sm">
               Sign In
             </Link>
             <Link
               href="/register"
-              className="px-6 py-2.5 bg-primary text-primary-foreground rounded-xl hover:bg-primary/90 shadow-md shadow-primary/20 transition-all font-semibold hover:-translate-y-0.5 active:translate-y-0"
+              className="px-5 py-2 bg-primary text-primary-foreground rounded-xl hover:bg-primary/90 shadow-md shadow-primary/20 transition-all font-semibold text-sm hover:-translate-y-0.5 active:translate-y-0"
             >
               Register Free
             </Link>
@@ -60,6 +64,11 @@ export function NavBar() {
             <Link href="#testimonials" className="block px-3 py-2 text-foreground font-medium hover:bg-muted rounded-lg" onClick={() => setIsOpen(false)}>
               Testimonials
             </Link>
+            <div className="px-3 py-1">
+              <WhatsAppButton variant="solid" size="sm" className="w-full justify-center">
+                WhatsApp Support (0330 4084080)
+              </WhatsAppButton>
+            </div>
             <Link href="/login" className="block px-3 py-2 text-foreground font-medium hover:bg-muted rounded-lg" onClick={() => setIsOpen(false)}>
               Sign In
             </Link>
