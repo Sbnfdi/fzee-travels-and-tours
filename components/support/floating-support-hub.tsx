@@ -153,13 +153,13 @@ export function FloatingSupportHub() {
   };
 
   return (
-    <div className="fixed bottom-5 right-5 z-50 flex flex-col items-end pointer-events-auto">
+    <div className="fixed bottom-3 right-3 sm:bottom-5 sm:right-5 z-50 flex flex-col items-end pointer-events-auto max-w-full">
       {/* Floating Tooltip Notification */}
       {showTooltip && !isOpen && (
-        <div className="mb-3 animate-bounce max-w-xs bg-card border border-border shadow-xl rounded-2xl p-3 flex items-center gap-3 relative">
+        <div className="mb-2.5 animate-bounce w-[calc(100vw-2rem)] sm:w-auto sm:max-w-xs bg-card border border-border shadow-xl rounded-2xl p-3 flex items-center gap-3 relative">
           <button
             onClick={() => setShowTooltip(false)}
-            className="absolute -top-1.5 -right-1.5 bg-muted text-muted-foreground hover:text-foreground rounded-full p-0.5"
+            className="absolute -top-1.5 -right-1.5 bg-muted text-muted-foreground hover:text-foreground rounded-full p-1"
             aria-label="Dismiss tooltip"
           >
             <X className="w-3 h-3" />
@@ -176,26 +176,26 @@ export function FloatingSupportHub() {
 
       {/* Main Drawer / Widget Window */}
       {isOpen && (
-        <div className="w-[360px] sm:w-[420px] h-[580px] max-h-[82vh] bg-card border border-border/80 shadow-2xl rounded-3xl flex flex-col overflow-hidden mb-4 transition-all duration-300 animate-in fade-in slide-in-from-bottom-5">
+        <div className="w-[calc(100vw-1.5rem)] xs:w-[360px] sm:w-[400px] md:w-[420px] h-[calc(100vh-5.5rem)] sm:h-[580px] max-h-[580px] sm:max-h-[82vh] bg-card border border-border/80 shadow-2xl rounded-2xl sm:rounded-3xl flex flex-col overflow-hidden mb-3 transition-all duration-300 animate-in fade-in slide-in-from-bottom-5">
           {/* Header */}
-          <div className="bg-gradient-to-r from-slate-900 via-primary/95 to-slate-900 text-white p-4 flex flex-col gap-3 relative">
+          <div className="bg-gradient-to-r from-slate-900 via-primary/95 to-slate-900 text-white p-3.5 sm:p-4 flex flex-col gap-2.5 sm:gap-3 relative shrink-0">
             <div className="flex justify-between items-center">
-              <div className="flex items-center gap-3">
-                <div className="w-10 h-10 rounded-2xl bg-white/10 backdrop-blur-md flex items-center justify-center border border-white/20">
-                  <Plane className="w-5 h-5 text-amber-400" />
+              <div className="flex items-center gap-2.5 sm:gap-3 min-w-0">
+                <div className="w-9 h-9 sm:w-10 sm:h-10 rounded-2xl bg-white/10 backdrop-blur-md flex items-center justify-center border border-white/20 shrink-0">
+                  <Plane className="w-4 h-4 sm:w-5 sm:h-5 text-amber-400" />
                 </div>
-                <div>
-                  <h3 className="font-extrabold text-base tracking-tight leading-tight flex items-center gap-1.5">
+                <div className="min-w-0">
+                  <h3 className="font-extrabold text-sm sm:text-base tracking-tight leading-tight truncate">
                     Fzee Support Hub
                   </h3>
-                  <div className="flex items-center gap-1.5 text-xs text-white/80">
-                    <span className="w-2 h-2 rounded-full bg-emerald-400 animate-pulse"></span>
-                    <span>Live Agents & AI Online</span>
+                  <div className="flex items-center gap-1.5 text-[11px] sm:text-xs text-white/80">
+                    <span className="w-2 h-2 rounded-full bg-emerald-400 animate-pulse shrink-0"></span>
+                    <span className="truncate">Live Agents & AI Online</span>
                   </div>
                 </div>
               </div>
 
-              <div className="flex items-center gap-1">
+              <div className="flex items-center gap-1 shrink-0">
                 {activeTab === 'ai' && (
                   <button
                     onClick={handleResetChat}
@@ -219,25 +219,25 @@ export function FloatingSupportHub() {
             <div className="grid grid-cols-2 gap-1 bg-black/25 p-1 rounded-xl text-xs font-semibold">
               <button
                 onClick={() => setActiveTab('ai')}
-                className={`py-2 px-3 rounded-lg flex items-center justify-center gap-2 transition-all ${
+                className={`py-2 px-2.5 sm:px-3 rounded-lg flex items-center justify-center gap-1.5 sm:gap-2 transition-all ${
                   activeTab === 'ai'
                     ? 'bg-card text-foreground shadow-sm'
                     : 'text-white/80 hover:text-white hover:bg-white/5'
                 }`}
               >
-                <Sparkles className="w-3.5 h-3.5 text-amber-500" />
-                <span>AI Travel Bot</span>
+                <Sparkles className="w-3.5 h-3.5 text-amber-500 shrink-0" />
+                <span className="truncate">AI Travel Bot</span>
               </button>
               <button
                 onClick={() => setActiveTab('whatsapp')}
-                className={`py-2 px-3 rounded-lg flex items-center justify-center gap-2 transition-all ${
+                className={`py-2 px-2.5 sm:px-3 rounded-lg flex items-center justify-center gap-1.5 sm:gap-2 transition-all ${
                   activeTab === 'whatsapp'
                     ? 'bg-[#25D366] text-white shadow-sm font-bold'
                     : 'text-white/80 hover:text-white hover:bg-white/5'
                 }`}
               >
-                <WhatsAppIcon className="w-4 h-4" />
-                <span>WhatsApp Desk</span>
+                <WhatsAppIcon className="w-4 h-4 shrink-0" />
+                <span className="truncate">WhatsApp Desk</span>
               </button>
             </div>
           </div>
@@ -246,28 +246,28 @@ export function FloatingSupportHub() {
           {activeTab === 'ai' && (
             <div className="flex-1 flex flex-col min-h-0 bg-background/50">
               {/* Chat Scroll Container */}
-              <div className="flex-1 overflow-y-auto p-4 space-y-4 text-xs">
+              <div className="flex-1 overflow-y-auto p-3.5 sm:p-4 space-y-3.5 sm:space-y-4 text-xs">
                 {messages.map((msg) => (
                   <div
                     key={msg.id}
-                    className={`flex gap-2.5 ${
+                    className={`flex gap-2 sm:gap-2.5 ${
                       msg.role === 'user' ? 'justify-end' : 'justify-start'
                     }`}
                   >
                     {msg.role === 'assistant' && (
-                      <div className="w-7 h-7 rounded-xl bg-primary text-primary-foreground flex items-center justify-center shrink-0 mt-0.5 shadow-sm">
-                        <Bot className="w-4 h-4" />
+                      <div className="w-6 h-6 sm:w-7 sm:h-7 rounded-xl bg-primary text-primary-foreground flex items-center justify-center shrink-0 mt-0.5 shadow-sm">
+                        <Bot className="w-3.5 h-3.5 sm:w-4 sm:h-4" />
                       </div>
                     )}
 
                     <div
-                      className={`max-w-[82%] rounded-2xl p-3 shadow-xs space-y-2 ${
+                      className={`max-w-[85%] sm:max-w-[82%] rounded-2xl p-2.5 sm:p-3 shadow-xs space-y-2 ${
                         msg.role === 'user'
                           ? 'bg-primary text-primary-foreground rounded-br-xs'
                           : 'bg-card border border-border/70 text-foreground rounded-bl-xs'
                       }`}
                     >
-                      <div className="whitespace-pre-line leading-relaxed text-xs">
+                      <div className="whitespace-pre-line leading-relaxed text-xs break-words">
                         {msg.content}
                       </div>
 
@@ -278,11 +278,11 @@ export function FloatingSupportHub() {
                             href={getWhatsAppUrl(`Inquiry from Chatbot:\n"${msg.content.slice(0, 100)}..."`)}
                             target="_blank"
                             rel="noopener noreferrer"
-                            className="inline-flex items-center gap-1.5 px-2.5 py-1 bg-[#25D366]/10 hover:bg-[#25D366] text-[#25D366] hover:text-white font-medium text-[11px] rounded-lg transition-colors border border-[#25D366]/20"
+                            className="inline-flex items-center gap-1.5 px-2.5 py-1 bg-[#25D366]/10 hover:bg-[#25D366] text-[#25D366] hover:text-white font-medium text-[11px] rounded-lg transition-colors border border-[#25D366]/20 max-w-full truncate"
                           >
-                            <WhatsAppIcon className="w-3.5 h-3.5" />
-                            <span>Continue on WhatsApp</span>
-                            <ExternalLink className="w-3 h-3 ml-0.5 opacity-70" />
+                            <WhatsAppIcon className="w-3.5 h-3.5 shrink-0" />
+                            <span className="truncate">Continue on WhatsApp</span>
+                            <ExternalLink className="w-3 h-3 ml-0.5 opacity-70 shrink-0" />
                           </a>
                         </div>
                       )}
@@ -297,19 +297,19 @@ export function FloatingSupportHub() {
                     </div>
 
                     {msg.role === 'user' && (
-                      <div className="w-7 h-7 rounded-xl bg-muted text-foreground flex items-center justify-center shrink-0 mt-0.5">
-                        <User className="w-4 h-4" />
+                      <div className="w-6 h-6 sm:w-7 sm:h-7 rounded-xl bg-muted text-foreground flex items-center justify-center shrink-0 mt-0.5">
+                        <User className="w-3.5 h-3.5 sm:w-4 sm:h-4" />
                       </div>
                     )}
                   </div>
                 ))}
 
                 {isLoading && (
-                  <div className="flex gap-2.5 justify-start">
-                    <div className="w-7 h-7 rounded-xl bg-primary text-primary-foreground flex items-center justify-center shrink-0">
-                      <Bot className="w-4 h-4" />
+                  <div className="flex gap-2 sm:gap-2.5 justify-start">
+                    <div className="w-6 h-6 sm:w-7 sm:h-7 rounded-xl bg-primary text-primary-foreground flex items-center justify-center shrink-0">
+                      <Bot className="w-3.5 h-3.5 sm:w-4 sm:h-4" />
                     </div>
-                    <div className="bg-card border border-border p-3 rounded-2xl rounded-bl-xs text-xs text-muted-foreground flex items-center gap-2">
+                    <div className="bg-card border border-border p-2.5 sm:p-3 rounded-2xl rounded-bl-xs text-xs text-muted-foreground flex items-center gap-2">
                       <span className="w-2 h-2 rounded-full bg-primary animate-ping"></span>
                       <span>Fzee AI is thinking...</span>
                     </div>
@@ -319,12 +319,12 @@ export function FloatingSupportHub() {
               </div>
 
               {/* Quick Prompts Carousel */}
-              <div className="px-3 py-2 border-t border-border/60 bg-muted/30 overflow-x-auto flex gap-1.5 no-scrollbar scrollbar-none">
+              <div className="px-2.5 py-2 border-t border-border/60 bg-muted/30 overflow-x-auto flex gap-1.5 no-scrollbar scrollbar-none shrink-0">
                 {QUICK_PROMPTS.map((qp, idx) => (
                   <button
                     key={idx}
                     onClick={() => handleSendMessage(qp.query)}
-                    className="whitespace-nowrap text-[11px] font-medium px-2.5 py-1 rounded-full bg-card hover:bg-primary hover:text-primary-foreground border border-border/80 transition-colors shadow-2xs"
+                    className="whitespace-nowrap text-[11px] font-medium px-2.5 py-1 rounded-full bg-card hover:bg-primary hover:text-primary-foreground border border-border/80 transition-colors shadow-2xs shrink-0"
                   >
                     {qp.label}
                   </button>
@@ -337,19 +337,19 @@ export function FloatingSupportHub() {
                   e.preventDefault();
                   handleSendMessage();
                 }}
-                className="p-3 border-t border-border bg-card flex items-center gap-2"
+                className="p-2.5 sm:p-3 border-t border-border bg-card flex items-center gap-2 shrink-0"
               >
                 <input
                   type="text"
                   placeholder="Ask Fzee AI anything..."
                   value={inputMessage}
                   onChange={(e) => setInputMessage(e.target.value)}
-                  className="flex-1 bg-muted/60 hover:bg-muted text-foreground text-xs px-3.5 py-2.5 rounded-xl border border-border/50 focus:outline-hidden focus:ring-2 focus:ring-primary/30"
+                  className="flex-1 min-w-0 bg-muted/60 hover:bg-muted text-foreground text-xs px-3 py-2 sm:px-3.5 sm:py-2.5 rounded-xl border border-border/50 focus:outline-hidden focus:ring-2 focus:ring-primary/30"
                 />
                 <button
                   type="submit"
                   disabled={!inputMessage.trim() || isLoading}
-                  className="p-2.5 bg-primary text-primary-foreground rounded-xl hover:bg-primary/90 disabled:opacity-40 transition-all shrink-0"
+                  className="p-2.5 bg-primary text-primary-foreground rounded-xl hover:bg-primary/90 disabled:opacity-40 transition-all shrink-0 cursor-pointer"
                   aria-label="Send message"
                 >
                   <Send className="w-4 h-4" />
@@ -360,20 +360,20 @@ export function FloatingSupportHub() {
 
           {/* TAB 2: Direct WhatsApp Support */}
           {activeTab === 'whatsapp' && (
-            <div className="flex-1 flex flex-col overflow-y-auto p-4 space-y-4 bg-background/50 text-xs">
+            <div className="flex-1 flex flex-col overflow-y-auto p-3.5 sm:p-4 space-y-3.5 sm:space-y-4 bg-background/50 text-xs">
               {/* Official Numbers Banner */}
-              <div className="bg-gradient-to-r from-emerald-500/10 via-emerald-500/5 to-transparent border border-emerald-500/30 p-3.5 rounded-2xl space-y-2">
-                <div className="flex items-center gap-2 font-bold text-foreground text-sm">
-                  <WhatsAppIcon className="w-5 h-5 text-[#25D366]" />
+              <div className="bg-gradient-to-r from-emerald-500/10 via-emerald-500/5 to-transparent border border-emerald-500/30 p-3 sm:p-3.5 rounded-2xl space-y-1.5">
+                <div className="flex items-center gap-2 font-bold text-foreground text-xs sm:text-sm">
+                  <WhatsAppIcon className="w-4 h-4 sm:w-5 sm:h-5 text-[#25D366] shrink-0" />
                   <span>Official WhatsApp Support Desks</span>
                 </div>
-                <p className="text-muted-foreground text-[11px]">
+                <p className="text-muted-foreground text-[11px] leading-snug">
                   Connect directly with our dedicated travel experts for instant responses & fast bookings.
                 </p>
               </div>
 
               {/* Desk Selectors */}
-              <div className="space-y-2.5">
+              <div className="space-y-2">
                 <h4 className="font-bold text-foreground uppercase tracking-wider text-[10px] text-muted-foreground">
                   Select Contact Desk
                 </h4>
@@ -385,19 +385,19 @@ export function FloatingSupportHub() {
                   rel="noopener noreferrer"
                   className="block p-3 bg-card hover:bg-emerald-500/5 border border-border hover:border-[#25D366]/60 rounded-2xl transition-all shadow-xs group"
                 >
-                  <div className="flex justify-between items-center">
-                    <div className="space-y-0.5">
-                      <div className="font-bold text-foreground flex items-center gap-2 text-xs">
+                  <div className="flex justify-between items-center gap-2">
+                    <div className="space-y-0.5 min-w-0">
+                      <div className="font-bold text-foreground flex flex-wrap items-center gap-1.5 text-xs">
                         <span>{WHATSAPP_CONFIG.primary.label}</span>
-                        <span className="px-1.5 py-0.2 bg-emerald-500/15 text-[#25D366] text-[10px] font-bold rounded-md">
+                        <span className="px-1.5 py-0.2 bg-emerald-500/15 text-[#25D366] text-[10px] font-bold rounded-md font-mono">
                           0330 4084080
                         </span>
                       </div>
-                      <p className="text-muted-foreground text-[11px]">
+                      <p className="text-muted-foreground text-[11px] truncate">
                         {WHATSAPP_CONFIG.primary.description}
                       </p>
                     </div>
-                    <ChevronRight className="w-4 h-4 text-muted-foreground group-hover:text-[#25D366] group-hover:translate-x-0.5 transition-all" />
+                    <ChevronRight className="w-4 h-4 text-muted-foreground group-hover:text-[#25D366] group-hover:translate-x-0.5 transition-all shrink-0" />
                   </div>
                 </a>
 
@@ -408,19 +408,19 @@ export function FloatingSupportHub() {
                   rel="noopener noreferrer"
                   className="block p-3 bg-card hover:bg-emerald-500/5 border border-border hover:border-[#25D366]/60 rounded-2xl transition-all shadow-xs group"
                 >
-                  <div className="flex justify-between items-center">
-                    <div className="space-y-0.5">
-                      <div className="font-bold text-foreground flex items-center gap-2 text-xs">
+                  <div className="flex justify-between items-center gap-2">
+                    <div className="space-y-0.5 min-w-0">
+                      <div className="font-bold text-foreground flex flex-wrap items-center gap-1.5 text-xs">
                         <span>{WHATSAPP_CONFIG.secondary.label}</span>
-                        <span className="px-1.5 py-0.2 bg-emerald-500/15 text-[#25D366] text-[10px] font-bold rounded-md">
+                        <span className="px-1.5 py-0.2 bg-emerald-500/15 text-[#25D366] text-[10px] font-bold rounded-md font-mono">
                           0331 4084080
                         </span>
                       </div>
-                      <p className="text-muted-foreground text-[11px]">
+                      <p className="text-muted-foreground text-[11px] truncate">
                         {WHATSAPP_CONFIG.secondary.description}
                       </p>
                     </div>
-                    <ChevronRight className="w-4 h-4 text-muted-foreground group-hover:text-[#25D366] group-hover:translate-x-0.5 transition-all" />
+                    <ChevronRight className="w-4 h-4 text-muted-foreground group-hover:text-[#25D366] group-hover:translate-x-0.5 transition-all shrink-0" />
                   </div>
                 </a>
               </div>
@@ -433,41 +433,41 @@ export function FloatingSupportHub() {
                 <div className="grid grid-cols-2 gap-2 text-xs">
                   <button
                     onClick={() => handleQuickTopicLaunch('umrah')}
-                    className="p-2.5 bg-card hover:bg-emerald-500/10 border border-border/80 rounded-xl text-left font-medium transition-colors flex items-center gap-2"
+                    className="p-2 sm:p-2.5 bg-card hover:bg-emerald-500/10 border border-border/80 rounded-xl text-left font-medium transition-colors flex items-center gap-1.5 shrink-0"
                   >
                     <span>🕋</span>
-                    <span className="text-[11px] font-semibold">Umrah Packages</span>
+                    <span className="text-[11px] font-semibold truncate">Umrah Packages</span>
                   </button>
                   <button
                     onClick={() => handleQuickTopicLaunch('flights')}
-                    className="p-2.5 bg-card hover:bg-emerald-500/10 border border-border/80 rounded-xl text-left font-medium transition-colors flex items-center gap-2"
+                    className="p-2 sm:p-2.5 bg-card hover:bg-emerald-500/10 border border-border/80 rounded-xl text-left font-medium transition-colors flex items-center gap-1.5 shrink-0"
                   >
                     <span>✈️</span>
-                    <span className="text-[11px] font-semibold">Flight Booking</span>
+                    <span className="text-[11px] font-semibold truncate">Flight Booking</span>
                   </button>
                   <button
                     onClick={() => handleQuickTopicLaunch('visa')}
-                    className="p-2.5 bg-card hover:bg-emerald-500/10 border border-border/80 rounded-xl text-left font-medium transition-colors flex items-center gap-2"
+                    className="p-2 sm:p-2.5 bg-card hover:bg-emerald-500/10 border border-border/80 rounded-xl text-left font-medium transition-colors flex items-center gap-1.5 shrink-0"
                   >
                     <span>🛂</span>
-                    <span className="text-[11px] font-semibold">Visa Guidance</span>
+                    <span className="text-[11px] font-semibold truncate">Visa Guidance</span>
                   </button>
                   <button
                     onClick={() => handleQuickTopicLaunch('b2b_agent')}
-                    className="p-2.5 bg-card hover:bg-emerald-500/10 border border-border/80 rounded-xl text-left font-medium transition-colors flex items-center gap-2"
+                    className="p-2 sm:p-2.5 bg-card hover:bg-emerald-500/10 border border-border/80 rounded-xl text-left font-medium transition-colors flex items-center gap-1.5 shrink-0"
                   >
                     <span>💼</span>
-                    <span className="text-[11px] font-semibold">B2B Agent Portal</span>
+                    <span className="text-[11px] font-semibold truncate">B2B Agent Portal</span>
                   </button>
                 </div>
               </div>
 
               {/* Custom WhatsApp Form */}
-              <form onSubmit={handleWaCustomSend} className="space-y-2 pt-2 border-t border-border">
+              <form onSubmit={handleWaCustomSend} className="space-y-2 pt-2 border-t border-border mt-auto">
                 <label className="block text-[11px] font-bold text-foreground">
                   Type Custom WhatsApp Message
                 </label>
-                <div className="flex gap-2 mb-2 text-[10px]">
+                <div className="flex flex-col xs:flex-row gap-1.5 xs:gap-3 text-[10px]">
                   <label className="flex items-center gap-1.5 cursor-pointer font-medium">
                     <input
                       type="radio"
@@ -495,11 +495,11 @@ export function FloatingSupportHub() {
                     placeholder="Type your message here..."
                     value={waCustomMessage}
                     onChange={(e) => setWaCustomMessage(e.target.value)}
-                    className="flex-1 bg-card border border-border text-foreground text-xs px-3 py-2 rounded-xl focus:outline-hidden focus:ring-2 focus:ring-[#25D366]/40"
+                    className="flex-1 min-w-0 bg-card border border-border text-foreground text-xs px-3 py-2 rounded-xl focus:outline-hidden focus:ring-2 focus:ring-[#25D366]/40"
                   />
                   <button
                     type="submit"
-                    className="px-3 py-2 bg-[#25D366] hover:bg-[#20ba5a] text-white rounded-xl font-bold flex items-center gap-1 shrink-0"
+                    className="px-3 py-2 bg-[#25D366] hover:bg-[#20ba5a] text-white rounded-xl font-bold flex items-center gap-1 shrink-0 cursor-pointer text-xs"
                   >
                     <WhatsAppIcon className="w-4 h-4" />
                     <span>Send</span>
@@ -517,7 +517,7 @@ export function FloatingSupportHub() {
           setIsOpen(!isOpen);
           setShowTooltip(false);
         }}
-        className={`group relative flex items-center justify-center p-4 rounded-full shadow-2xl transition-all duration-300 transform active:scale-95 ${
+        className={`group relative flex items-center justify-center p-3.5 sm:p-4 rounded-full shadow-2xl transition-all duration-300 transform active:scale-95 cursor-pointer ${
           isOpen
             ? 'bg-slate-900 text-white rotate-90 scale-90'
             : 'bg-[#25D366] hover:bg-[#20ba5a] text-white hover:scale-105 shadow-[#25D366]/40'
@@ -530,10 +530,10 @@ export function FloatingSupportHub() {
         )}
 
         {isOpen ? (
-          <X className="w-7 h-7" />
+          <X className="w-6 h-6 sm:w-7 sm:h-7" />
         ) : (
           <div className="relative flex items-center justify-center">
-            <WhatsAppIcon className="w-7 h-7" />
+            <WhatsAppIcon className="w-6 h-6 sm:w-7 sm:h-7" />
             <span className="absolute -top-1 -right-1 flex h-3.5 w-3.5">
               <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-amber-400 opacity-75"></span>
               <span className="relative inline-flex rounded-full h-3.5 w-3.5 bg-amber-400 border-2 border-[#25D366] items-center justify-center">
