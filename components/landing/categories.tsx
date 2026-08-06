@@ -29,6 +29,36 @@ export function Categories({
           </p>
         </div>
 
+        {/* Static Popular Destinations Section */}
+        <div className="space-y-8">
+          <div className="flex items-center gap-3">
+            <div className="p-3 rounded-xl bg-primary/10 text-primary">
+              <Map className="w-6 h-6" />
+            </div>
+            <h3 className="text-2xl font-bold text-foreground">Popular Destinations</h3>
+          </div>
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
+            {[
+              { title: "UAE Groups", desc: "Explore Dubai with group discounts", img: "https://images.unsplash.com/photo-1512453979798-5ea266f8880c?q=80&w=600&auto=format&fit=crop" },
+              { title: "KSA Groups", desc: "Travel to Saudi Arabia with exclusive rates", img: "https://images.unsplash.com/photo-1580418827493-f2b22c0a76cb?q=80&w=600&auto=format&fit=crop" },
+              { title: "Umrah Groups", desc: "Special packages for your spiritual journey", img: "https://images.unsplash.com/photo-1565552643983-6c8ea3db18de?q=80&w=600&auto=format&fit=crop" },
+              { title: "Muscat Groups", desc: "Discover the beauty of Oman", img: "https://images.unsplash.com/photo-1616421946059-e93132e49c95?q=80&w=600&auto=format&fit=crop" },
+              { title: "Qatar Groups", desc: "Experience Qatar's modern marvels", img: "https://images.unsplash.com/photo-1596205886280-c1f01c801e0a?q=80&w=600&auto=format&fit=crop" },
+              { title: "Bahrain Groups", desc: "Discover Bahrain's rich culture", img: "https://images.unsplash.com/photo-1627885744211-5db0d60d3dce?q=80&w=600&auto=format&fit=crop" },
+              { title: "UK Groups", desc: "Explore the United Kingdom", img: "https://images.unsplash.com/photo-1513635269975-59693e0cd1ce?q=80&w=600&auto=format&fit=crop" },
+              { title: "All Groups", desc: "Browse all available destinations", img: "https://images.unsplash.com/photo-1436491865332-7a61a109cc05?q=80&w=600&auto=format&fit=crop" },
+            ].map((cat, i) => (
+              <Link href="/login" key={i} className="group bg-card border border-border rounded-2xl overflow-hidden hover:shadow-2xl hover:shadow-primary/10 transition-all duration-300 hover:-translate-y-1 block text-center pb-4">
+                <div className="h-40 overflow-hidden relative mb-4">
+                  <img src={cat.img} alt={cat.title} className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-700" />
+                </div>
+                <h4 className="font-bold text-foreground text-lg">{cat.title}</h4>
+                <p className="text-xs text-muted-foreground px-4 mt-1">{cat.desc}</p>
+              </Link>
+            ))}
+          </div>
+        </div>
+
         {/* Flights Section */}
         {flights.length > 0 && (
           <div className="space-y-8">
