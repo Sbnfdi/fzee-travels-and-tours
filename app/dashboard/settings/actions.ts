@@ -33,15 +33,19 @@ export async function updateSystemSettings(data: {
   bankAccountNumber: string;
 }) {
   try {
-    const updatedSettings = await prisma.systemSettings.update({
+    const updatedSettings = await prisma.systemSettings.upsert({
       where: { id: 'default' },
-      data,
+      update: data,
+      create: {
+        id: 'default',
+        ...data,
+      },
     });
 
     revalidatePath('/dashboard/settings');
     return { success: true, settings: updatedSettings };
-  } catch (error) {
+  } catch (error: any) {
     console.error('Error updating system settings:', error);
-    return { success: false, error: 'Failed to update system settings' };
+    return { success: false, error: error.message || 'Failed to update system settings' };
   }
 }
