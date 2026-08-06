@@ -43,7 +43,7 @@ export function Categories({
               { title: "KSA Groups", desc: "Travel to Saudi Arabia with exclusive rates", img: "https://images.unsplash.com/photo-1580418827493-f2b22c0a76cb?q=80&w=600&auto=format&fit=crop" },
               { title: "Umrah Groups", desc: "Special packages for your spiritual journey", img: "https://images.unsplash.com/photo-1566073771259-6a8506099945?q=80&w=600&auto=format&fit=crop" },
               { title: "Muscat Groups", desc: "Discover the beauty of Oman", img: "https://images.unsplash.com/photo-1520250497591-112f2f40a3f4?q=80&w=600&auto=format&fit=crop" },
-              { title: "Qatar Groups", desc: "Experience Qatar's modern marvels", img: "https://images.unsplash.com/photo-1582650993077-d9555cb566e2?q=80&w=600&auto=format&fit=crop" },
+              { title: "Qatar Groups", desc: "Experience Qatar's modern marvels", img: "https://images.pexels.com/photos/3787839/pexels-photo-3787839.jpeg?auto=compress&cs=tinysrgb&w=600" },
               { title: "Bahrain Groups", desc: "Discover Bahrain's rich culture", img: "https://images.unsplash.com/photo-1506012787146-f92b2d7d6d96?q=80&w=600&auto=format&fit=crop" },
               { title: "UK Groups", desc: "Explore the United Kingdom", img: "https://images.unsplash.com/photo-1542296332-2e4473faf563?q=80&w=600&auto=format&fit=crop" },
               { title: "All Groups", desc: "Browse all available destinations", img: "https://images.unsplash.com/photo-1436491865332-7a61a109cc05?q=80&w=600&auto=format&fit=crop" },
