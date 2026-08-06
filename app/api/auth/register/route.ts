@@ -36,6 +36,13 @@ export async function POST(request: NextRequest) {
 
     // Create user, agency, agent, and wallet in a single transaction
     const result = await prisma.$transaction(async (tx: TransactionClient) => {
+      // Get system settings
+      const settings = await tx.systemSettings.findUnique({
+        where: { id: 'default' },
+      });
+      const autoApprove = settings?.autoApproveAgencies ?? true;
+      const defaultCredit = settings?.defaultCreditLimit ?? 10000;
+
       // Create user
       const user = await tx.user.create({
         data: {
@@ -47,7 +54,7 @@ export async function POST(request: NextRequest) {
         },
       });
 
-      // Create agency for travel agent (free registration, auto-approved)
+      // Create agency for travel agent
       const agency = await tx.agency.create({
         data: {
           userId: user.id,
@@ -60,9 +67,9 @@ export async function POST(request: NextRequest) {
           country: 'pending',
           postalCode: 'pending',
           phone: phone,
-          status: 'approved', // Auto-approved for free registration
-          registrationApprovedAt: new Date(),
-          creditLimit: 10000, // Default credit limit for free agents
+          status: autoApprove ? 'approved' : 'pending',
+          registrationApprovedAt: autoApprove ? new Date() : null,
+          creditLimit: defaultCredit,
         },
       });
 
@@ -73,7 +80,7 @@ export async function POST(request: NextRequest) {
           agencyId: agency.id,
           commissionRate: 10, // Default 10% commission
           walletBalance: 0,
-          status: 'active',
+          status: autoApprove ? 'active' : 'inactive',
         },
       });
 
@@ -82,7 +89,7 @@ export async function POST(request: NextRequest) {
         data: {
           agencyId: agency.id,
           balance: 0,
-          creditLimit: 10000,
+          creditLimit: defaultCredit,
         },
       });
 
