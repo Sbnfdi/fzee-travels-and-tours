@@ -6,37 +6,27 @@ import { Plane, Compass, Zap, ShieldCheck, ArrowRight, CheckCircle2 } from 'luci
 export function Hero() {
   return (
     <section className="pt-36 pb-24 px-4 sm:px-6 lg:px-8 relative overflow-hidden bg-background">
-      {/* Dynamic Background Image */}
-      <div className="absolute inset-0 -z-20">
-        <img 
-          src="https://images.unsplash.com/photo-1436491865332-7a61a109cc05?q=80&w=2074&auto=format&fit=crop" 
-          alt="Flight above clouds" 
-          className="w-full h-full object-cover"
-        />
-        <div className="absolute inset-0 bg-black/50 dark:bg-black/70 mix-blend-multiply"></div>
-        <div className="absolute inset-0 bg-gradient-to-b from-transparent via-background/80 to-background"></div>
-      </div>
-
       {/* Dynamic Background Effects */}
       <div className="absolute inset-0 -z-10 pointer-events-none">
-        <div className="absolute top-10 right-1/4 w-[500px] h-[500px] bg-primary/20 rounded-full blur-[100px]"></div>
-        <div className="absolute top-1/3 left-10 w-[400px] h-[400px] bg-accent/20 rounded-full blur-[100px]"></div>
+        <div className="absolute top-10 right-1/4 w-[500px] h-[500px] bg-primary/10 rounded-full blur-3xl"></div>
+        <div className="absolute top-1/3 left-10 w-[400px] h-[400px] bg-accent/15 rounded-full blur-3xl"></div>
+        <div className="absolute inset-0 bg-[radial-gradient(#e5e7eb_1px,transparent_1px)] dark:bg-[radial-gradient(#1f2937_1px,transparent_1px)] [background-size:24px_24px] opacity-40"></div>
       </div>
 
       <div className="max-w-7xl mx-auto">
         <div className="grid lg:grid-cols-12 gap-12 items-center">
           {/* Left Content */}
           <div className="lg:col-span-7 space-y-8">
-            <div className="inline-flex items-center gap-2 px-3.5 py-1.5 rounded-full bg-white/10 backdrop-blur-md border border-white/20 text-white text-xs font-bold uppercase tracking-wider shadow-sm">
+            <div className="inline-flex items-center gap-2 px-3.5 py-1.5 rounded-full bg-primary/10 border border-primary/20 text-primary text-xs font-bold uppercase tracking-wider">
               <ShieldCheck className="w-4 h-4" />
               <span>Official B2B Partner Portal</span>
             </div>
 
             <div className="space-y-4">
-              <h1 className="text-4xl sm:text-5xl lg:text-6xl font-black tracking-tight text-white leading-[1.1] drop-shadow-lg">
-                Empower Your Travel Agency with <span className="text-primary underline decoration-primary/30 decoration-wavy underline-offset-8 drop-shadow-none">Fzee Travels</span>
+              <h1 className="text-4xl sm:text-5xl lg:text-6xl font-black tracking-tight text-foreground leading-[1.1]">
+                Empower Your Travel Agency with <span className="text-primary underline decoration-primary/30 decoration-wavy underline-offset-8">Fzee Travels & Tours</span>
               </h1>
-              <p className="text-lg sm:text-xl text-white/90 max-w-2xl font-medium leading-relaxed drop-shadow-md">
+              <p className="text-lg sm:text-xl text-muted-foreground max-w-2xl font-normal leading-relaxed">
                 Register your agency instantly and streamline your group tours, flight bookings, and hotel arrangements. Zero setup fees, unlimited growth.
               </p>
             </div>
@@ -45,14 +35,14 @@ export function Hero() {
             <div className="flex flex-col sm:flex-row gap-4 pt-2">
               <Link
                 href="/register"
-                className="px-8 py-4 bg-primary text-primary-foreground rounded-xl hover:bg-primary/90 shadow-xl shadow-primary/40 transition-all font-bold text-base inline-flex items-center justify-center gap-2 group hover:-translate-y-1"
+                className="px-8 py-4 bg-primary text-primary-foreground rounded-xl hover:bg-primary/90 shadow-lg shadow-primary/30 transition-all font-bold text-base inline-flex items-center justify-center gap-2 group hover:-translate-y-0.5"
               >
                 <span>Register Agency Free</span>
                 <ArrowRight className="w-5 h-5 group-hover:translate-x-1 transition-transform" />
               </Link>
               <Link
                 href="#features"
-                className="px-8 py-4 bg-white/10 backdrop-blur-md border-2 border-white/30 text-white hover:bg-white/20 rounded-xl transition-all font-bold text-base inline-flex items-center justify-center gap-2"
+                className="px-8 py-4 bg-card border-2 border-border text-foreground hover:border-primary hover:text-primary rounded-xl transition-all font-bold text-base inline-flex items-center justify-center gap-2"
               >
                 <span>Explore Features</span>
                 <Compass className="w-5 h-5" />
@@ -60,16 +50,16 @@ export function Hero() {
             </div>
 
             {/* Benefits */}
-            <div className="grid sm:grid-cols-3 gap-4 pt-6 border-t border-white/20">
-              <div className="flex items-center gap-2 text-xs font-bold text-white/90 drop-shadow-md">
+            <div className="grid sm:grid-cols-3 gap-4 pt-6 border-t border-border">
+              <div className="flex items-center gap-2 text-xs font-semibold text-muted-foreground">
                 <CheckCircle2 className="w-4 h-4 text-primary" />
                 <span>Instant Agent Approval</span>
               </div>
-              <div className="flex items-center gap-2 text-xs font-bold text-white/90 drop-shadow-md">
+              <div className="flex items-center gap-2 text-xs font-semibold text-muted-foreground">
                 <CheckCircle2 className="w-4 h-4 text-primary" />
                 <span>Zero Subscription Fees</span>
               </div>
-              <div className="flex items-center gap-2 text-xs font-bold text-white/90 drop-shadow-md">
+              <div className="flex items-center gap-2 text-xs font-semibold text-muted-foreground">
                 <CheckCircle2 className="w-4 h-4 text-primary" />
                 <span>24/7 Dedicated Support</span>
               </div>
