@@ -1,7 +1,8 @@
 'use client';
 
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { Settings, Save, CheckCircle2, DollarSign, ShieldCheck, Landmark } from 'lucide-react';
+import { getSystemSettings, updateSystemSettings } from './actions';
 
 export default function AdminSettingsPage() {
   const [currency, setCurrency] = useState('PKR');
@@ -11,16 +12,60 @@ export default function AdminSettingsPage() {
   const [bankAccountNumber, setBankAccountNumber] = useState('0123-4567890-01');
   const [bankName, setBankName] = useState('Fzee Travels Bank Pakistan');
   const [loading, setLoading] = useState(false);
+  const [fetching, setFetching] = useState(true);
   const [message, setMessage] = useState('');
+  const [error, setError] = useState('');
 
-  const handleSave = (e: React.FormEvent) => {
+  useEffect(() => {
+    async function loadSettings() {
+      try {
+        const settings = await getSystemSettings();
+        setCurrency(settings.currency);
+        setDefaultCreditLimit(settings.defaultCreditLimit);
+        setAutoApproveAgencies(settings.autoApproveAgencies);
+        setBankAccountName(settings.bankAccountName);
+        setBankAccountNumber(settings.bankAccountNumber);
+        setBankName(settings.bankName);
+      } catch (err) {
+        console.error(err);
+      } finally {
+        setFetching(false);
+      }
+    }
+    loadSettings();
+  }, []);
+
+  const handleSave = async (e: React.FormEvent) => {
     e.preventDefault();
     setLoading(true);
-    setTimeout(() => {
-      setMessage('Admin system settings updated successfully!');
+    setMessage('');
+    setError('');
+    
+    try {
+      const result = await updateSystemSettings({
+        currency,
+        defaultCreditLimit,
+        autoApproveAgencies,
+        bankAccountName,
+        bankAccountNumber,
+        bankName,
+      });
+
+      if (result.success) {
+        setMessage('Admin system settings updated successfully!');
+      } else {
+        setError(result.error || 'Failed to update settings');
+      }
+    } catch (err) {
+      setError('An unexpected error occurred');
+    } finally {
       setLoading(false);
-    }, 600);
+    }
   };
+
+  if (fetching) {
+    return <div className="p-8 text-center text-muted-foreground animate-pulse">Loading system settings...</div>;
+  }
 
   return (
     <div className="max-w-4xl mx-auto space-y-8">
@@ -33,6 +78,12 @@ export default function AdminSettingsPage() {
         <div className="p-4 bg-primary/10 border border-primary/30 rounded-xl text-primary font-medium text-sm flex items-center gap-3">
           <CheckCircle2 className="w-5 h-5 shrink-0" />
           <span>{message}</span>
+        </div>
+      )}
+
+      {error && (
+        <div className="p-4 bg-red-500/10 border border-red-500/30 rounded-xl text-red-600 font-medium text-sm flex items-center gap-3">
+          <span>{error}</span>
         </div>
       )}
 

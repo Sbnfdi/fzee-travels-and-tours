@@ -400,3 +400,16 @@ model AuditLog {
   @@index([userId])
   @@index([entity])
 }
+
+// ============= SYSTEM SETTINGS =============
+model SystemSettings {
+  id                  String   @id @default("default")
+  currency            String   @default("PKR")
+  defaultCreditLimit  Float    @default(100000)
+  autoApproveAgencies Boolean  @default(true)
+  bankName            String   @default("Fzee Travels Bank Pakistan")
+  bankAccountName     String   @default("Fzee Travels & Tours (Pvt) Ltd")
+  bankAccountNumber   String   @default("0123-4567890-01")
+  updatedAt           DateTime @updatedAt
+}
+
