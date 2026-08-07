@@ -3,6 +3,7 @@
 import { useEffect, useState } from 'react';
 import { Plane, Wallet, TrendingUp, Calendar, ArrowRight, Clock, CheckCircle2, MessageCircle, AlertCircle, Loader2 } from 'lucide-react';
 import Link from 'next/link';
+import { useRouter } from 'next/navigation';
 
 interface AgentStats {
   totalBookings: number;
@@ -30,7 +31,8 @@ export default function AgentDashboardPage() {
   });
   const [recentBookings, setRecentBookings] = useState<Booking[]>([]);
   const [loading, setLoading] = useState(true);
-  const [agencyStatus, setAgencyStatus] = useState<string>('pending');
+  const [agencyStatus, setAgencyStatus] = useState<string>('loading');
+  const router = useRouter();
 
   useEffect(() => {
     const fetchDashboardData = async () => {
@@ -47,9 +49,17 @@ export default function AgentDashboardPage() {
           if (authData.success) {
             const status = authData.user?.agency?.status || authData.user?.agent?.agency?.status;
             if (status) {
-              setAgencyStatus(status);
+              setAgencyStatus(status.toLowerCase());
+            } else {
+              setAgencyStatus('no_agency');
             }
+          } else {
+            router.push('/login');
+            return;
           }
+        } else {
+          router.push('/login');
+          return;
         }
 
         let balance = 0;
@@ -167,6 +177,22 @@ export default function AgentDashboardPage() {
               We typically review applications within 24 hours.
             </p>
           </div>
+        </div>
+      </div>
+    );
+  }
+
+  if (agencyStatus === 'no_agency') {
+    return (
+      <div className="flex flex-col items-center justify-center min-h-[70vh] px-4">
+        <div className="max-w-md w-full bg-card border border-border rounded-3xl p-8 text-center shadow-xl">
+          <div className="w-20 h-20 bg-red-100 rounded-full flex items-center justify-center mx-auto mb-6">
+            <AlertCircle className="w-10 h-10 text-red-600" />
+          </div>
+          <h1 className="text-2xl font-black text-foreground mb-3 tracking-tight">No Agency Found</h1>
+          <p className="text-muted-foreground font-medium text-sm leading-relaxed mb-8">
+            Your account is not linked to any agency. Please register as an agency owner or contact your administrator.
+          </p>
         </div>
       </div>
     );
