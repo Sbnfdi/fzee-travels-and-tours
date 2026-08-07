@@ -14,28 +14,60 @@ export function Hero() {
   ];
 
   return (
-    <section className="bg-gray-50 pb-8">
-      {/* Banner */}
-      <div className="w-full bg-primary text-primary-foreground text-center py-4 px-4 shadow-md">
-        <h1 className="text-xl md:text-3xl font-black uppercase tracking-wide">
-          Welcome To B2B Portal Of Fzee Travels & Tours
-        </h1>
+    <section className="relative w-full overflow-hidden bg-slate-900 pb-12">
+      {/* Background Video & Fallback Image */}
+      <div className="absolute inset-0 z-0 pointer-events-none">
+        {/* Fallback Image */}
+        <div 
+          className="absolute inset-0 bg-cover bg-center opacity-40 transition-opacity duration-1000"
+          style={{ backgroundImage: "url('https://images.unsplash.com/photo-1436491865332-7a61a109cc05?q=80&w=2000&auto=format&fit=crop')" }}
+        />
+        {/* Video Background */}
+        <video
+          autoPlay
+          loop
+          muted
+          playsInline
+          className="absolute inset-0 w-full h-full object-cover opacity-60"
+        >
+          <source src="https://cdn.pixabay.com/video/2016/09/21/5412-183786499_large.mp4" type="video/mp4" />
+        </video>
+        {/* Gradient Overlay for Text Readability */}
+        <div className="absolute inset-0 bg-gradient-to-b from-black/80 via-black/40 to-black/80" />
       </div>
 
-      {/* Destinations Grid */}
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 mt-6">
-        <div className="flex flex-nowrap overflow-x-auto gap-4 pb-4 md:grid md:grid-cols-4 lg:grid-cols-7 md:overflow-visible">
-          {destinations.map((dest, i) => (
-            <Link key={i} href="/login" className="flex-none w-32 md:w-auto group block rounded-lg overflow-hidden bg-white shadow-sm border border-border hover:shadow-md transition">
-              <div className="h-24 overflow-hidden">
-                <img src={dest.img} alt={dest.name} className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-500" />
-              </div>
-              <div className="p-2 text-center bg-card border-t-2 border-primary">
-                <h3 className="font-bold text-sm text-foreground">{dest.name}</h3>
-                <p className="text-[10px] text-muted-foreground">{dest.subtitle}</p>
-              </div>
-            </Link>
-          ))}
+      {/* Main Content */}
+      <div className="relative z-10">
+        {/* Banner */}
+        <div className="w-full bg-primary/90 backdrop-blur-md text-primary-foreground text-center py-6 px-4 shadow-lg border-b border-primary-foreground/10">
+          <h1 className="text-2xl md:text-4xl font-black uppercase tracking-widest drop-shadow-sm">
+            Welcome To B2B Portal Of Fzee Travels & Tours
+          </h1>
+          <p className="mt-2 text-primary-foreground/80 text-sm md:text-base font-medium max-w-2xl mx-auto">
+            Your premium gateway for seamless group bookings, flights, and exclusive travel packages.
+          </p>
+        </div>
+
+        {/* Destinations Grid */}
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 mt-12">
+          <div className="flex flex-nowrap overflow-x-auto gap-5 pb-6 md:grid md:grid-cols-4 lg:grid-cols-7 md:overflow-visible hide-scrollbar snap-x">
+            {destinations.map((dest, i) => (
+              <Link 
+                key={i} 
+                href="/login" 
+                className="flex-none w-[140px] md:w-auto group block rounded-2xl overflow-hidden bg-white/95 backdrop-blur-sm shadow-xl border border-white/20 hover:shadow-primary/30 transition-all duration-300 hover:-translate-y-2 snap-center"
+              >
+                <div className="h-32 overflow-hidden relative">
+                  <div className="absolute inset-0 bg-black/10 group-hover:bg-transparent transition-colors z-10" />
+                  <img src={dest.img} alt={dest.name} className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-700 ease-in-out" />
+                </div>
+                <div className="p-3 text-center bg-white border-t-4 border-primary">
+                  <h3 className="font-extrabold text-sm text-slate-800 tracking-tight">{dest.name}</h3>
+                  <p className="text-[10px] text-slate-500 font-semibold uppercase mt-0.5">{dest.subtitle}</p>
+                </div>
+              </Link>
+            ))}
+          </div>
         </div>
       </div>
     </section>

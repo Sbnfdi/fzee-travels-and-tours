@@ -45,8 +45,10 @@ export function FlightsTable() {
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         
         <div className="w-full border border-border shadow-sm rounded-lg overflow-hidden bg-white">
-          {/* Table Header */}
-          <div className="bg-primary text-primary-foreground flex flex-wrap text-xs md:text-sm font-bold uppercase py-3 px-4">
+          <div className="w-full overflow-x-auto">
+            <div className="min-w-[800px]">
+              {/* Table Header */}
+              <div className="bg-primary text-primary-foreground flex flex-wrap text-xs md:text-sm font-bold uppercase py-3 px-4">
             <div className="w-1/6">Date</div>
             <div className="w-1/6">Sector</div>
             <div className="w-1/6">Airline</div>
@@ -93,6 +95,8 @@ export function FlightsTable() {
                 ))}
               </div>
             ))}
+          </div>
+            </div>
           </div>
         </div>
 
