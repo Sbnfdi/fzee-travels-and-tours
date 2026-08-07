@@ -2,11 +2,8 @@
 
 export function Partners() {
   const partners = [
-    'IATA',
-    'DCCI',
     'SECP',
     'ISO 9001',
-    'DTS',
     'HAJJ',
     'UMRAH',
   ];
