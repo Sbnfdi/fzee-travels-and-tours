@@ -32,6 +32,7 @@ export default function AgentDashboardPage() {
   const [recentBookings, setRecentBookings] = useState<Booking[]>([]);
   const [loading, setLoading] = useState(true);
   const [agencyStatus, setAgencyStatus] = useState<string>('loading');
+  const [authError, setAuthError] = useState<string>('');
   const router = useRouter();
 
   useEffect(() => {
@@ -54,11 +55,20 @@ export default function AgentDashboardPage() {
               setAgencyStatus('no_agency');
             }
           } else {
+            setAuthError(`Success was false. Msg: ${authData?.error || 'No error msg'}`);
             setAgencyStatus('unauthorized');
             setLoading(false);
             return;
           }
         } else {
+          let errorMsg = `HTTP ${authRes.status}`;
+          try {
+            const errData = await authRes.json();
+            errorMsg += ` - ${errData.error || 'Unknown error'}`;
+          } catch (e) {
+            errorMsg += ` - Failed to parse JSON`;
+          }
+          setAuthError(errorMsg);
           setAgencyStatus('unauthorized');
           setLoading(false);
           return;
@@ -208,9 +218,14 @@ export default function AgentDashboardPage() {
             <AlertCircle className="w-10 h-10 text-red-600" />
           </div>
           <h1 className="text-2xl font-black text-foreground mb-3 tracking-tight">Authentication Failed</h1>
-          <p className="text-muted-foreground font-medium text-sm leading-relaxed mb-8">
+          <p className="text-muted-foreground font-medium text-sm leading-relaxed mb-4">
             We couldn't verify your session. If you just logged in, your browser might be blocking cookies (or requiring HTTPS).
           </p>
+          {authError && (
+            <div className="mb-8 p-3 bg-red-50 border border-red-200 rounded-lg text-xs font-mono text-red-800 break-words">
+              Error Details: {authError}
+            </div>
+          )}
           <Link
             href="/login"
             className="w-full bg-primary hover:bg-primary/90 text-primary-foreground font-bold py-3.5 px-4 rounded-xl transition-all shadow-lg flex items-center justify-center"
