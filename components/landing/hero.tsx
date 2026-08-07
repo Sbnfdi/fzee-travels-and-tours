@@ -115,9 +115,7 @@ export function Hero() {
                 </Link>
               ))}
             </div>
-          ) : (
-            <div className="py-8 text-center text-white/50 text-sm font-medium">Log in to admin dashboard to add destination deals.</div>
-          )}
+          ) : null}
         </div>
 
       </div>
