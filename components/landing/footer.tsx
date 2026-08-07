@@ -1,137 +1,79 @@
 'use client';
 
 import Link from 'next/link';
-import { Plane } from 'lucide-react';
-import { WhatsAppIcon } from '@/components/support/whatsapp-button';
-import { getWhatsAppUrl, WHATSAPP_CONFIG } from '@/lib/whatsapp';
+import { Phone, Mail } from 'lucide-react';
 
 export function Footer() {
   return (
-    <footer className="border-t border-border bg-card">
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-16">
-        <div className="grid grid-cols-1 md:grid-cols-5 gap-10 mb-12">
-          {/* Brand */}
-          <div className="md:col-span-2 space-y-4">
-            <Link href="/" className="flex items-center gap-3 font-black text-xl text-foreground">
-              <div className="w-8 h-8 rounded-lg bg-primary flex items-center justify-center text-primary-foreground">
-                <Plane className="w-4 h-4 fill-current" />
-              </div>
-              <div className="flex flex-col">
-                <span className="leading-none text-foreground font-black text-lg">FZEE</span>
-                <span className="text-[9px] tracking-widest uppercase text-primary font-bold">Travels & Tours</span>
-              </div>
-            </Link>
-            <p className="text-sm text-muted-foreground max-w-sm leading-relaxed">
-              Premium B2B travel portal providing travel agents with seamless group tour management, real-time bookings, and dedicated support.
-            </p>
+    <footer className="w-full mt-auto">
+      {/* Top Black Bar */}
+      <div className="bg-black text-white py-3">
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 flex flex-col sm:flex-row justify-between items-center gap-4 text-xs font-bold">
+          <div>
+            10+ Years Of Trust
           </div>
-
-          {/* Navigation Quick Links */}
-          <div className="space-y-4">
-            <h3 className="font-bold text-sm text-foreground uppercase tracking-wider">Services</h3>
-            <ul className="space-y-2.5 text-sm">
-              <li>
-                <Link href="#features" className="text-muted-foreground hover:text-primary transition-colors">
-                  Group Tours
-                </Link>
-              </li>
-              <li>
-                <Link href="#features" className="text-muted-foreground hover:text-primary transition-colors">
-                  Flight Reservations
-                </Link>
-              </li>
-              <li>
-                <Link href="#features" className="text-muted-foreground hover:text-primary transition-colors">
-                  Hotel Accommodations
-                </Link>
-              </li>
-              <li>
-                <Link href="#features" className="text-muted-foreground hover:text-primary transition-colors">
-                  Visa Assistance
-                </Link>
-              </li>
-            </ul>
-          </div>
-
-          {/* Quick Access */}
-          <div className="space-y-4">
-            <h3 className="font-bold text-sm text-foreground uppercase tracking-wider">Agent Portal</h3>
-            <ul className="space-y-2.5 text-sm">
-              <li>
-                <Link href="/login" className="text-muted-foreground hover:text-primary transition-colors">
-                  Agent Sign In
-                </Link>
-              </li>
-              <li>
-                <Link href="/register" className="text-muted-foreground hover:text-primary transition-colors">
-                  Register Agency
-                </Link>
-              </li>
-              <li>
-                <Link href="/agent" className="text-muted-foreground hover:text-primary transition-colors">
-                  Dashboard Access
-                </Link>
-              </li>
-            </ul>
-          </div>
-
-          {/* Contact */}
-          <div className="space-y-4">
-            <h3 className="font-bold text-sm text-foreground uppercase tracking-wider">Contact & Support</h3>
-            <ul className="space-y-3 text-sm">
-              <li>
-                <a
-                  href={getWhatsAppUrl('Hello Fzee Travels! I would like to make an inquiry.', 'primary')}
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  className="flex items-center gap-2 text-muted-foreground hover:text-[#25D366] transition-colors group"
-                >
-                  <WhatsAppIcon className="w-4 h-4 text-[#25D366] group-hover:scale-110 transition-transform" />
-                  <div>
-                    <span className="block text-xs font-semibold text-foreground">Customer Support</span>
-                    <span className="text-xs font-mono text-[#25D366]">{WHATSAPP_CONFIG.primary.displayNumber}</span>
-                  </div>
-                </a>
-              </li>
-              <li>
-                <a
-                  href={getWhatsAppUrl('Hello! I am an agent inquiring about B2B registration.', 'secondary')}
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  className="flex items-center gap-2 text-muted-foreground hover:text-[#25D366] transition-colors group"
-                >
-                  <WhatsAppIcon className="w-4 h-4 text-[#25D366] group-hover:scale-110 transition-transform" />
-                  <div>
-                    <span className="block text-xs font-semibold text-foreground">B2B Agent Desk</span>
-                    <span className="text-xs font-mono text-[#25D366]">{WHATSAPP_CONFIG.secondary.displayNumber}</span>
-                  </div>
-                </a>
-              </li>
-              <li className="pt-1 text-xs text-muted-foreground">
-                <span className="block font-medium text-foreground">Email</span>
-                <span className="text-primary font-semibold">info@fzeetravels.com</span>
-              </li>
-            </ul>
-          </div>
-        </div>
-
-        {/* Bottom */}
-        <div className="border-t border-border pt-8 flex flex-col sm:flex-row justify-between items-center gap-4 text-xs text-muted-foreground">
-          <p>
-            © {new Date().getFullYear()} Fzee Travels and Tours. All rights reserved.
-          </p>
           <div className="flex gap-6">
-            <Link href="#" className="hover:text-foreground transition-colors">
-              Privacy Policy
-            </Link>
-            <Link href="#" className="hover:text-foreground transition-colors">
-              Terms of Service
-            </Link>
-            <Link href="#" className="hover:text-foreground transition-colors">
-              Support
-            </Link>
+            <a href="tel:03304084080" className="flex items-center gap-2 hover:text-orange-500 transition-colors">
+              <Phone className="w-4 h-4 text-orange-500" />
+              <span>Call Support 24/7</span>
+            </a>
+            <a href="mailto:info@fzeetravels.com" className="flex items-center gap-2 hover:text-orange-500 transition-colors">
+              <Mail className="w-4 h-4 text-orange-500" />
+              <span>Email Support</span>
+            </a>
           </div>
         </div>
+      </div>
+
+      {/* Main Footer with Cityscape Background */}
+      <div className="relative bg-slate-100 py-16 border-t-4 border-orange-500 overflow-hidden">
+        {/* Cityscape Background image overlay */}
+        <div 
+          className="absolute inset-0 opacity-10 pointer-events-none bg-bottom bg-repeat-x"
+          style={{ 
+            backgroundImage: "url('https://images.unsplash.com/photo-1512453979798-5ea266f8880c?q=80&w=2000&auto=format&fit=crop')",
+            backgroundSize: 'contain'
+          }}
+        />
+        
+        <div className="relative max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 grid grid-cols-1 md:grid-cols-2 gap-10 items-center">
+          
+          {/* Logo Area */}
+          <div className="flex flex-col items-center md:items-start text-center md:text-left">
+            <Link href="/" className="flex flex-col">
+              <span className="text-6xl md:text-8xl font-black text-orange-500 leading-none">fzee</span>
+              <span className="text-sm md:text-xl uppercase font-bold text-gray-700 tracking-[0.3em]">Travels & Tours</span>
+            </Link>
+          </div>
+
+          {/* Links Area */}
+          <div className="grid grid-cols-2 sm:grid-cols-3 gap-6 text-sm font-semibold text-gray-700">
+            <div className="flex flex-col gap-3">
+              <h4 className="text-black font-black uppercase mb-2">Company</h4>
+              <Link href="#" className="hover:text-orange-600 transition">About Us</Link>
+              <Link href="#" className="hover:text-orange-600 transition">Careers</Link>
+              <Link href="#" className="hover:text-orange-600 transition">Blog</Link>
+            </div>
+            <div className="flex flex-col gap-3">
+              <h4 className="text-black font-black uppercase mb-2">Services</h4>
+              <Link href="#" className="hover:text-orange-600 transition">B2B Portal</Link>
+              <Link href="#" className="hover:text-orange-600 transition">Flights</Link>
+              <Link href="#" className="hover:text-orange-600 transition">Tours</Link>
+            </div>
+            <div className="flex flex-col gap-3">
+              <h4 className="text-black font-black uppercase mb-2">Legal</h4>
+              <Link href="#" className="hover:text-orange-600 transition">Privacy Policy</Link>
+              <Link href="#" className="hover:text-orange-600 transition">Terms of Service</Link>
+              <Link href="#" className="hover:text-orange-600 transition">Refunds</Link>
+            </div>
+          </div>
+
+        </div>
+      </div>
+      
+      {/* Copyright Bar */}
+      <div className="bg-gray-200 py-3 text-center text-xs text-gray-500 font-medium">
+        © {new Date().getFullYear()} Fzee Travels and Tours. All rights reserved.
       </div>
     </footer>
   );
