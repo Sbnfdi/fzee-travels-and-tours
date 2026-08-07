@@ -7,6 +7,7 @@ import { Features } from '@/components/landing/features';
 import { Testimonials } from '@/components/landing/testimonials';
 import { Partners } from '@/components/landing/partners';
 import { Footer } from '@/components/landing/footer';
+import { PromoPopup } from '@/components/landing/promo-popup';
 
 export const revalidate = 60;
 
@@ -37,6 +38,7 @@ export default async function Page() {
         <div className="absolute inset-0 bg-slate-950/60 backdrop-blur-[2px]" />
       </div>
 
+      <PromoPopup />
       <NavBar />
       <main className="flex-1 relative z-10 flex flex-col items-center w-full overflow-hidden">
         <Hero />
