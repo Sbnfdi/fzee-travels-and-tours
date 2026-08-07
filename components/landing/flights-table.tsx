@@ -46,7 +46,7 @@ export function FlightsTable() {
         
         <div className="w-full border border-border shadow-sm rounded-lg overflow-hidden bg-white">
           {/* Table Header */}
-          <div className="bg-indigo-900 text-white flex flex-wrap text-xs md:text-sm font-bold uppercase py-3 px-4">
+          <div className="bg-primary text-primary-foreground flex flex-wrap text-xs md:text-sm font-bold uppercase py-3 px-4">
             <div className="w-1/6">Date</div>
             <div className="w-1/6">Sector</div>
             <div className="w-1/6">Airline</div>
@@ -62,7 +62,7 @@ export function FlightsTable() {
             {flightGroups.map((group, groupIdx) => (
               <div key={groupIdx}>
                 {/* Airline Section Header */}
-                <div className="bg-indigo-50/50 py-3 px-4 flex justify-center border-y border-border">
+                <div className="bg-primary/5 py-3 px-4 flex justify-center border-y border-border">
                   <div className="h-6 w-32 relative">
                     <img src={group.logo} alt={group.airline} className="w-full h-full object-contain" />
                   </div>
@@ -80,7 +80,7 @@ export function FlightsTable() {
                     <div className="w-1/6 text-center font-bold text-base text-foreground">Rs {flight.fare}</div>
                     <div className="flex-1 flex justify-center">
                       {flight.available ? (
-                        <Link href="/login" className="px-4 py-1.5 bg-orange-500 text-white text-xs font-bold rounded shadow-sm hover:bg-orange-600 transition block text-center w-full max-w-[100px]">
+                        <Link href="/login" className="px-4 py-1.5 bg-primary text-primary-foreground text-xs font-bold rounded shadow-sm hover:bg-primary/90 transition block text-center w-full max-w-[100px]">
                           Book Now
                         </Link>
                       ) : (

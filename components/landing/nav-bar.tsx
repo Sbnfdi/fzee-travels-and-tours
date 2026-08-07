@@ -10,29 +10,29 @@ export function NavBar() {
           {/* Logo Area */}
           <Link href="/" className="flex items-center gap-2">
             <div className="flex flex-col">
-              <span className="text-2xl font-black text-orange-500 leading-none">fzee</span>
-              <span className="text-[10px] uppercase font-bold text-gray-500 tracking-wider">Travels & Tours</span>
+              <span className="text-2xl font-black text-primary leading-none">fzee</span>
+              <span className="text-[10px] uppercase font-bold text-muted-foreground tracking-wider">Travels & Tours</span>
             </div>
           </Link>
 
           {/* Nav Links */}
           <div className="hidden md:flex items-center gap-2">
-            <Link href="/" className="px-4 py-1.5 bg-red-600 text-white text-xs font-bold rounded-full shadow-sm hover:opacity-90 transition">
+            <Link href="/" className="px-4 py-1.5 bg-primary text-primary-foreground text-xs font-bold rounded-full shadow-sm hover:opacity-90 transition">
               Home
             </Link>
-            <Link href="/b2b" className="px-4 py-1.5 bg-blue-600 text-white text-xs font-bold rounded-full shadow-sm hover:opacity-90 transition">
+            <Link href="/b2b" className="px-4 py-1.5 bg-primary/90 text-primary-foreground text-xs font-bold rounded-full shadow-sm hover:opacity-90 transition">
               B2B Portal
             </Link>
-            <Link href="/login" className="px-4 py-1.5 bg-indigo-600 text-white text-xs font-bold rounded-full shadow-sm hover:opacity-90 transition">
+            <Link href="/login" className="px-4 py-1.5 bg-primary/80 text-primary-foreground text-xs font-bold rounded-full shadow-sm hover:opacity-90 transition">
               Login
             </Link>
-            <Link href="/register" className="px-4 py-1.5 bg-indigo-800 text-white text-xs font-bold rounded-full shadow-sm hover:opacity-90 transition">
+            <Link href="/register" className="px-4 py-1.5 bg-primary text-primary-foreground text-xs font-bold rounded-full shadow-sm hover:opacity-90 transition">
               Register
             </Link>
-            <Link href="/blog" className="px-4 py-1.5 bg-purple-600 text-white text-xs font-bold rounded-full shadow-sm hover:opacity-90 transition">
+            <Link href="/blog" className="px-4 py-1.5 bg-primary/90 text-primary-foreground text-xs font-bold rounded-full shadow-sm hover:opacity-90 transition">
               Blog
             </Link>
-            <Link href="/contact" className="px-4 py-1.5 bg-orange-500 text-white text-xs font-bold rounded-full shadow-sm hover:opacity-90 transition">
+            <Link href="/contact" className="px-4 py-1.5 bg-primary text-primary-foreground text-xs font-bold rounded-full shadow-sm hover:opacity-90 transition">
               Contact
             </Link>
           </div>

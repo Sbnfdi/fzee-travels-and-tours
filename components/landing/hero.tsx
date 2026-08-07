@@ -16,7 +16,7 @@ export function Hero() {
   return (
     <section className="bg-gray-50 pb-8">
       {/* Banner */}
-      <div className="w-full bg-orange-600 text-white text-center py-4 px-4 shadow-md">
+      <div className="w-full bg-primary text-primary-foreground text-center py-4 px-4 shadow-md">
         <h1 className="text-xl md:text-3xl font-black uppercase tracking-wide">
           Welcome To B2B Portal Of Fzee Travels & Tours
         </h1>
@@ -30,7 +30,7 @@ export function Hero() {
               <div className="h-24 overflow-hidden">
                 <img src={dest.img} alt={dest.name} className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-500" />
               </div>
-              <div className="p-2 text-center bg-white border-t-2 border-indigo-900">
+              <div className="p-2 text-center bg-card border-t-2 border-primary">
                 <h3 className="font-bold text-sm text-foreground">{dest.name}</h3>
                 <p className="text-[10px] text-muted-foreground">{dest.subtitle}</p>
               </div>
