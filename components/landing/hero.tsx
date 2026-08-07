@@ -24,7 +24,7 @@ export function Hero() {
 
             <div className="space-y-4">
               <h1 className="text-4xl sm:text-5xl lg:text-6xl font-black tracking-tight text-foreground leading-[1.1]">
-                Empower Your Travel Agency with <span className="text-primary underline decoration-primary/30 decoration-wavy underline-offset-8">Fzee Travels & Tours</span>
+                Empower Your Travel Agency with <span className="text-primary">Fzee Travels & Tours</span>
               </h1>
               <p className="text-lg sm:text-xl text-muted-foreground max-w-2xl font-normal leading-relaxed">
                 Register your agency instantly and streamline your group tours, flight bookings, and hotel arrangements. Zero setup fees, unlimited growth.
