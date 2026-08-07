@@ -66,8 +66,8 @@ export function FlightsTable() {
                   <div key={groupIdx}>
                     {/* Airline Section Header */}
                     <div className="bg-white/5 py-4 px-6 flex justify-center border-y border-white/10">
-                      <div className="h-8 w-40 relative bg-white/90 rounded-lg p-1">
-                        <img src={group.logo} alt={group.airline} className="w-full h-full object-contain" />
+                      <div className="flex items-center justify-center h-10 px-8 bg-white/10 rounded-lg border border-white/20 shadow-inner">
+                        <span className="font-black text-white text-lg tracking-[0.2em] uppercase drop-shadow-sm">{group.airline}</span>
                       </div>
                     </div>
 
