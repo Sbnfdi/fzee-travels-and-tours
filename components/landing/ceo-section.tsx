@@ -37,7 +37,7 @@ export function CeoSection() {
             </div>
 
             <div className="mt-10 border-l-4 border-primary pl-6">
-              <h4 className="text-xl font-bold text-foreground">Abdullah Fzee</h4>
+              <h4 className="text-xl font-bold text-foreground">Zeeshan Ikram Raja</h4>
               <p className="text-primary font-medium">Founder & CEO</p>
               
               {/* Optional Signature Graphic Placeholder */}
