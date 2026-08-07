@@ -61,7 +61,7 @@ export function Footer() {
                 <MapPin className="w-5 h-5 shrink-0 group-hover:text-primary transition-colors" />
                 <div className="text-sm font-medium">
                   <div className="text-white font-bold">Head Office</div>
-                  Office #4, 2nd Floor, Al-Amin Plaza, Karachi, Pakistan
+                  Shop 06, Building Services Plaza, Mall Road, Saddar, Rawalpindi / Islamabad
                 </div>
               </div>
             </div>

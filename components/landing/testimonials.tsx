@@ -5,7 +5,7 @@ import { Star, Quote } from 'lucide-react';
 const testimonials = [
   {
     name: 'Ahmed Malik',
-    company: 'Al-Noor Travels, Karachi',
+    company: 'Al-Noor Travels, Islamabad',
     role: 'CEO',
     rating: 5,
     content: 'Fzee Travels & Tours transformed how we manage Umrah group bookings. We\'ve increased operational efficiency by 40% and our clients love the quick turnaround.',

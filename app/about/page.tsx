@@ -66,10 +66,10 @@ export default function AboutPage() {
               <h2 className="text-3xl font-black text-white mb-6 drop-shadow-md">Our Story</h2>
               <div className="space-y-4 text-white/80 font-medium leading-relaxed relative z-10">
                 <p>
-                  Founded in Karachi over a decade ago, Fzee Travels & Tours began with a simple mission: to simplify complex travel operations for local agents.
+                  Founded over a decade ago, Fzee Travels & Tours began with a simple mission: to simplify complex travel operations for local agents.
                 </p>
                 <p>
-                  Today, we are a leading B2B travel wholesaler, providing unparalleled access to international airline inventories, premium Umrah packages, and global hotel reservations. 
+                  Today, headquartered at <strong>Shop 06, Building Services Plaza, Mall Road, Saddar, Rawalpindi</strong>, we are a leading B2B travel wholesaler, providing unparalleled access to international airline inventories, premium Umrah packages, and global hotel reservations. 
                 </p>
                 <p>
                   We believe that when our partner agencies grow, we grow. That's why we've built a digital ecosystem that removes the friction from ticketing and allows you to focus on what matters most—your clients.
@@ -85,7 +85,7 @@ export default function AboutPage() {
                 {[
                   { icon: ShieldCheck, title: 'Unmatched Reliability', desc: 'Over 12 years of zero-default operational excellence in the travel industry.' },
                   { icon: Award, title: 'Exclusive Inventories', desc: 'Direct allocations for Saudia, PIA, Emirates, and exclusive Umrah quotas.' },
-                  { icon: MapPin, title: 'Local Presence, Global Reach', desc: 'Headquartered in Karachi with dedicated support agents who understand the local market.' }
+                  { icon: MapPin, title: 'Islamabad / Rawalpindi Presence', desc: 'Located at Shop 06, Building Services Plaza, Mall Road, Saddar, Rawalpindi with dedicated support agents.' }
                 ].map((item, idx) => (
                   <div key={idx} className="flex gap-4 p-6 rounded-2xl bg-white/5 backdrop-blur-md border border-white/10 hover:border-primary/50 transition-all group">
                     <div className="w-12 h-12 rounded-xl bg-primary/20 border border-primary/30 flex items-center justify-center shrink-0 group-hover:bg-primary transition-colors">
