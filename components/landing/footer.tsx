@@ -5,69 +5,60 @@ import { Phone, Mail } from 'lucide-react';
 
 export function Footer() {
   return (
-    <footer className="w-full mt-auto">
-      {/* Top Black Bar */}
-      <div className="bg-slate-900 text-white py-4">
+    <footer className="w-full mt-auto relative z-10 border-t border-white/10 bg-black/40 backdrop-blur-xl">
+      {/* Top Bar */}
+      <div className="bg-black/40 border-b border-white/5 py-4">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 flex flex-col sm:flex-row justify-between items-center gap-4 text-xs font-bold">
-          <div className="tracking-widest uppercase text-slate-400">
+          <div className="tracking-[0.2em] uppercase text-white/50">
             10+ Years Of Trust
           </div>
           <div className="flex flex-col sm:flex-row gap-4 sm:gap-8">
-            <a href="tel:03304084080" className="flex items-center justify-center gap-2 hover:text-primary transition-colors duration-200">
+            <a href="tel:03304084080" className="flex items-center justify-center gap-2 hover:text-white text-white/70 transition-colors duration-200">
               <Phone className="w-4 h-4 text-primary" />
-              <span className="tracking-wide">Call Support 24/7</span>
+              <span className="tracking-widest uppercase">Call Support 24/7</span>
             </a>
-            <a href="mailto:info@fzeetravels.com" className="flex items-center justify-center gap-2 hover:text-primary transition-colors duration-200">
+            <a href="mailto:info@fzeetravels.com" className="flex items-center justify-center gap-2 hover:text-white text-white/70 transition-colors duration-200">
               <Mail className="w-4 h-4 text-primary" />
-              <span className="tracking-wide">Email Support</span>
+              <span className="tracking-widest uppercase">Email Support</span>
             </a>
           </div>
         </div>
       </div>
 
-      {/* Main Footer with Cityscape Background */}
-      <div className="relative bg-slate-50 py-16 md:py-20 border-t-4 border-primary overflow-hidden">
-        {/* Cityscape Background image overlay */}
-        <div 
-          className="absolute inset-0 opacity-[0.03] pointer-events-none bg-bottom bg-repeat-x"
-          style={{ 
-            backgroundImage: "url('https://images.unsplash.com/photo-1512453979798-5ea266f8880c?q=80&w=2000&auto=format&fit=crop')",
-            backgroundSize: 'contain'
-          }}
-        />
-        
-        <div className="relative max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 grid grid-cols-1 md:grid-cols-12 gap-12 items-start">
+      {/* Main Footer */}
+      <div className="py-16 md:py-20">
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 grid grid-cols-1 md:grid-cols-12 gap-12 items-start">
           
           {/* Logo Area */}
           <div className="md:col-span-5 flex flex-col items-center md:items-start text-center md:text-left space-y-4">
             <Link href="/" className="flex flex-col group">
-              <span className="text-6xl md:text-7xl font-black text-primary leading-none tracking-tighter group-hover:opacity-90 transition-opacity">fzee</span>
-              <span className="text-xs md:text-sm uppercase font-extrabold text-slate-500 tracking-[0.3em] mt-1">Travels & Tours</span>
+              <span className="text-6xl md:text-7xl font-black text-white drop-shadow-md leading-none tracking-tighter group-hover:text-primary transition-colors">fzee</span>
+              <span className="text-xs md:text-sm uppercase font-extrabold text-white/50 tracking-[0.3em] mt-1">Travels & Tours</span>
             </Link>
-            <p className="text-sm text-slate-500 max-w-sm font-medium leading-relaxed">
+            <p className="text-sm text-white/60 max-w-sm font-medium leading-relaxed mt-4">
               Your premium B2B portal for seamless group bookings, comprehensive flight inventories, and exclusive global hotel access.
             </p>
           </div>
 
           {/* Links Area */}
-          <div className="md:col-span-7 grid grid-cols-1 sm:grid-cols-3 gap-8 text-sm font-semibold text-slate-600">
+          <div className="md:col-span-7 grid grid-cols-1 sm:grid-cols-3 gap-8 text-sm font-bold text-white/60">
             <div className="flex flex-col items-center sm:items-start gap-4">
-              <h4 className="text-slate-900 font-black uppercase tracking-wider mb-2">Company</h4>
-              <Link href="#" className="hover:text-primary transition-colors">About Us</Link>
-              <Link href="#" className="hover:text-primary transition-colors">Careers</Link>
-              <Link href="#" className="hover:text-primary transition-colors">Blog</Link>
+              <h4 className="text-white font-black uppercase tracking-[0.2em] mb-2 drop-shadow-sm">Company</h4>
+              <Link href="#" className="hover:text-primary transition-colors uppercase tracking-wider text-xs">About Us</Link>
+              <Link href="#" className="hover:text-primary transition-colors uppercase tracking-wider text-xs">Careers</Link>
+              <Link href="#" className="hover:text-primary transition-colors uppercase tracking-wider text-xs">Blog</Link>
             </div>
             <div className="flex flex-col items-center sm:items-start gap-4">
-              <h4 className="text-slate-900 font-black uppercase tracking-wider mb-2">Services</h4>
-              <Link href="#" className="hover:text-primary transition-colors">B2B Portal</Link>
-              <Link href="#" className="hover:text-primary transition-colors">Flights Inventory</Link>
-              <Link href="#" className="hover:text-primary transition-colors">Group Tours</Link>
+              <h4 className="text-white font-black uppercase tracking-[0.2em] mb-2 drop-shadow-sm">Services</h4>
+              <Link href="#" className="hover:text-primary transition-colors uppercase tracking-wider text-xs">B2B Portal</Link>
+              <Link href="#" className="hover:text-primary transition-colors uppercase tracking-wider text-xs">Flights</Link>
+              <Link href="#" className="hover:text-primary transition-colors uppercase tracking-wider text-xs">Tours</Link>
             </div>
             <div className="flex flex-col items-center sm:items-start gap-4">
-              <h4 className="text-slate-900 font-black uppercase tracking-wider mb-2">Legal</h4>
-              <Link href="#" className="hover:text-primary transition-colors">Privacy Policy</Link>
-              <Link href="#" className="hover:text-primary transition-colors">Terms of Service</Link>
-              <Link href="#" className="hover:text-primary transition-colors">Refund Policy</Link>
+              <h4 className="text-white font-black uppercase tracking-[0.2em] mb-2 drop-shadow-sm">Legal</h4>
+              <Link href="#" className="hover:text-primary transition-colors uppercase tracking-wider text-xs">Privacy Policy</Link>
+              <Link href="#" className="hover:text-primary transition-colors uppercase tracking-wider text-xs">Terms of Service</Link>
+              <Link href="#" className="hover:text-primary transition-colors uppercase tracking-wider text-xs">Refund Policy</Link>
             </div>
           </div>
 
@@ -75,7 +66,7 @@ export function Footer() {
       </div>
       
       {/* Copyright Bar */}
-      <div className="bg-slate-200 py-4 text-center text-xs text-slate-600 font-bold uppercase tracking-wider">
+      <div className="bg-black/60 py-4 text-center text-[10px] sm:text-xs text-white/40 font-bold uppercase tracking-[0.2em]">
         © {new Date().getFullYear()} Fzee Travels and Tours. All rights reserved.
       </div>
     </footer>

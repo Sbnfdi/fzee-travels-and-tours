@@ -41,61 +41,63 @@ export function FlightsTable() {
   ];
 
   return (
-    <section className="bg-white py-8">
+    <section className="w-full py-16">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         
-        <div className="w-full border border-border shadow-sm rounded-lg overflow-hidden bg-white">
+        <div className="w-full bg-black/40 backdrop-blur-2xl border border-white/20 shadow-[0_0_40px_rgba(0,0,0,0.5)] rounded-2xl overflow-hidden">
           <div className="w-full overflow-x-auto">
             <div className="min-w-[800px]">
+              
               {/* Table Header */}
-              <div className="bg-primary text-primary-foreground flex flex-wrap text-xs md:text-sm font-bold uppercase py-3 px-4">
-            <div className="w-1/6">Date</div>
-            <div className="w-1/6">Sector</div>
-            <div className="w-1/6">Airline</div>
-            <div className="w-1/6">FLT No.</div>
-            <div className="w-[10%]">DEP</div>
-            <div className="w-[10%]">ARR</div>
-            <div className="w-1/6 text-center">FARE</div>
-            <div className="flex-1 text-center">BOOK</div>
-          </div>
+              <div className="bg-primary text-primary-foreground flex flex-wrap text-xs md:text-sm font-bold uppercase py-4 px-6 tracking-widest border-b border-primary-foreground/20">
+                <div className="w-1/6">Date</div>
+                <div className="w-1/6">Sector</div>
+                <div className="w-1/6">Airline</div>
+                <div className="w-1/6">FLT No.</div>
+                <div className="w-[10%]">DEP</div>
+                <div className="w-[10%]">ARR</div>
+                <div className="w-1/6 text-center">FARE</div>
+                <div className="flex-1 text-center">BOOK</div>
+              </div>
 
-          {/* Table Body */}
-          <div className="divide-y divide-border">
-            {flightGroups.map((group, groupIdx) => (
-              <div key={groupIdx}>
-                {/* Airline Section Header */}
-                <div className="bg-primary/5 py-3 px-4 flex justify-center border-y border-border">
-                  <div className="h-6 w-32 relative">
-                    <img src={group.logo} alt={group.airline} className="w-full h-full object-contain" />
-                  </div>
-                </div>
-
-                {/* Flights List */}
-                {group.flights.map((flight, idx) => (
-                  <div key={idx} className="flex flex-wrap items-center text-xs md:text-sm py-3 px-4 hover:bg-muted/30 transition-colors">
-                    <div className="w-1/6 font-medium text-foreground">{flight.date}</div>
-                    <div className="w-1/6 font-bold text-foreground">{flight.sector}</div>
-                    <div className="w-1/6 text-muted-foreground">{group.airline}</div>
-                    <div className="w-1/6 font-medium">{flight.fltNo}</div>
-                    <div className="w-[10%] font-semibold text-green-700">{flight.dep}</div>
-                    <div className="w-[10%] font-semibold text-red-600">{flight.arr}</div>
-                    <div className="w-1/6 text-center font-bold text-base text-foreground">Rs {flight.fare}</div>
-                    <div className="flex-1 flex justify-center">
-                      {flight.available ? (
-                        <Link href="/login" className="px-4 py-1.5 bg-primary text-primary-foreground text-xs font-bold rounded shadow-sm hover:bg-primary/90 transition block text-center w-full max-w-[100px]">
-                          Book Now
-                        </Link>
-                      ) : (
-                        <span className="px-4 py-1.5 bg-gray-300 text-gray-500 text-xs font-bold rounded block text-center w-full max-w-[100px] cursor-not-allowed">
-                          Sold Out
-                        </span>
-                      )}
+              {/* Table Body */}
+              <div className="divide-y divide-white/10">
+                {flightGroups.map((group, groupIdx) => (
+                  <div key={groupIdx}>
+                    {/* Airline Section Header */}
+                    <div className="bg-white/5 py-4 px-6 flex justify-center border-y border-white/10">
+                      <div className="h-8 w-40 relative bg-white/90 rounded-lg p-1">
+                        <img src={group.logo} alt={group.airline} className="w-full h-full object-contain" />
+                      </div>
                     </div>
+
+                    {/* Flights List */}
+                    {group.flights.map((flight, idx) => (
+                      <div key={idx} className="flex flex-wrap items-center text-xs md:text-sm py-4 px-6 hover:bg-white/10 transition-colors duration-200">
+                        <div className="w-1/6 font-medium text-white/90">{flight.date}</div>
+                        <div className="w-1/6 font-bold text-white tracking-wide">{flight.sector}</div>
+                        <div className="w-1/6 text-white/60 font-medium uppercase tracking-wider">{group.airline}</div>
+                        <div className="w-1/6 font-bold text-white">{flight.fltNo}</div>
+                        <div className="w-[10%] font-bold text-[#4ade80] drop-shadow-sm">{flight.dep}</div>
+                        <div className="w-[10%] font-bold text-[#f87171] drop-shadow-sm">{flight.arr}</div>
+                        <div className="w-1/6 text-center font-black text-base md:text-lg text-white">Rs {flight.fare}</div>
+                        <div className="flex-1 flex justify-center">
+                          {flight.available ? (
+                            <Link href="/login" className="px-5 py-2 bg-primary text-primary-foreground text-xs font-black rounded-full shadow-lg hover:shadow-primary/50 hover:bg-primary/90 hover:-translate-y-0.5 transition-all block text-center w-full max-w-[120px] uppercase tracking-wider">
+                              Book Now
+                            </Link>
+                          ) : (
+                            <span className="px-5 py-2 bg-white/10 border border-white/20 text-white/50 text-xs font-bold rounded-full block text-center w-full max-w-[120px] cursor-not-allowed uppercase tracking-wider">
+                              Sold Out
+                            </span>
+                          )}
+                        </div>
+                      </div>
+                    ))}
                   </div>
                 ))}
               </div>
-            ))}
-          </div>
+              
             </div>
           </div>
         </div>
