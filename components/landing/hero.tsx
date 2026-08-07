@@ -1,57 +1,122 @@
 'use client';
 
 import Link from 'next/link';
+import { Plane, Compass, Zap, ShieldCheck, ArrowRight, CheckCircle2 } from 'lucide-react';
 
 export function Hero() {
   return (
-    <section 
-      className="relative pt-[140px] pb-[80px] px-4 min-h-auto bg-cover bg-center bg-fixed overflow-hidden"
-      style={{ backgroundImage: "url('https://cdn.pixabay.com/photo/2023/03/11/11/34/travelling-7844283_960_720.jpg')" }}
-    >
-      <div className="absolute inset-0 bg-black/10 z-0 pointer-events-none"></div>
-      
-      <div className="relative z-10 max-w-[1400px] mx-auto text-center">
-        <h1 
-          className="text-[clamp(2rem,4vw,3rem)] font-[800] text-primary mb-[15px] tracking-tight" 
-          style={{ textShadow: '2px 4px 12px rgba(0, 0, 0, 0.3)' }}
-        >
-          Welcome To Fzee Travels & Tours
-        </h1>
+    <section className="pt-36 pb-24 px-4 sm:px-6 lg:px-8 relative overflow-hidden bg-background">
+      {/* Dynamic Background Effects */}
+      <div className="absolute inset-0 -z-10 pointer-events-none">
+        <div className="absolute top-10 right-1/4 w-[500px] h-[500px] bg-primary/10 rounded-full blur-3xl"></div>
+        <div className="absolute top-1/3 left-10 w-[400px] h-[400px] bg-accent/15 rounded-full blur-3xl"></div>
+        <div className="absolute inset-0 bg-[radial-gradient(#e5e7eb_1px,transparent_1px)] dark:bg-[radial-gradient(#1f2937_1px,transparent_1px)] [background-size:24px_24px] opacity-40"></div>
+      </div>
 
-        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-[25px] mt-[40px]">
-          {[
-            { title: "UAE Groups", desc: "Explore Dubai with group discounts", img: "https://images.unsplash.com/photo-1512453979798-5ea266f8880c?q=80&w=600&auto=format&fit=crop" },
-            { title: "KSA Groups", desc: "Travel to Saudi Arabia with exclusive rates", img: "https://images.unsplash.com/photo-1580418827493-f2b22c0a76cb?q=80&w=600&auto=format&fit=crop" },
-            { title: "Umrah Groups", desc: "Special packages for your spiritual journey", img: "https://images.unsplash.com/photo-1566073771259-6a8506099945?q=80&w=600&auto=format&fit=crop" },
-            { title: "Muscat Groups", desc: "Discover the beauty of Oman", img: "https://images.unsplash.com/photo-1520250497591-112f2f40a3f4?q=80&w=600&auto=format&fit=crop" },
-            { title: "Qatar Groups", desc: "Experience Qatar's modern marvels", img: "https://images.pexels.com/photos/3787839/pexels-photo-3787839.jpeg?auto=compress&cs=tinysrgb&w=600" },
-            { title: "Bahrain Groups", desc: "Discover Bahrain's rich culture", img: "https://images.unsplash.com/photo-1506012787146-f92b2d7d6d96?q=80&w=600&auto=format&fit=crop" },
-            { title: "UK Groups", desc: "Explore the United Kingdom", img: "https://images.unsplash.com/photo-1542296332-2e4473faf563?q=80&w=600&auto=format&fit=crop" },
-            { title: "All Groups", desc: "Browse all available destinations", img: "https://images.unsplash.com/photo-1436491865332-7a61a109cc05?q=80&w=600&auto=format&fit=crop" },
-          ].map((cat, i) => (
-            <Link 
-              href="/login" 
-              key={i} 
-              className="group bg-white rounded-[16px] overflow-hidden shadow-[0_8px_25px_rgba(0,0,0,0.12)] hover:shadow-[0_15px_40px_rgba(225,29,72,0.3)] hover:-translate-y-[8px] transition-all duration-[0.4s] cubic-bezier(0.4,0,0.2,1) block text-center no-underline relative"
-            >
-              <div className="h-[180px] overflow-hidden relative">
-                <img 
-                  src={cat.img} 
-                  alt={cat.title} 
-                  className="w-full h-full object-cover group-hover:scale-110 group-hover:rotate-1 transition-transform duration-[0.6s] ease" 
-                />
-                {i < 3 && (
-                  <div className="absolute top-[12px] right-[12px] bg-gradient-to-br from-primary to-rose-600 text-white px-[14px] py-[6px] rounded-[30px] text-[11px] font-[700] uppercase tracking-[0.5px] shadow-[0_4px_15px_rgba(225,29,72,0.4)]">
-                    {i === 0 ? 'HOT' : i === 1 ? 'NEW' : 'POPULAR'}
+      <div className="max-w-7xl mx-auto">
+        <div className="grid lg:grid-cols-12 gap-12 items-center">
+          {/* Left Content */}
+          <div className="lg:col-span-7 space-y-8">
+            <div className="inline-flex items-center gap-2 px-3.5 py-1.5 rounded-full bg-primary/10 border border-primary/20 text-primary text-xs font-bold uppercase tracking-wider">
+              <ShieldCheck className="w-4 h-4" />
+              <span>Official B2B Partner Portal</span>
+            </div>
+
+            <div className="space-y-4">
+              <h1 className="text-4xl sm:text-5xl lg:text-6xl font-black tracking-tight text-foreground leading-[1.1]">
+                Empower Your Travel Agency with <span className="text-primary">Fzee Travels & Tours</span>
+              </h1>
+              <p className="text-lg sm:text-xl text-muted-foreground max-w-2xl font-normal leading-relaxed">
+                Register your agency instantly and streamline your group tours, flight bookings, and hotel arrangements. Zero setup fees, unlimited growth.
+              </p>
+            </div>
+
+            {/* CTAs */}
+            <div className="flex flex-col sm:flex-row gap-4 pt-2">
+              <Link
+                href="/register"
+                className="px-8 py-4 bg-primary text-primary-foreground rounded-xl hover:bg-primary/90 shadow-lg shadow-primary/30 transition-all font-bold text-base inline-flex items-center justify-center gap-2 group hover:-translate-y-0.5"
+              >
+                <span>Register Agency Free</span>
+                <ArrowRight className="w-5 h-5 group-hover:translate-x-1 transition-transform" />
+              </Link>
+              <Link
+                href="#features"
+                className="px-8 py-4 bg-card border-2 border-border text-foreground hover:border-primary hover:text-primary rounded-xl transition-all font-bold text-base inline-flex items-center justify-center gap-2"
+              >
+                <span>Explore Features</span>
+                <Compass className="w-5 h-5" />
+              </Link>
+            </div>
+
+            {/* Benefits */}
+            <div className="grid sm:grid-cols-3 gap-4 pt-6 border-t border-border">
+              <div className="flex items-center gap-2 text-xs font-semibold text-muted-foreground">
+                <CheckCircle2 className="w-4 h-4 text-primary" />
+                <span>Instant Agent Approval</span>
+              </div>
+              <div className="flex items-center gap-2 text-xs font-semibold text-muted-foreground">
+                <CheckCircle2 className="w-4 h-4 text-primary" />
+                <span>Zero Subscription Fees</span>
+              </div>
+              <div className="flex items-center gap-2 text-xs font-semibold text-muted-foreground">
+                <CheckCircle2 className="w-4 h-4 text-primary" />
+                <span>24/7 Dedicated Support</span>
+              </div>
+            </div>
+          </div>
+
+          {/* Right Visual */}
+          <div className="lg:col-span-5 relative">
+            <div className="absolute inset-0 bg-gradient-to-tr from-primary/30 to-black/40 rounded-3xl blur-2xl -z-10"></div>
+            <div className="relative bg-card/90 backdrop-blur-xl rounded-3xl p-8 border border-border shadow-2xl space-y-6">
+              <div className="flex items-center justify-between border-b border-border pb-4">
+                <div className="flex items-center gap-3">
+                  <div className="w-3 h-3 rounded-full bg-primary animate-pulse"></div>
+                  <span className="font-bold text-sm text-foreground">Live Portal Overview</span>
+                </div>
+                <span className="text-xs bg-primary/10 text-primary font-bold px-2.5 py-1 rounded-md">B2B Active</span>
+              </div>
+
+              <div className="space-y-4">
+                <div className="flex items-center gap-4 p-4 rounded-xl bg-muted/60 border border-border/50 hover:border-primary/50 transition">
+                  <div className="w-12 h-12 bg-primary/15 rounded-xl flex items-center justify-center text-primary shrink-0">
+                    <Zap className="w-6 h-6" />
                   </div>
-                )}
+                  <div>
+                    <h3 className="font-bold text-foreground text-sm">Real-time Group Bookings</h3>
+                    <p className="text-xs text-muted-foreground">Instant seats reservation & ticketing</p>
+                  </div>
+                </div>
+
+                <div className="flex items-center gap-4 p-4 rounded-xl bg-muted/60 border border-border/50 hover:border-primary/50 transition">
+                  <div className="w-12 h-12 bg-primary/15 rounded-xl flex items-center justify-center text-primary shrink-0">
+                    <Plane className="w-6 h-6" />
+                  </div>
+                  <div>
+                    <h3 className="font-bold text-foreground text-sm">Global Inventory</h3>
+                    <p className="text-xs text-muted-foreground">Exclusive B2B rates for flights & hotels</p>
+                  </div>
+                </div>
+
+                <div className="flex items-center gap-4 p-4 rounded-xl bg-muted/60 border border-border/50 hover:border-primary/50 transition">
+                  <div className="w-12 h-12 bg-primary/15 rounded-xl flex items-center justify-center text-primary shrink-0">
+                    <Compass className="w-6 h-6" />
+                  </div>
+                  <div>
+                    <h3 className="font-bold text-foreground text-sm">Automated Wallet System</h3>
+                    <p className="text-xs text-muted-foreground">Seamless top-ups and instant invoicing</p>
+                  </div>
+                </div>
               </div>
-              <div className="p-[18px]">
-                <h3 className="text-[1.15rem] font-[700] text-[#001948] mb-[8px]">{cat.title}</h3>
-                <p className="text-[0.85rem] text-[#64748b] leading-[1.5] m-0">{cat.desc}</p>
+
+              <div className="pt-2 text-center border-t border-border">
+                <p className="text-xs font-medium text-muted-foreground">
+                  Trusted by travel professionals worldwide
+                </p>
               </div>
-            </Link>
-          ))}
+            </div>
+          </div>
         </div>
       </div>
     </section>
