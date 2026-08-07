@@ -153,7 +153,7 @@ export function FloatingSupportHub() {
   };
 
   return (
-    <div className="fixed bottom-3 right-3 sm:bottom-5 sm:right-5 z-50 flex flex-col items-end pointer-events-auto max-w-full">
+    <div className="fixed bottom-20 right-3 sm:bottom-5 sm:right-5 z-50 flex flex-col items-end pointer-events-auto max-w-full">
       {/* Floating Tooltip Notification */}
       {showTooltip && !isOpen && (
         <div className="mb-2.5 animate-bounce w-[calc(100vw-2rem)] sm:w-auto sm:max-w-xs bg-card border border-border shadow-xl rounded-2xl p-3 flex items-center gap-3 relative">

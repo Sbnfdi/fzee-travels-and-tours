@@ -82,6 +82,28 @@ export default function RegisterPage() {
             <p className="text-sm text-muted-foreground">Join Fzee Travels & Tours network and manage bookings instantly</p>
           </div>
 
+          {/* Approval Timeline */}
+          <div className="flex items-center justify-between text-[10px] sm:text-xs font-bold uppercase tracking-wider text-muted-foreground border-y border-border/50 py-4 relative">
+            <div className="flex flex-col items-center gap-1.5 w-1/3 text-center">
+              <div className="w-6 h-6 rounded-full bg-primary/20 text-primary flex items-center justify-center">1</div>
+              <span className="text-foreground">Form (2m)</span>
+            </div>
+            
+            <div className="flex-1 h-px bg-border/50"></div>
+            
+            <div className="flex flex-col items-center gap-1.5 w-1/3 text-center">
+              <div className="w-6 h-6 rounded-full bg-primary/10 flex items-center justify-center">2</div>
+              <span>Verify Call</span>
+            </div>
+
+            <div className="flex-1 h-px bg-border/50"></div>
+
+            <div className="flex flex-col items-center gap-1.5 w-1/3 text-center">
+              <div className="w-6 h-6 rounded-full bg-primary/10 flex items-center justify-center">3</div>
+              <span>Portal Access</span>
+            </div>
+          </div>
+
           {error && (
             <div className="p-4 bg-destructive/10 border border-destructive/30 rounded-xl text-destructive text-sm font-medium flex items-center gap-3">
               <AlertCircle className="w-5 h-5 shrink-0" />

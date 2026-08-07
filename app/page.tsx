@@ -1,6 +1,10 @@
 import { NavBar } from '@/components/landing/nav-bar';
 import { Hero } from '@/components/landing/hero';
+import { Stats } from '@/components/landing/stats';
+import { Overview } from '@/components/landing/overview';
 import { FlightsTable } from '@/components/landing/flights-table';
+import { Features } from '@/components/landing/features';
+import { Testimonials } from '@/components/landing/testimonials';
 import { Partners } from '@/components/landing/partners';
 import { Footer } from '@/components/landing/footer';
 
@@ -29,9 +33,13 @@ export default async function Page() {
       </div>
 
       <NavBar />
-      <main className="flex-1 relative z-10 flex flex-col items-center">
+      <main className="flex-1 relative z-10 flex flex-col items-center w-full overflow-hidden">
         <Hero />
+        <Stats />
+        <Overview />
         <FlightsTable />
+        <Features />
+        <Testimonials />
         <Partners />
       </main>
       <Footer />
