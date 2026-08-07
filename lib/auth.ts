@@ -46,14 +46,14 @@ export async function setAuthCookies(accessToken: string, refreshToken: string) 
   const cookieStore = await cookies();
   cookieStore.set('accessToken', accessToken, {
     httpOnly: true,
-    secure: process.env.NODE_ENV === 'production',
+    secure: process.env.NODE_ENV === 'production' && process.env.VERCEL === '1',
     sameSite: 'lax',
     maxAge: 24 * 60 * 60, // 24 hours
   });
   
   cookieStore.set('refreshToken', refreshToken, {
     httpOnly: true,
-    secure: process.env.NODE_ENV === 'production',
+    secure: process.env.NODE_ENV === 'production' && process.env.VERCEL === '1',
     sameSite: 'lax',
     maxAge: 7 * 24 * 60 * 60, // 7 days
   });

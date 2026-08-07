@@ -54,11 +54,13 @@ export default function AgentDashboardPage() {
               setAgencyStatus('no_agency');
             }
           } else {
-            router.push('/login');
+            setAgencyStatus('unauthorized');
+            setLoading(false);
             return;
           }
         } else {
-          router.push('/login');
+          setAgencyStatus('unauthorized');
+          setLoading(false);
           return;
         }
 
@@ -193,6 +195,28 @@ export default function AgentDashboardPage() {
           <p className="text-muted-foreground font-medium text-sm leading-relaxed mb-8">
             Your account is not linked to any agency. Please register as an agency owner or contact your administrator.
           </p>
+        </div>
+      </div>
+    );
+  }
+
+  if (agencyStatus === 'unauthorized') {
+    return (
+      <div className="flex flex-col items-center justify-center min-h-[70vh] px-4">
+        <div className="max-w-md w-full bg-card border border-border rounded-3xl p-8 text-center shadow-xl">
+          <div className="w-20 h-20 bg-red-100 rounded-full flex items-center justify-center mx-auto mb-6">
+            <AlertCircle className="w-10 h-10 text-red-600" />
+          </div>
+          <h1 className="text-2xl font-black text-foreground mb-3 tracking-tight">Authentication Failed</h1>
+          <p className="text-muted-foreground font-medium text-sm leading-relaxed mb-8">
+            We couldn't verify your session. If you just logged in, your browser might be blocking cookies (or requiring HTTPS).
+          </p>
+          <Link
+            href="/login"
+            className="w-full bg-primary hover:bg-primary/90 text-primary-foreground font-bold py-3.5 px-4 rounded-xl transition-all shadow-lg flex items-center justify-center"
+          >
+            Go to Login
+          </Link>
         </div>
       </div>
     );
