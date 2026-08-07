@@ -3,7 +3,7 @@
 import Link from 'next/link';
 import { usePathname } from 'next/navigation';
 import { useState, useEffect } from 'react';
-import { BarChart3, Users, Briefcase, CreditCard, Settings, LogOut, Plane, Layers, Building2, Globe, Compass, Menu, X } from 'lucide-react';
+import { BarChart3, Users, Briefcase, CreditCard, Settings, LogOut, Plane, Layers, Building2, Globe, Compass, Menu, X, Tag } from 'lucide-react';
 
 export default function DashboardLayout({
   children,
@@ -27,6 +27,7 @@ export default function DashboardLayout({
     { href: '/dashboard/visa', icon: Globe, label: 'Visa Services' },
     { href: '/dashboard/bookings', icon: Users, label: 'Bookings' },
     { href: '/dashboard/payments', icon: CreditCard, label: 'Payments & Top-ups' },
+    { href: '/dashboard/deals', icon: Tag, label: 'Sample Deals' },
     { href: '/dashboard/settings', icon: Settings, label: 'Settings' },
   ];
 

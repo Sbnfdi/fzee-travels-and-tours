@@ -413,3 +413,16 @@ model SystemSettings {
   updatedAt           DateTime @updatedAt
 }
 
+// ============= MARKETING & CONTENT =============
+model SampleDeal {
+  id          String   @id @default(cuid())
+  title       String   // e.g. "KHI → JED" or "Dubai"
+  subtitle    String?  // e.g. "Group Fare" or "Tour Packages"
+  price       String?  // e.g. "PKR 42,000" (can be null for destination slider)
+  image       String?  // Image URL
+  isMainDeal  Boolean  @default(false) // If true, shows up as the primary CTA button
+  isActive    Boolean  @default(true)
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+}
+
