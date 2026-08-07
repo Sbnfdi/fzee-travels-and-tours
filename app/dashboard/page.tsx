@@ -102,19 +102,19 @@ export default function DashboardPage() {
   return (
     <div className="space-y-8">
       {/* Header */}
-      <div className="border-b border-border pb-6">
-        <h1 className="text-3xl font-black text-foreground tracking-tight">Admin Overview</h1>
-        <p className="text-muted-foreground mt-1">Fzee Travels & Tours Enterprise Control Center</p>
+      <div className="border-b border-white/10 pb-6">
+        <h1 className="text-3xl font-black text-white tracking-tight">Admin Overview</h1>
+        <p className="text-white/60 mt-1">Fzee Travels & Tours Enterprise Control Center</p>
       </div>
 
       {/* Stats Grid */}
       <div className="grid sm:grid-cols-2 lg:grid-cols-4 gap-6">
         {statCards.map((card, idx) => (
-          <div key={idx} className="bg-card rounded-2xl border border-border p-6 shadow-sm hover:border-primary/40 transition">
+          <div key={idx} className="bg-slate-900/40 backdrop-blur-2xl rounded-2xl border border-white/10 p-6 shadow-[0_0_30px_rgba(0,0,0,0.3)] hover:border-primary/40 transition-all hover:scale-[1.02]">
             <div className="flex items-start justify-between">
               <div>
-                <p className="text-muted-foreground text-xs font-bold uppercase tracking-wider">{card.label}</p>
-                <p className="text-2xl sm:text-3xl font-black text-foreground mt-2">{loading ? '...' : card.value}</p>
+                <p className="text-white/60 text-xs font-bold uppercase tracking-wider">{card.label}</p>
+                <p className="text-2xl sm:text-3xl font-black text-white mt-2 drop-shadow-md">{loading ? '...' : card.value}</p>
               </div>
               <div className={`${card.bgColor} p-3 rounded-xl`}>
                 <card.icon className={`w-6 h-6 ${card.color}`} />

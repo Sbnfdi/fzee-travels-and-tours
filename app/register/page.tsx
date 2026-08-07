@@ -58,10 +58,25 @@ export default function RegisterPage() {
   };
 
   return (
-    <div className="min-h-screen flex flex-col justify-center items-center px-4 py-12 bg-background relative overflow-hidden">
-      {/* Glow effect */}
-      <div className="absolute top-1/4 -left-20 w-80 h-80 bg-primary/10 rounded-full blur-3xl pointer-events-none"></div>
-      <div className="absolute bottom-1/4 -right-20 w-80 h-80 bg-primary/10 rounded-full blur-3xl pointer-events-none"></div>
+    <div className="relative min-h-screen flex flex-col justify-center items-center px-4 py-12 font-sans overflow-hidden">
+      {/* Global Video Background with Premium Mesh Overlay */}
+      <div className="fixed inset-0 z-[-1] pointer-events-none bg-slate-950">
+        <div 
+          className="absolute inset-0 bg-cover bg-center opacity-30 mix-blend-luminosity"
+          style={{ backgroundImage: "url('https://images.unsplash.com/photo-1436491865332-7a61a109cc05?q=80&w=2000&auto=format&fit=crop')" }}
+        />
+        <video
+          autoPlay
+          loop
+          muted
+          playsInline
+          className="absolute inset-0 w-full h-full object-cover opacity-40 mix-blend-lighten"
+        >
+          <source src="https://cdn.pixabay.com/video/2016/09/21/5412-183786499_large.mp4" type="video/mp4" />
+        </video>
+        <div className="absolute inset-0 bg-[radial-gradient(ellipse_at_top_right,_var(--tw-gradient-stops))] from-primary/20 via-slate-950/80 to-slate-950" />
+        <div className="absolute inset-0 bg-slate-950/60 backdrop-blur-[2px]" />
+      </div>
 
       <div className="w-full max-w-lg space-y-8 relative z-10">
         {/* Logo */}
@@ -76,7 +91,7 @@ export default function RegisterPage() {
         </Link>
 
         {/* Form Card */}
-        <div className="bg-card rounded-2xl border border-border/80 p-8 sm:p-10 space-y-6 shadow-xl shadow-black/5">
+        <div className="bg-slate-900/60 backdrop-blur-2xl rounded-[2rem] border border-white/10 p-8 sm:p-10 space-y-6 shadow-[0_0_50px_rgba(0,0,0,0.5)]">
           <div className="space-y-2 text-center">
             <h1 className="text-2xl sm:text-3xl font-black text-foreground tracking-tight">Agent Registration</h1>
             <p className="text-sm text-muted-foreground">Join Fzee Travels & Tours network and manage bookings instantly</p>
@@ -119,7 +134,7 @@ export default function RegisterPage() {
                 value={agencyName}
                 onChange={(e) => setAgencyName(e.target.value)}
                 placeholder="e.g. Skyline Travel Agency"
-                className="w-full px-4 py-3 rounded-xl border border-input bg-background text-foreground text-sm focus:outline-none focus:ring-2 focus:ring-primary/50 focus:border-primary transition"
+                className="w-full px-4 py-3 rounded-xl border border-white/10 bg-black/40 text-white placeholder:text-white/30 text-sm focus:outline-none focus:ring-2 focus:ring-primary/50 focus:border-primary transition font-medium backdrop-blur-md"
                 required
               />
             </div>
@@ -131,7 +146,7 @@ export default function RegisterPage() {
                 value={contactPerson}
                 onChange={(e) => setContactPerson(e.target.value)}
                 placeholder="e.g. John Doe"
-                className="w-full px-4 py-3 rounded-xl border border-input bg-background text-foreground text-sm focus:outline-none focus:ring-2 focus:ring-primary/50 focus:border-primary transition"
+                className="w-full px-4 py-3 rounded-xl border border-white/10 bg-black/40 text-white placeholder:text-white/30 text-sm focus:outline-none focus:ring-2 focus:ring-primary/50 focus:border-primary transition font-medium backdrop-blur-md"
                 required
               />
             </div>
@@ -144,7 +159,7 @@ export default function RegisterPage() {
                   value={email}
                   onChange={(e) => setEmail(e.target.value)}
                   placeholder="agent@agency.com"
-                  className="w-full px-4 py-3 rounded-xl border border-input bg-background text-foreground text-sm focus:outline-none focus:ring-2 focus:ring-primary/50 focus:border-primary transition"
+                  className="w-full px-4 py-3 rounded-xl border border-white/10 bg-black/40 text-white placeholder:text-white/30 text-sm focus:outline-none focus:ring-2 focus:ring-primary/50 focus:border-primary transition font-medium backdrop-blur-md"
                   required
                 />
               </div>
@@ -156,7 +171,7 @@ export default function RegisterPage() {
                   value={phone}
                   onChange={(e) => setPhone(e.target.value)}
                   placeholder="+1 (555) 000-0000"
-                  className="w-full px-4 py-3 rounded-xl border border-input bg-background text-foreground text-sm focus:outline-none focus:ring-2 focus:ring-primary/50 focus:border-primary transition"
+                  className="w-full px-4 py-3 rounded-xl border border-white/10 bg-black/40 text-white placeholder:text-white/30 text-sm focus:outline-none focus:ring-2 focus:ring-primary/50 focus:border-primary transition font-medium backdrop-blur-md"
                   required
                 />
               </div>
@@ -170,7 +185,7 @@ export default function RegisterPage() {
                   value={password}
                   onChange={(e) => setPassword(e.target.value)}
                   placeholder="••••••••"
-                  className="w-full px-4 py-3 rounded-xl border border-input bg-background text-foreground text-sm focus:outline-none focus:ring-2 focus:ring-primary/50 focus:border-primary transition"
+                  className="w-full px-4 py-3 rounded-xl border border-white/10 bg-black/40 text-white placeholder:text-white/30 text-sm focus:outline-none focus:ring-2 focus:ring-primary/50 focus:border-primary transition font-medium backdrop-blur-md"
                   required
                 />
               </div>
@@ -182,7 +197,7 @@ export default function RegisterPage() {
                   value={confirmPassword}
                   onChange={(e) => setConfirmPassword(e.target.value)}
                   placeholder="••••••••"
-                  className="w-full px-4 py-3 rounded-xl border border-input bg-background text-foreground text-sm focus:outline-none focus:ring-2 focus:ring-primary/50 focus:border-primary transition"
+                  className="w-full px-4 py-3 rounded-xl border border-white/10 bg-black/40 text-white placeholder:text-white/30 text-sm focus:outline-none focus:ring-2 focus:ring-primary/50 focus:border-primary transition font-medium backdrop-blur-md"
                   required
                 />
               </div>

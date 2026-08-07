@@ -53,10 +53,25 @@ export default function LoginPage() {
   };
 
   return (
-    <div className="min-h-screen flex flex-col justify-center items-center px-4 py-12 bg-background relative overflow-hidden text-foreground">
-      {/* Glow effect */}
-      <div className="absolute top-1/4 -right-20 w-80 h-80 bg-primary/10 rounded-full blur-3xl pointer-events-none"></div>
-      <div className="absolute bottom-1/4 -left-20 w-80 h-80 bg-primary/10 rounded-full blur-3xl pointer-events-none"></div>
+    <div className="relative min-h-screen flex flex-col justify-center items-center px-4 py-12 font-sans overflow-hidden">
+      {/* Global Video Background with Premium Mesh Overlay */}
+      <div className="fixed inset-0 z-[-1] pointer-events-none bg-slate-950">
+        <div 
+          className="absolute inset-0 bg-cover bg-center opacity-30 mix-blend-luminosity"
+          style={{ backgroundImage: "url('https://images.unsplash.com/photo-1436491865332-7a61a109cc05?q=80&w=2000&auto=format&fit=crop')" }}
+        />
+        <video
+          autoPlay
+          loop
+          muted
+          playsInline
+          className="absolute inset-0 w-full h-full object-cover opacity-40 mix-blend-lighten"
+        >
+          <source src="https://cdn.pixabay.com/video/2016/09/21/5412-183786499_large.mp4" type="video/mp4" />
+        </video>
+        <div className="absolute inset-0 bg-[radial-gradient(ellipse_at_top_right,_var(--tw-gradient-stops))] from-primary/20 via-slate-950/80 to-slate-950" />
+        <div className="absolute inset-0 bg-slate-950/60 backdrop-blur-[2px]" />
+      </div>
 
       <div className="w-full max-w-md space-y-6 relative z-10">
         {/* Logo */}
@@ -71,7 +86,7 @@ export default function LoginPage() {
         </Link>
 
         {/* Form Card */}
-        <div className="bg-card rounded-2xl border border-border p-8 space-y-6 shadow-xl shadow-black/5">
+        <div className="bg-slate-900/60 backdrop-blur-2xl rounded-[2rem] border border-white/10 p-8 space-y-6 shadow-[0_0_50px_rgba(0,0,0,0.5)]">
           <div className="space-y-2 text-center">
             <h1 className="text-2xl font-black text-foreground tracking-tight">B2B Portal Sign In</h1>
             <p className="text-sm text-muted-foreground">Sign in to your account credentials</p>
@@ -92,7 +107,7 @@ export default function LoginPage() {
                 value={email}
                 onChange={(e) => setEmail(e.target.value)}
                 placeholder="user@fzeetravels.com"
-                className="w-full px-4 py-3 rounded-xl border border-input bg-background text-foreground text-sm focus:outline-none focus:ring-2 focus:ring-primary/50 focus:border-primary transition font-medium"
+                className="w-full px-4 py-3 rounded-xl border border-white/10 bg-black/40 text-white placeholder:text-white/30 text-sm focus:outline-none focus:ring-2 focus:ring-primary/50 focus:border-primary transition font-medium backdrop-blur-md"
                 required
               />
             </div>
@@ -104,7 +119,7 @@ export default function LoginPage() {
                 value={password}
                 onChange={(e) => setPassword(e.target.value)}
                 placeholder="••••••••"
-                className="w-full px-4 py-3 rounded-xl border border-input bg-background text-foreground text-sm focus:outline-none focus:ring-2 focus:ring-primary/50 focus:border-primary transition"
+                className="w-full px-4 py-3 rounded-xl border border-white/10 bg-black/40 text-white placeholder:text-white/30 text-sm focus:outline-none focus:ring-2 focus:ring-primary/50 focus:border-primary transition font-medium backdrop-blur-md"
                 required
               />
             </div>
