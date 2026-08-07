@@ -24,6 +24,9 @@ export function NavBar() {
             <Link href="/" className="text-sm font-bold text-white/90 hover:text-white transition-colors duration-200 uppercase tracking-wider">
               Home
             </Link>
+            <Link href="/about" className="text-sm font-bold text-white/90 hover:text-white transition-colors duration-200 uppercase tracking-wider">
+              About
+            </Link>
             <Link href="/contact" className="text-sm font-bold text-white/90 hover:text-white transition-colors duration-200 uppercase tracking-wider">
               Contact
             </Link>
@@ -55,6 +58,9 @@ export function NavBar() {
           <div className="px-4 py-6 flex flex-col gap-4">
             <Link href="/" onClick={() => setIsOpen(false)} className="block px-4 py-3 text-sm font-bold text-white hover:bg-white/10 rounded-xl transition-colors uppercase tracking-wider">
               Home
+            </Link>
+            <Link href="/about" onClick={() => setIsOpen(false)} className="block px-4 py-3 text-sm font-bold text-white hover:bg-white/10 rounded-xl transition-colors uppercase tracking-wider">
+              About
             </Link>
             <Link href="/contact" onClick={() => setIsOpen(false)} className="block px-4 py-3 text-sm font-bold text-white hover:bg-white/10 rounded-xl transition-colors uppercase tracking-wider">
               Contact

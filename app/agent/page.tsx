@@ -1,7 +1,7 @@
 'use client';
 
 import { useEffect, useState } from 'react';
-import { Plane, Wallet, TrendingUp, Calendar, ArrowRight, Clock, CheckCircle2 } from 'lucide-react';
+import { Plane, Wallet, TrendingUp, Calendar, ArrowRight, Clock, CheckCircle2, MessageCircle, AlertCircle, Loader2 } from 'lucide-react';
 import Link from 'next/link';
 
 interface AgentStats {
@@ -30,15 +30,24 @@ export default function AgentDashboardPage() {
   });
   const [recentBookings, setRecentBookings] = useState<Booking[]>([]);
   const [loading, setLoading] = useState(true);
+  const [agencyStatus, setAgencyStatus] = useState<string>('pending');
 
   useEffect(() => {
     const fetchDashboardData = async () => {
       try {
-        const [walletRes, bookingsRes, groupsRes] = await Promise.all([
+        const [authRes, walletRes, bookingsRes, groupsRes] = await Promise.all([
+          fetch('/api/auth/me'),
           fetch('/api/wallet'),
           fetch('/api/bookings?limit=5'),
           fetch('/api/groups'),
         ]);
+
+        if (authRes.ok) {
+          const authData = await authRes.json();
+          if (authData.success && authData.user?.agency?.status) {
+            setAgencyStatus(authData.user.agency.status);
+          }
+        }
 
         let balance = 0;
         if (walletRes.ok) {
@@ -120,6 +129,45 @@ export default function AgentDashboardPage() {
       bgColor: 'bg-primary/10',
     },
   ];
+
+  if (loading) {
+    return (
+      <div className="flex flex-col items-center justify-center min-h-[60vh]">
+        <Loader2 className="w-12 h-12 text-primary animate-spin mb-4" />
+        <p className="text-muted-foreground font-medium animate-pulse">Loading dashboard...</p>
+      </div>
+    );
+  }
+
+  if (agencyStatus === 'pending') {
+    return (
+      <div className="flex flex-col items-center justify-center min-h-[70vh] px-4">
+        <div className="max-w-md w-full bg-card border border-border rounded-3xl p-8 text-center shadow-xl">
+          <div className="w-20 h-20 bg-amber-100 rounded-full flex items-center justify-center mx-auto mb-6">
+            <AlertCircle className="w-10 h-10 text-amber-600" />
+          </div>
+          <h1 className="text-2xl font-black text-foreground mb-3 tracking-tight">Approval Pending</h1>
+          <p className="text-muted-foreground font-medium text-sm leading-relaxed mb-8">
+            Your agency registration is currently under review by our admin team. Once verified, you will get full access to the B2B portal, exclusive group fares, and wallet features.
+          </p>
+          <div className="space-y-4">
+            <a 
+              href="https://wa.me/923314084080" 
+              target="_blank" 
+              rel="noreferrer"
+              className="flex items-center justify-center gap-2 w-full bg-[#25D366] hover:bg-[#20bd5a] text-white font-bold py-3.5 px-4 rounded-xl transition-all shadow-lg hover:shadow-xl hover:-translate-y-0.5"
+            >
+              <MessageCircle className="w-5 h-5" />
+              Chat on WhatsApp to Expedite
+            </a>
+            <p className="text-xs text-muted-foreground font-medium">
+              We typically review applications within 24 hours.
+            </p>
+          </div>
+        </div>
+      </div>
+    );
+  }
 
   return (
     <div className="space-y-8">
