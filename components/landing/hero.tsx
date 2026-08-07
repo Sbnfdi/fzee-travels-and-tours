@@ -1,76 +1,57 @@
 'use client';
 
 import Link from 'next/link';
-import { ArrowRight, Plane, Building2, Map, ShieldCheck } from 'lucide-react';
 
 export function Hero() {
   return (
-    <section className="relative min-h-[90vh] flex items-center justify-center overflow-hidden">
-      {/* Background Image & Overlay */}
-      <div 
-        className="absolute inset-0 z-0 bg-cover bg-center bg-no-repeat"
-        style={{ 
-            backgroundImage: "url('https://images.unsplash.com/photo-1436491865332-7a61a109cc05?q=80&w=2000&auto=format&fit=crop')",
-            backgroundAttachment: 'fixed'
-        }}
-      >
-        <div className="absolute inset-0 bg-black/60 backdrop-blur-[2px]"></div>
-      </div>
-
-      <div className="relative z-10 text-center px-4 sm:px-6 lg:px-8 max-w-5xl mx-auto mt-20">
-        <div className="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-white/10 backdrop-blur-md border border-white/20 text-white text-sm font-bold uppercase tracking-wider mb-8 shadow-2xl">
-          <ShieldCheck className="w-4 h-4 text-primary" />
-          <span>Official B2B Partner Portal</span>
-        </div>
-        
-        <h1 className="text-4xl sm:text-5xl lg:text-7xl font-black tracking-tight text-white mb-6 drop-shadow-2xl leading-tight">
-          Empower Your Travel Agency with <span className="text-transparent bg-clip-text bg-gradient-to-r from-primary to-rose-400 drop-shadow-none">Fzee Travels & Tours</span>
+    <section 
+      className="relative pt-[140px] pb-[80px] px-4 min-h-auto bg-cover bg-center bg-fixed overflow-hidden"
+      style={{ backgroundImage: "url('https://cdn.pixabay.com/photo/2023/03/11/11/34/travelling-7844283_960_720.jpg')" }}
+    >
+      <div className="absolute inset-0 bg-black/10 z-0 pointer-events-none"></div>
+      
+      <div className="relative z-10 max-w-[1400px] mx-auto text-center">
+        <h1 
+          className="text-[clamp(2rem,4vw,3rem)] font-[800] text-primary mb-[15px] tracking-tight" 
+          style={{ textShadow: '2px 4px 12px rgba(0, 0, 0, 0.3)' }}
+        >
+          Welcome To Fzee Travels & Tours
         </h1>
-        
-        <p className="text-lg sm:text-xl text-white/90 max-w-3xl mx-auto font-medium leading-relaxed mb-10 drop-shadow-lg">
-          Register your agency instantly and streamline your group tours, flight bookings, and hotel arrangements. Zero setup fees, unlimited growth.
-        </p>
 
-        <div className="flex flex-col sm:flex-row gap-5 justify-center items-center">
-          <Link
-            href="/register"
-            className="group relative px-8 py-4 bg-gradient-to-r from-primary to-primary/80 text-white rounded-xl font-bold text-lg shadow-[0_10px_40px_-10px_var(--color-primary)] hover:shadow-[0_10px_50px_-5px_var(--color-primary)] transition-all duration-300 hover:-translate-y-1 overflow-hidden"
-          >
-            <div className="absolute inset-0 bg-white/20 translate-y-full group-hover:translate-y-0 transition-transform duration-300 ease-in-out"></div>
-            <span className="relative flex items-center gap-2">
-              Register Agency Free
-              <ArrowRight className="w-5 h-5 group-hover:translate-x-1 transition-transform" />
-            </span>
-          </Link>
-          
-          <Link
-            href="#services"
-            className="px-8 py-4 bg-white/10 backdrop-blur-md border border-white/20 text-white hover:bg-white/20 rounded-xl font-bold text-lg transition-all duration-300 shadow-xl inline-flex items-center gap-2"
-          >
-            <span>Explore Inventory</span>
-          </Link>
-        </div>
-
-        {/* Floating Quick Stats or Icons */}
-        <div className="mt-16 grid grid-cols-3 gap-4 max-w-2xl mx-auto opacity-90">
-           <div className="flex flex-col items-center gap-2 text-white">
-              <div className="w-12 h-12 rounded-full bg-white/10 backdrop-blur-md flex items-center justify-center border border-white/20 shadow-lg">
-                <Plane className="w-6 h-6 text-primary" />
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-[25px] mt-[40px]">
+          {[
+            { title: "UAE Groups", desc: "Explore Dubai with group discounts", img: "https://images.unsplash.com/photo-1512453979798-5ea266f8880c?q=80&w=600&auto=format&fit=crop" },
+            { title: "KSA Groups", desc: "Travel to Saudi Arabia with exclusive rates", img: "https://images.unsplash.com/photo-1580418827493-f2b22c0a76cb?q=80&w=600&auto=format&fit=crop" },
+            { title: "Umrah Groups", desc: "Special packages for your spiritual journey", img: "https://images.unsplash.com/photo-1566073771259-6a8506099945?q=80&w=600&auto=format&fit=crop" },
+            { title: "Muscat Groups", desc: "Discover the beauty of Oman", img: "https://images.unsplash.com/photo-1520250497591-112f2f40a3f4?q=80&w=600&auto=format&fit=crop" },
+            { title: "Qatar Groups", desc: "Experience Qatar's modern marvels", img: "https://images.pexels.com/photos/3787839/pexels-photo-3787839.jpeg?auto=compress&cs=tinysrgb&w=600" },
+            { title: "Bahrain Groups", desc: "Discover Bahrain's rich culture", img: "https://images.unsplash.com/photo-1506012787146-f92b2d7d6d96?q=80&w=600&auto=format&fit=crop" },
+            { title: "UK Groups", desc: "Explore the United Kingdom", img: "https://images.unsplash.com/photo-1542296332-2e4473faf563?q=80&w=600&auto=format&fit=crop" },
+            { title: "All Groups", desc: "Browse all available destinations", img: "https://images.unsplash.com/photo-1436491865332-7a61a109cc05?q=80&w=600&auto=format&fit=crop" },
+          ].map((cat, i) => (
+            <Link 
+              href="/login" 
+              key={i} 
+              className="group bg-white rounded-[16px] overflow-hidden shadow-[0_8px_25px_rgba(0,0,0,0.12)] hover:shadow-[0_15px_40px_rgba(225,29,72,0.3)] hover:-translate-y-[8px] transition-all duration-[0.4s] cubic-bezier(0.4,0,0.2,1) block text-center no-underline relative"
+            >
+              <div className="h-[180px] overflow-hidden relative">
+                <img 
+                  src={cat.img} 
+                  alt={cat.title} 
+                  className="w-full h-full object-cover group-hover:scale-110 group-hover:rotate-1 transition-transform duration-[0.6s] ease" 
+                />
+                {i < 3 && (
+                  <div className="absolute top-[12px] right-[12px] bg-gradient-to-br from-primary to-rose-600 text-white px-[14px] py-[6px] rounded-[30px] text-[11px] font-[700] uppercase tracking-[0.5px] shadow-[0_4px_15px_rgba(225,29,72,0.4)]">
+                    {i === 0 ? 'HOT' : i === 1 ? 'NEW' : 'POPULAR'}
+                  </div>
+                )}
               </div>
-              <span className="text-xs font-bold tracking-wider uppercase">Global Flights</span>
-           </div>
-           <div className="flex flex-col items-center gap-2 text-white">
-              <div className="w-12 h-12 rounded-full bg-white/10 backdrop-blur-md flex items-center justify-center border border-white/20 shadow-lg">
-                <Map className="w-6 h-6 text-primary" />
+              <div className="p-[18px]">
+                <h3 className="text-[1.15rem] font-[700] text-[#001948] mb-[8px]">{cat.title}</h3>
+                <p className="text-[0.85rem] text-[#64748b] leading-[1.5] m-0">{cat.desc}</p>
               </div>
-              <span className="text-xs font-bold tracking-wider uppercase">Exclusive Tours</span>
-           </div>
-           <div className="flex flex-col items-center gap-2 text-white">
-              <div className="w-12 h-12 rounded-full bg-white/10 backdrop-blur-md flex items-center justify-center border border-white/20 shadow-lg">
-                <Building2 className="w-6 h-6 text-primary" />
-              </div>
-              <span className="text-xs font-bold tracking-wider uppercase">Premium Hotels</span>
-           </div>
+            </Link>
+          ))}
         </div>
       </div>
     </section>
