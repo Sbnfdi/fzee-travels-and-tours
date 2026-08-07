@@ -36,16 +36,19 @@ export default function AgentDashboardPage() {
     const fetchDashboardData = async () => {
       try {
         const [authRes, walletRes, bookingsRes, groupsRes] = await Promise.all([
-          fetch('/api/auth/me'),
-          fetch('/api/wallet'),
-          fetch('/api/bookings?limit=5'),
-          fetch('/api/groups'),
+          fetch('/api/auth/me', { cache: 'no-store' }),
+          fetch('/api/wallet', { cache: 'no-store' }),
+          fetch('/api/bookings?limit=5', { cache: 'no-store' }),
+          fetch('/api/groups', { cache: 'no-store' }),
         ]);
 
         if (authRes.ok) {
           const authData = await authRes.json();
-          if (authData.success && authData.user?.agency?.status) {
-            setAgencyStatus(authData.user.agency.status);
+          if (authData.success) {
+            const status = authData.user?.agency?.status || authData.user?.agent?.agency?.status;
+            if (status) {
+              setAgencyStatus(status);
+            }
           }
         }
 
