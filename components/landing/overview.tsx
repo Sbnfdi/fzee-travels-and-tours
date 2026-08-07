@@ -29,9 +29,13 @@ export function Overview() {
         <div className="grid lg:grid-cols-2 gap-12 items-center">
           
           {/* Mockup Image / UI */}
-          <div className="relative group perspective">
-            <div className="absolute -inset-1 bg-gradient-to-tr from-primary to-primary/20 rounded-2xl blur-xl opacity-30 group-hover:opacity-50 transition-opacity duration-500"></div>
-            <div className="relative bg-[#0f172a]/80 backdrop-blur-2xl border border-white/20 rounded-2xl shadow-2xl overflow-hidden aspect-video flex flex-col group-hover:rotate-1 transition-transform duration-500 ease-out">
+          <div className="relative group perspective-1000">
+            {/* Ambient Animated Glowing Orb */}
+            <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[140%] h-[140%] bg-gradient-to-r from-primary/30 to-amber-500/20 blur-[100px] rounded-full pointer-events-none -z-10 group-hover:scale-110 transition-transform duration-1000" />
+            
+            <div className="absolute -inset-1 bg-gradient-to-tr from-primary to-primary/30 rounded-3xl blur-2xl opacity-40 group-hover:opacity-60 transition-opacity duration-700 animate-pulse"></div>
+            
+            <div className="relative bg-[#0f172a]/70 backdrop-blur-3xl border border-white/20 rounded-3xl shadow-[0_0_50px_rgba(0,0,0,0.5)] overflow-hidden aspect-video flex flex-col transform-gpu transition-all duration-700 hover:rotate-y-[5deg] hover:-rotate-x-[2deg] hover:scale-[1.02]">
               {/* Browser Header */}
               <div className="h-10 bg-white/5 border-b border-white/10 flex items-center px-4 gap-2">
                 <div className="flex gap-1.5">
@@ -76,16 +80,16 @@ export function Overview() {
           </div>
 
           {/* Feature List */}
-          <div className="space-y-8">
+          <div className="space-y-8 relative z-10">
             <div className="space-y-6">
               {portalFeatures.map((feat, idx) => (
-                <div key={idx} className="flex gap-4 p-4 rounded-2xl hover:bg-white/5 transition-colors border border-transparent hover:border-white/10 group">
-                  <div className="w-12 h-12 bg-white/10 rounded-xl flex items-center justify-center text-primary shrink-0 group-hover:bg-primary group-hover:text-primary-foreground transition-colors shadow-inner border border-white/5">
-                    <feat.icon className="w-6 h-6" />
+                <div key={idx} className="flex gap-5 p-5 rounded-3xl bg-white/5 backdrop-blur-sm border border-white/10 hover:bg-white/10 hover:border-primary/50 transition-all duration-300 group shadow-xl">
+                  <div className="w-14 h-14 bg-white/10 rounded-2xl flex items-center justify-center text-primary shrink-0 group-hover:bg-primary group-hover:text-primary-foreground transition-all duration-300 shadow-inner group-hover:shadow-[0_0_20px_rgba(var(--primary),0.5)] group-hover:scale-110 border border-white/5">
+                    <feat.icon className="w-7 h-7" />
                   </div>
                   <div>
-                    <h3 className="font-bold text-white text-lg drop-shadow-sm">{feat.title}</h3>
-                    <p className="text-white/60 text-sm mt-1 leading-relaxed">{feat.desc}</p>
+                    <h3 className="font-black text-white text-xl drop-shadow-sm group-hover:text-primary transition-colors">{feat.title}</h3>
+                    <p className="text-white/70 text-sm mt-1.5 leading-relaxed font-medium">{feat.desc}</p>
                   </div>
                 </div>
               ))}
