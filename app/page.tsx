@@ -13,30 +13,7 @@ export const revalidate = 60;
 
 export default async function Page() {
   return (
-    <div className="relative min-h-screen flex flex-col font-sans">
-      {/* Global Video Background with Premium Mesh Overlay */}
-      <div className="fixed inset-0 z-[-1] pointer-events-none bg-slate-950">
-        <div 
-          className="absolute inset-0 bg-cover bg-center opacity-30 mix-blend-luminosity"
-          style={{ backgroundImage: "url('https://images.unsplash.com/photo-1436491865332-7a61a109cc05?q=80&w=2000&auto=format&fit=crop')" }}
-        />
-        <video
-          autoPlay
-          loop
-          muted
-          playsInline
-          className="absolute inset-0 w-full h-full object-cover opacity-40 mix-blend-lighten"
-        >
-          <source src="https://cdn.pixabay.com/video/2016/09/21/5412-183786499_large.mp4" type="video/mp4" />
-        </video>
-        
-        {/* Modern Mesh Gradients */}
-        <div className="absolute inset-0 bg-[radial-gradient(ellipse_at_top_right,_var(--tw-gradient-stops))] from-primary/20 via-slate-950/80 to-slate-950" />
-        <div className="absolute inset-0 bg-[radial-gradient(circle_at_bottom_left,_var(--tw-gradient-stops))] from-blue-900/10 via-transparent to-transparent" />
-        
-        {/* Dark overlay to ensure white text readability */}
-        <div className="absolute inset-0 bg-slate-950/60 backdrop-blur-[2px]" />
-      </div>
+    <div className="relative min-h-screen flex flex-col bg-background text-foreground font-sans">
 
       <PromoPopup />
       <NavBar />
