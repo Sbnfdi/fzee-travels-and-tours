@@ -19,9 +19,9 @@ export default async function Page() {
       <NavBar />
       <main className="flex-1 relative z-10 flex flex-col items-center w-full overflow-hidden">
         <Hero />
-        <Stats />
         <Overview />
         <FlightsTable />
+        <Stats />
         <Features />
         <Testimonials />
         <Partners />

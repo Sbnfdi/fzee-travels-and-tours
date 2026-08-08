@@ -8,37 +8,37 @@ export function Hero() {
     {
       name: 'Dubai',
       subtext: 'Fixed Seats',
-      image: 'https://images.unsplash.com/photo-1512453979798-5ea266f8880c?q=80&w=600&auto=format&fit=crop',
+      image: 'https://images.unsplash.com/photo-1512453979798-5ea266f8880c?auto=format&fit=crop&w=600&q=80',
     },
     {
       name: 'Baku',
       subtext: 'Group Packages',
-      image: 'https://images.unsplash.com/photo-1579783902614-a3fb3927b675?q=80&w=600&auto=format&fit=crop',
+      image: 'https://images.unsplash.com/photo-1541872703-74c5e44368f9?auto=format&fit=crop&w=600&q=80',
     },
     {
       name: 'Muscat',
       subtext: 'Group Fares',
-      image: 'https://images.unsplash.com/photo-1549944811-c148c6897799?q=80&w=600&auto=format&fit=crop',
+      image: 'https://images.unsplash.com/photo-1549944811-c148c6897799?auto=format&fit=crop&w=600&q=80',
     },
     {
       name: 'Qatar',
       subtext: 'Group Seats',
-      image: 'https://images.unsplash.com/photo-1580674684081-7617fbf3d745?q=80&w=600&auto=format&fit=crop',
+      image: 'https://images.unsplash.com/photo-1568605117036-5fe5e7bab0b7?auto=format&fit=crop&w=600&q=80',
     },
     {
       name: 'UK',
       subtext: 'Direct Flights',
-      image: 'https://images.unsplash.com/photo-1513635269975-59663e0ac1ad?q=80&w=600&auto=format&fit=crop',
+      image: 'https://images.unsplash.com/photo-1513635269975-59663e0ac1ad?auto=format&fit=crop&w=600&q=80',
     },
     {
       name: 'Maldives',
       subtext: 'Honeymoon Packages',
-      image: 'https://images.unsplash.com/photo-1514282401047-d79a71a590e8?q=80&w=600&auto=format&fit=crop',
+      image: 'https://images.unsplash.com/photo-1514282401047-d79a71a590e8?auto=format&fit=crop&w=600&q=80',
     },
     {
       name: 'Saudi Arabia',
       subtext: 'Hajj & Umrah',
-      image: 'https://images.unsplash.com/photo-1591604466107-ec97de577aff?q=80&w=600&auto=format&fit=crop',
+      image: 'https://images.unsplash.com/photo-1565552645632-d725f8bfc19a?auto=format&fit=crop&w=600&q=80',
     },
   ];
 
