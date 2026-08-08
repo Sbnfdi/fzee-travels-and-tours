@@ -1,6 +1,6 @@
 'use client';
 
-import { useState, useEffect } from 'react';
+import { useState, useEffect, Fragment } from 'react';
 import Link from 'next/link';
 import { Plane, CalendarDays, AlertCircle } from 'lucide-react';
 
@@ -40,7 +40,7 @@ export function FlightsTable() {
           }
         }
       } catch (err) {
-        console.error('Failed to fetch homepage flights:', err);
+        console.error(err);
       } finally {
         setLoading(false);
       }
@@ -49,26 +49,18 @@ export function FlightsTable() {
   }, []);
 
   const formatDate = (dateString: string) => {
-    try {
-      const d = new Date(dateString);
-      return d.toLocaleDateString('en-GB', { day: '2-digit', month: '2-digit', year: 'numeric' });
-    } catch {
-      return dateString;
-    }
+    const d = new Date(dateString);
+    return d.toLocaleDateString('en-GB', { day: '2-digit', month: '2-digit', year: 'numeric' });
   };
 
   const formatTime = (dateString: string) => {
-    try {
-      const d = new Date(dateString);
-      return d.toLocaleTimeString('en-GB', { hour: '2-digit', minute: '2-digit' });
-    } catch {
-      return '—';
-    }
+    const d = new Date(dateString);
+    return d.toLocaleTimeString('en-GB', { hour: '2-digit', minute: '2-digit' });
   };
 
-  // Group flights dynamically by airline
+  // Group flights by airline
   const grouped = flights.reduce((acc, flight) => {
-    const key = flight.airline || 'Other Airlines';
+    const key = flight.airline || 'Other';
     if (!acc[key]) acc[key] = [];
     acc[key].push(flight);
     return acc;
@@ -82,17 +74,6 @@ export function FlightsTable() {
         
         <div className="w-full bg-card border border-border shadow-2xl rounded-2xl overflow-hidden text-foreground">
           <div className="w-full">
-            
-            {/* Table Header - Hidden on Mobile */}
-            <div className="hidden md:grid grid-cols-12 items-center bg-primary text-primary-foreground text-xs font-black uppercase py-4 px-6 tracking-widest border-b border-primary-foreground/20 shadow-md">
-              <div className="col-span-2">Sector</div>
-              <div className="col-span-2">Airline</div>
-              <div className="col-span-1">FLT No.</div>
-              <div className="col-span-2">Departure Date & Time</div>
-              <div className="col-span-2">Arrival Date & Time</div>
-              <div className="col-span-2 text-center">Fare</div>
-              <div className="col-span-1 text-center">Book</div>
-            </div>
 
             {/* Loading State */}
             {loading ? (
@@ -107,41 +88,105 @@ export function FlightsTable() {
                 <p className="text-xs text-muted-foreground">Check back soon for new flight schedules published by admins.</p>
               </div>
             ) : (
-              /* Dynamic Table Body */
-              <div className="divide-y divide-border">
-                {airlineNames.map((airline, groupIdx) => (
-                  <div key={groupIdx}>
-                    {/* Airline Section Header */}
-                    <div className="bg-muted/40 py-3.5 px-4 sm:px-6 flex justify-center border-y border-border">
-                      <div className="flex items-center justify-center h-10 px-8 bg-primary/10 rounded-xl border border-primary/20 shadow-inner">
-                        <span className="font-black text-primary text-lg tracking-[0.2em] uppercase drop-shadow-sm">{airline}</span>
+              <>
+                {/* Desktop Table View */}
+                <div className="hidden md:block overflow-x-auto w-full">
+                  <table className="w-full text-left border-collapse text-sm">
+                    <thead>
+                      <tr className="bg-primary text-primary-foreground text-xs font-black uppercase tracking-wider border-b border-primary-foreground/20 shadow-sm">
+                        <th className="py-4 px-6">Sector</th>
+                        <th className="py-4 px-6">Airline</th>
+                        <th className="py-4 px-6">FLT No.</th>
+                        <th className="py-4 px-6">Departure Date & Time</th>
+                        <th className="py-4 px-6">Arrival Date & Time</th>
+                        <th className="py-4 px-6 text-center">Fare</th>
+                        <th className="py-4 px-6 text-center">Book</th>
+                      </tr>
+                    </thead>
+                    <tbody className="divide-y divide-border">
+                      {airlineNames.map((airline, groupIdx) => (
+                        <Fragment key={groupIdx}>
+                          {/* Airline Section Row */}
+                          <tr className="bg-muted/40 border-y border-border">
+                            <td colSpan={7} className="py-3 px-6 text-center">
+                              <div className="inline-flex items-center justify-center h-9 px-6 bg-primary/10 rounded-xl border border-primary/20 shadow-inner">
+                                <span className="font-black text-primary text-base tracking-[0.2em] uppercase drop-shadow-sm">{airline}</span>
+                              </div>
+                            </td>
+                          </tr>
+
+                          {/* Flight Rows */}
+                          {grouped[airline].map((flight) => {
+                            const isAvailable = flight.availableSeats > 0;
+                            const depDateStr = formatDate(flight.departureTime);
+                            const depTimeStr = formatTime(flight.departureTime);
+                            const arrDateStr = formatDate(flight.arrivalTime);
+                            const arrTimeStr = formatTime(flight.arrivalTime);
+                            const sectorStr = `${flight.departureCity}-${flight.arrivalCity}`;
+                            const fareAmount = (flight.currentFare || flight.pricePerSeat).toLocaleString();
+
+                            return (
+                              <tr key={flight.id} className="hover:bg-muted/30 transition-colors duration-200 border-b border-border/60">
+                                <td className="py-4 px-6 font-black text-foreground">{sectorStr}</td>
+                                <td className="py-4 px-6 text-muted-foreground font-semibold uppercase tracking-wider">{airline}</td>
+                                <td className="py-4 px-6 font-bold text-foreground font-mono">{flight.flightNumber}</td>
+                                <td className="py-4 px-6">
+                                  <div className="font-bold text-foreground text-xs">{depDateStr}</div>
+                                  <div className="font-bold text-emerald-600 dark:text-emerald-400">{depTimeStr}</div>
+                                </td>
+                                <td className="py-4 px-6">
+                                  <div className="font-bold text-foreground text-xs">{arrDateStr}</div>
+                                  <div className="font-bold text-rose-600 dark:text-rose-400">{arrTimeStr}</div>
+                                </td>
+                                <td className="py-4 px-6 text-center font-black text-base text-primary">Rs {fareAmount}</td>
+                                <td className="py-4 px-6 text-center">
+                                  {isAvailable ? (
+                                    <Link href="/login" className="inline-block px-5 py-2 bg-primary text-primary-foreground text-xs font-black rounded-xl shadow-md hover:bg-primary/90 transition-all uppercase tracking-wider">
+                                      Book
+                                    </Link>
+                                  ) : (
+                                    <span className="inline-block px-4 py-2 bg-muted text-muted-foreground text-xs font-bold rounded-xl border border-border uppercase tracking-wider">
+                                      Sold Out
+                                    </span>
+                                  )}
+                                </td>
+                              </tr>
+                            );
+                          })}
+                        </Fragment>
+                      ))}
+                    </tbody>
+                  </table>
+                </div>
+
+                {/* Mobile Card View */}
+                <div className="md:hidden divide-y divide-border">
+                  {airlineNames.map((airline, groupIdx) => (
+                    <div key={groupIdx}>
+                      <div className="bg-muted/40 py-3.5 px-4 flex justify-center border-y border-border">
+                        <div className="flex items-center justify-center h-10 px-8 bg-primary/10 rounded-xl border border-primary/20 shadow-inner">
+                          <span className="font-black text-primary text-lg tracking-[0.2em] uppercase drop-shadow-sm">{airline}</span>
+                        </div>
                       </div>
-                    </div>
 
-                    {/* Flights List */}
-                    {grouped[airline].map((flight) => {
-                      const isAvailable = flight.availableSeats > 0;
-                      const depDateStr = formatDate(flight.departureTime);
-                      const depTimeStr = formatTime(flight.departureTime);
+                      {grouped[airline].map((flight) => {
+                        const isAvailable = flight.availableSeats > 0;
+                        const depDateStr = formatDate(flight.departureTime);
+                        const depTimeStr = formatTime(flight.departureTime);
+                        const arrDateStr = formatDate(flight.arrivalTime);
+                        const arrTimeStr = formatTime(flight.arrivalTime);
+                        const sectorStr = `${flight.departureCity}-${flight.arrivalCity}`;
+                        const fareAmount = (flight.currentFare || flight.pricePerSeat).toLocaleString();
 
-                      const arrDateStr = formatDate(flight.arrivalTime);
-                      const arrTimeStr = formatTime(flight.arrivalTime);
-
-                      const sectorStr = `${flight.departureCity}-${flight.arrivalCity}`;
-                      const fareAmount = (flight.currentFare || flight.pricePerSeat).toLocaleString();
-
-                      return (
-                        <div key={flight.id} className="py-4 px-4 sm:px-6 hover:bg-muted/30 transition-colors duration-200 border-b border-border/60 last:border-b-0">
-                          
-                          {/* Mobile Layout */}
-                          <div className="md:hidden flex flex-col gap-3">
-                            <div className="flex justify-between items-center border-b border-border pb-3">
+                        return (
+                          <div key={flight.id} className="p-4 space-y-3 border-b border-border/60">
+                            <div className="flex justify-between items-center border-b border-border pb-2">
                               <div>
-                                <div className="text-[10px] text-muted-foreground uppercase tracking-widest mb-1">Sector</div>
+                                <div className="text-[10px] text-muted-foreground uppercase tracking-widest mb-0.5">Sector</div>
                                 <div className="font-black text-foreground tracking-wide text-lg">{sectorStr}</div>
                               </div>
                               <div className="text-right">
-                                <div className="text-[10px] text-muted-foreground uppercase tracking-widest mb-1">Flight</div>
+                                <div className="text-[10px] text-muted-foreground uppercase tracking-widest mb-0.5">Flight</div>
                                 <div className="font-bold text-foreground font-mono">{flight.flightNumber}</div>
                               </div>
                             </div>
@@ -159,9 +204,9 @@ export function FlightsTable() {
                               </div>
                             </div>
 
-                            <div className="flex justify-between items-center">
+                            <div className="flex justify-between items-center pt-1">
                               <div>
-                                <div className="text-[10px] text-muted-foreground uppercase tracking-widest mb-1">Fare</div>
+                                <div className="text-[10px] text-muted-foreground uppercase tracking-widest mb-0.5">Fare</div>
                                 <div className="font-black text-xl text-primary">Rs {fareAmount}</div>
                               </div>
                               <div className="w-1/2">
@@ -177,45 +222,12 @@ export function FlightsTable() {
                               </div>
                             </div>
                           </div>
-
-                          {/* Desktop Grid Columns */}
-                          <div className="hidden md:grid grid-cols-12 items-center text-sm">
-                            <div className="col-span-2 font-black text-foreground tracking-wide">{sectorStr}</div>
-                            <div className="col-span-2 text-muted-foreground font-semibold uppercase tracking-wider">{airline}</div>
-                            <div className="col-span-1 font-bold text-foreground font-mono">{flight.flightNumber}</div>
-                            
-                            {/* Departure Date & Time */}
-                            <div className="col-span-2">
-                              <div className="font-bold text-foreground text-xs">{depDateStr}</div>
-                              <div className="font-bold text-emerald-600 dark:text-emerald-400">{depTimeStr}</div>
-                            </div>
-
-                            {/* Arrival Date & Time */}
-                            <div className="col-span-2">
-                              <div className="font-bold text-foreground text-xs">{arrDateStr}</div>
-                              <div className="font-bold text-rose-600 dark:text-rose-400">{arrTimeStr}</div>
-                            </div>
-
-                            <div className="col-span-2 text-center font-black text-base text-primary">Rs {fareAmount}</div>
-                            <div className="col-span-1 flex justify-center">
-                              {isAvailable ? (
-                                <Link href="/login" className="px-4 py-2 bg-primary text-primary-foreground text-xs font-black rounded-xl shadow-md hover:bg-primary/90 transition-all block text-center uppercase tracking-wider">
-                                  Book
-                                </Link>
-                              ) : (
-                                <span className="px-3 py-2 bg-muted text-muted-foreground text-xs font-bold rounded-xl border border-border uppercase tracking-wider">
-                                  Sold Out
-                                </span>
-                              )}
-                            </div>
-                          </div>
-
-                        </div>
-                      );
-                    })}
-                  </div>
-                ))}
-              </div>
+                        );
+                      })}
+                    </div>
+                  ))}
+                </div>
+              </>
             )}
             
           </div>
