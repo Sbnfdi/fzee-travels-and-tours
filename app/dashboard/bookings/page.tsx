@@ -49,7 +49,7 @@ export default function AdminBookingsPage() {
     fetchBookings();
   }, []);
 
-  const handleAction = async (id: string, status: 'confirmed' | 'rejected') => {
+  const handleAction = async (id: string, status: 'confirmed' | 'rejected' | 'cancelled') => {
     setProcessingId(id);
     try {
       const res = await fetch(`/api/admin/bookings/${id}/approve`, {
