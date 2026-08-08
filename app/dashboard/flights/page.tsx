@@ -505,7 +505,7 @@ export default function AdminFlightsPage() {
                       <td className="px-6 py-4 text-foreground whitespace-nowrap">{f.baggage || '—'}</td>
                       <td className="px-6 py-4 text-foreground whitespace-nowrap">{f.meal ? 'Yes' : 'No'}</td>
                       <td className="px-6 py-4 text-foreground whitespace-nowrap">
-                        <span className="px-2.5 py-1 bg-slate-100 dark:bg-slate-800 text-foreground text-xs rounded-lg font-bold">{f.category || 'None'}</span>
+                        <span className="px-2.5 py-1 bg-primary/10 text-primary border border-primary/20 text-xs rounded-lg font-extrabold">{f.category || 'None'}</span>
                       </td>
                       <td className="px-6 py-4 whitespace-nowrap">
                         <span className="font-black text-primary">PKR {f.currentFare?.toLocaleString()}</span>
