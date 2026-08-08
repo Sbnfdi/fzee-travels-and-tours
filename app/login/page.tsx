@@ -68,10 +68,10 @@ export default function LoginPage() {
         </Link>
 
         {/* Form Card */}
-        <div className="bg-slate-900/60 backdrop-blur-2xl rounded-[2rem] border border-white/10 p-8 space-y-6 shadow-[0_0_50px_rgba(0,0,0,0.5)]">
+        <div className="bg-card border border-border/80 rounded-3xl p-8 space-y-6 shadow-xl text-foreground">
           <div className="space-y-2 text-center">
             <h1 className="text-2xl font-black text-foreground tracking-tight">B2B Portal Sign In</h1>
-            <p className="text-sm text-muted-foreground">Sign in to your account credentials</p>
+            <p className="text-sm text-muted-foreground font-medium">Sign in with your registered agency credentials</p>
           </div>
 
           {error && (

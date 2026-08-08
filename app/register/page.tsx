@@ -73,10 +73,10 @@ export default function RegisterPage() {
         </Link>
 
         {/* Form Card */}
-        <div className="bg-slate-900/60 backdrop-blur-2xl rounded-[2rem] border border-white/10 p-8 sm:p-10 space-y-6 shadow-[0_0_50px_rgba(0,0,0,0.5)]">
+        <div className="bg-card border border-border/80 rounded-3xl p-8 sm:p-10 space-y-6 shadow-xl text-foreground">
           <div className="space-y-2 text-center">
             <h1 className="text-2xl sm:text-3xl font-black text-foreground tracking-tight">Agent Registration</h1>
-            <p className="text-sm text-muted-foreground">Join Fzee Travel & Tours network and manage bookings instantly</p>
+            <p className="text-sm text-muted-foreground font-medium">Join Fzee Travel & Tours network and manage bookings instantly</p>
           </div>
 
           {/* Approval Timeline */}
