@@ -102,22 +102,22 @@ export default function DashboardPage() {
   return (
     <div className="space-y-8">
       {/* Header */}
-      <div className="border-b border-white/10 pb-6">
-        <h1 className="text-3xl font-black text-white tracking-tight">Admin Overview</h1>
-        <p className="text-white/60 mt-1">Fzee Travel & Tours Enterprise Control Center</p>
+      <div className="border-b border-border pb-6">
+        <h1 className="text-3xl font-black text-foreground tracking-tight">Admin Overview</h1>
+        <p className="text-muted-foreground text-sm font-semibold mt-1">Fzee Travel & Tours Enterprise Control Center</p>
       </div>
 
       {/* Stats Grid */}
       <div className="grid sm:grid-cols-2 lg:grid-cols-4 gap-6">
         {statCards.map((card, idx) => (
-          <div key={idx} className="bg-slate-900/40 backdrop-blur-2xl rounded-2xl border border-white/10 p-6 shadow-[0_0_30px_rgba(0,0,0,0.3)] hover:border-primary/40 transition-all hover:scale-[1.02]">
+          <div key={idx} className="bg-card rounded-2xl border border-border/80 p-6 shadow-sm hover:shadow-md hover:border-primary/30 transition-all hover:-translate-y-0.5">
             <div className="flex items-start justify-between">
               <div>
-                <p className="text-white/60 text-xs font-bold uppercase tracking-wider">{card.label}</p>
-                <p className="text-2xl sm:text-3xl font-black text-white mt-2 drop-shadow-md">{loading ? '...' : card.value}</p>
+                <p className="text-muted-foreground text-xs font-black uppercase tracking-wider">{card.label}</p>
+                <p className="text-2xl sm:text-3xl font-black text-foreground mt-2">{loading ? '...' : card.value}</p>
               </div>
-              <div className={`${card.bgColor} p-3 rounded-xl`}>
-                <card.icon className={`w-6 h-6 ${card.color}`} />
+              <div className="bg-rose-50 border border-rose-100 p-3 rounded-xl">
+                <card.icon className="w-6 h-6 text-primary" />
               </div>
             </div>
           </div>
