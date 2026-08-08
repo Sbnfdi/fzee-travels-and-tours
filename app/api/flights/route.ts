@@ -22,13 +22,16 @@ const createFlightSchema = z.object({
 });
 
 /**
- * Calculate the current dynamic fare based on how many seats are sold.
+ * Calculate the current dynamic fare for the VERY NEXT seat to be sold.
  * fareTiers is a JSON array of { upToSeat: number, price: number } sorted by upToSeat ascending.
- * "upToSeat" means: "for seat numbers up to this limit, use this price".
+ * "upToSeat" means: "for seat numbers 1 up to upToSeat, use this price".
  *
- * Example: totalSeats=200, availableSeats=200 => 0 seats sold, next seat to buy is #1
- * fareTiers: [{ upToSeat: 100, price: 90000 }, { upToSeat: 200, price: 120000 }]
- * => nextSeatNumber (1) <= 100, so price = 90000
+ * Example: totalSeats=5, availableSeats=5 => 0 seats sold, next seat to buy is #1
+ * fareTiers: [{ upToSeat: 2, price: 115000 }, { upToSeat: 5, price: 120000 }]
+ * => nextSeatNumber (1) <= 2, so currentFare = 115000
+ *
+ * When 2 seats are sold (availableSeats=3, seatsSold=2), next seat to buy is #3:
+ * => nextSeatNumber (3) <= 2 is FALSE, 3 <= 5 is TRUE, so currentFare = 120000!
  */
 export function getCurrentFare(flight: { totalSeats: number; availableSeats: number; pricePerSeat: number; fareTiers?: string | null }): number {
   if (!flight.fareTiers) return flight.pricePerSeat;
@@ -49,10 +52,78 @@ export function getCurrentFare(flight: { totalSeats: number; availableSeats: num
       }
     }
 
-    // If all tiers exceeded, use the last tier's price
+    // If all defined tiers exceeded, use the last tier's price
     return sortedTiers[sortedTiers.length - 1].price;
   } catch {
     return flight.pricePerSeat;
+  }
+}
+
+/**
+ * Calculate exact cumulative price for buying `numberOfPax` seats across tier boundaries.
+ * E.g. buying 3 seats when 0 sold (with ≤2 @ 115k and ≤5 @ 120k):
+ * Seat 1 (115k) + Seat 2 (115k) + Seat 3 (120k) = 350,000 total.
+ */
+export function calculateTotalFlightFare(
+  flight: { totalSeats: number; availableSeats: number; pricePerSeat: number; fareTiers?: string | null },
+  numberOfPax: number
+): { totalAmount: number; perSeatPrices: number[]; averageFare: number } {
+  if (!flight.fareTiers) {
+    return {
+      totalAmount: flight.pricePerSeat * numberOfPax,
+      perSeatPrices: Array(numberOfPax).fill(flight.pricePerSeat),
+      averageFare: flight.pricePerSeat,
+    };
+  }
+
+  try {
+    const tiers: { upToSeat: number; price: number }[] = JSON.parse(flight.fareTiers);
+    if (!Array.isArray(tiers) || tiers.length === 0) {
+      return {
+        totalAmount: flight.pricePerSeat * numberOfPax,
+        perSeatPrices: Array(numberOfPax).fill(flight.pricePerSeat),
+        averageFare: flight.pricePerSeat,
+      };
+    }
+
+    const sortedTiers = [...tiers].sort((a, b) => a.upToSeat - b.upToSeat);
+    const seatsSold = flight.totalSeats - flight.availableSeats;
+
+    let totalAmount = 0;
+    const perSeatPrices: number[] = [];
+
+    for (let i = 0; i < numberOfPax; i++) {
+      const seatNumber = seatsSold + i + 1; // 1-indexed seat number being purchased
+      let seatPrice = flight.pricePerSeat;
+      let matched = false;
+
+      for (const tier of sortedTiers) {
+        if (seatNumber <= tier.upToSeat) {
+          seatPrice = tier.price;
+          matched = true;
+          break;
+        }
+      }
+
+      if (!matched && sortedTiers.length > 0) {
+        seatPrice = sortedTiers[sortedTiers.length - 1].price;
+      }
+
+      perSeatPrices.push(seatPrice);
+      totalAmount += seatPrice;
+    }
+
+    return {
+      totalAmount,
+      perSeatPrices,
+      averageFare: Math.round(totalAmount / numberOfPax),
+    };
+  } catch {
+    return {
+      totalAmount: flight.pricePerSeat * numberOfPax,
+      perSeatPrices: Array(numberOfPax).fill(flight.pricePerSeat),
+      averageFare: flight.pricePerSeat,
+    };
   }
 }
 

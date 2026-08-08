@@ -101,10 +101,10 @@ const handler = withAuth(async (req: NextRequest) => {
         if (!flight || flight.status !== 'active') return NextResponse.json({ error: 'Invalid or inactive flight.' }, { status: 400 });
         if (flight.availableSeats < numberOfPax) return NextResponse.json({ error: 'Not enough seats remaining.' }, { status: 400 });
         
-        // Use dynamic fare based on fare tiers
-        const { getCurrentFare } = await import('@/app/api/flights/route');
-        const dynamicFare = getCurrentFare(flight);
-        totalAmount = dynamicFare * numberOfPax;
+        // Use exact seat-by-seat dynamic tier pricing calculation
+        const { calculateTotalFlightFare } = await import('@/app/api/flights/route');
+        const fareCalculation = calculateTotalFlightFare(flight, numberOfPax);
+        totalAmount = fareCalculation.totalAmount;
         inventoryIdToUpdate = flight.id;
         inventoryTypeToUpdate = 'FLIGHT';
         availableSlots = flight.availableSeats;

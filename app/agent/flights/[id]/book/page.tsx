@@ -14,6 +14,8 @@ interface FlightItem {
   pricePerSeat: number;
   currentFare: number;
   availableSeats: number;
+  totalSeats: number;
+  fareTiers?: string | null;
 }
 
 export default function BookFlightPage() {
@@ -49,6 +51,37 @@ export default function BookFlightPage() {
     };
     if (id) fetchFlight();
   }, [id]);
+
+  const calculateTotalPrice = (f: FlightItem, paxCount: number): number => {
+    if (!f.fareTiers) return (f.currentFare || f.pricePerSeat) * paxCount;
+    try {
+      const tiers: { upToSeat: number; price: number }[] = JSON.parse(f.fareTiers);
+      if (!Array.isArray(tiers) || tiers.length === 0) return (f.currentFare || f.pricePerSeat) * paxCount;
+      
+      const sortedTiers = [...tiers].sort((a, b) => a.upToSeat - b.upToSeat);
+      const seatsSold = (f.totalSeats || 200) - f.availableSeats;
+      let sum = 0;
+      for (let i = 0; i < paxCount; i++) {
+        const seatNum = seatsSold + i + 1;
+        let matchedPrice = f.pricePerSeat;
+        let found = false;
+        for (const t of sortedTiers) {
+          if (seatNum <= t.upToSeat) {
+            matchedPrice = t.price;
+            found = true;
+            break;
+          }
+        }
+        if (!found && sortedTiers.length > 0) {
+          matchedPrice = sortedTiers[sortedTiers.length - 1].price;
+        }
+        sum += matchedPrice;
+      }
+      return sum;
+    } catch {
+      return (f.currentFare || f.pricePerSeat) * paxCount;
+    }
+  };
 
   const handlePaxChange = (newPax: number) => {
     if (newPax < 1 || (flight && newPax > flight.availableSeats) || newPax > 50) return;
@@ -109,6 +142,8 @@ export default function BookFlightPage() {
 
   if (loading) return <div className="text-center py-20">Loading flight details...</div>;
   if (!flight) return <div className="text-center py-20 text-destructive font-bold">Flight not found.</div>;
+
+  const totalPrice = calculateTotalPrice(flight, pax);
 
   return (
     <div className="max-w-3xl mx-auto space-y-8 text-foreground">
@@ -186,11 +221,11 @@ export default function BookFlightPage() {
             <div>
               <span className="text-xs font-bold text-muted-foreground uppercase block">Total Amount</span>
               <span className="text-3xl font-black text-primary">
-                PKR {((flight.currentFare || flight.pricePerSeat) * pax).toLocaleString()}
+                PKR {totalPrice.toLocaleString()}
               </span>
-              {flight.currentFare && flight.currentFare !== flight.pricePerSeat && (
+              {pax > 1 && (
                 <span className="text-[10px] text-muted-foreground block font-medium">
-                  Dynamic Tier Fare: PKR {flight.currentFare.toLocaleString()} / seat
+                  Avg Fare: PKR {Math.round(totalPrice / pax).toLocaleString()} / seat
                 </span>
               )}
             </div>
