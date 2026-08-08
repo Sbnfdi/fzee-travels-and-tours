@@ -508,10 +508,7 @@ export default function AdminFlightsPage() {
                         <span className="px-2.5 py-1 bg-primary/10 text-primary border border-primary/20 text-xs rounded-lg font-extrabold">{f.category || 'None'}</span>
                       </td>
                       <td className="px-6 py-4 whitespace-nowrap">
-                        <span className="font-black text-primary">PKR {f.currentFare?.toLocaleString()}</span>
-                        {f.currentFare !== f.pricePerSeat && (
-                          <span className="block text-[10px] text-muted-foreground">Base: PKR {f.pricePerSeat.toLocaleString()}</span>
-                        )}
+                        <span className="font-black text-primary">PKR {(f.currentFare || f.pricePerSeat)?.toLocaleString()}</span>
                       </td>
                       <td className="px-6 py-4 whitespace-nowrap">
                         {tiers.length > 0 ? (

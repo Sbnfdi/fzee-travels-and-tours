@@ -118,7 +118,7 @@ export default function AdminBookingDetailPage() {
     if (id) fetchBooking();
   }, [id]);
 
-  const handleAction = async (status: 'confirmed' | 'rejected') => {
+  const handleAction = async (status: 'confirmed' | 'rejected' | 'cancelled') => {
     setProcessing(true);
     try {
       const res = await fetch(`/api/admin/bookings/${id}/approve`, {
@@ -297,6 +297,20 @@ export default function AdminBookingDetailPage() {
                     Reject
                   </button>
                 </>
+              )}
+
+              {booking.status === 'confirmed' && (
+                <button
+                  disabled={processing}
+                  onClick={() => {
+                    if (confirm(`Cancel confirmed booking ${booking.bookingNumber}? Seats will be restored to flight schedule.`)) {
+                      handleAction('cancelled');
+                    }
+                  }}
+                  className="px-4 py-2.5 border border-destructive/40 text-destructive hover:bg-destructive/10 font-bold rounded-xl text-xs transition disabled:opacity-50"
+                >
+                  {processing ? 'Cancelling...' : 'Cancel Booking'}
+                </button>
               )}
             </div>
           </div>

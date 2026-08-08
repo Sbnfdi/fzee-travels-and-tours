@@ -62,12 +62,27 @@ const handler = withRole('SUPER_ADMIN', 'ADMIN', 'FINANCE_ADMIN', 'BOOKING_MANAG
               data: { status: finalStatus },
             });
 
+            // Restore group slots if group booking
             if (booking.groupId) {
               await tx.group.update({
                 where: { id: booking.groupId },
                 data: { availableSlots: { increment: booking.numberOfPax } },
               });
             }
+
+            // Restore flight seats if flight booking
+            if (booking.flightId) {
+              await tx.flight.update({
+                where: { id: booking.flightId },
+                data: { availableSeats: { increment: booking.numberOfPax } },
+              });
+            }
+
+            // Cancel any associated invoice
+            await tx.invoice.updateMany({
+              where: { bookingId: id },
+              data: { status: 'cancelled' },
+            });
 
             return updated;
           });

@@ -263,6 +263,20 @@ export default function AdminBookingsPage() {
                               </button>
                             </>
                           )}
+
+                          {b.status === 'confirmed' && (
+                            <button
+                              disabled={processingId === b.id}
+                              onClick={() => {
+                                if (confirm(`Cancel confirmed booking ${b.bookingNumber}? Seats will be restored to flight schedule.`)) {
+                                  handleAction(b.id, 'cancelled');
+                                }
+                              }}
+                              className="px-3 py-1.5 border border-destructive/40 text-destructive hover:bg-destructive/10 font-bold rounded-lg text-xs transition disabled:opacity-50"
+                            >
+                              {processingId === b.id ? '...' : 'Cancel Booking'}
+                            </button>
+                          )}
                         </div>
                       </td>
                     </tr>
