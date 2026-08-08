@@ -1,7 +1,7 @@
 'use client';
 
 import { useState, useEffect } from 'react';
-import { Plane, Plus, Trash2, CheckCircle2, TrendingUp, X } from 'lucide-react';
+import { Plane, Plus, Trash2, CheckCircle2, TrendingUp, X, Edit, Ban, RotateCcw } from 'lucide-react';
 
 interface FareTier {
   upToSeat: number;
@@ -23,6 +23,7 @@ interface FlightItem {
   baggage: string | null;
   meal: boolean;
   category: string | null;
+  status: string;
 }
 
 interface CategoryItem {
@@ -36,6 +37,7 @@ export default function AdminFlightsPage() {
   const [activeCategory, setActiveCategory] = useState<string>('All Types');
   const [loading, setLoading] = useState(true);
   const [showModal, setShowModal] = useState(false);
+  const [editingFlightId, setEditingFlightId] = useState<string | null>(null);
   const [message, setMessage] = useState('');
   const [saving, setSaving] = useState(false);
 
@@ -107,6 +109,7 @@ export default function AdminFlightsPage() {
   };
 
   const resetForm = () => {
+    setEditingFlightId(null);
     setFlightNumber(''); setPnr(''); setAirline('');
     setDepartureCity(''); setArrivalCity('');
     setPricePerSeat(100000); setTotalSeats(200);
@@ -114,27 +117,53 @@ export default function AdminFlightsPage() {
     setBaggage('20 KG'); setMeal(false); setCategory('All Types');
   };
 
-  const handleAddFlight = async (e: React.FormEvent) => {
+  const handleOpenAddModal = () => {
+    resetForm();
+    setShowModal(true);
+  };
+
+  const handleEditFlight = (f: FlightItem) => {
+    setEditingFlightId(f.id);
+    setFlightNumber(f.flightNumber || '');
+    setPnr(f.pnr || '');
+    setAirline(f.airline || '');
+    setDepartureCity(f.departureCity || '');
+    setArrivalCity(f.arrivalCity || '');
+    setPricePerSeat(f.pricePerSeat || 100000);
+    setTotalSeats(f.totalSeats || 200);
+    setBaggage(f.baggage || '20 KG');
+    setMeal(!!f.meal);
+    setCategory(f.category || 'All Types');
+    setFareTiers(parseTiers(f.fareTiers));
+    setShowModal(true);
+  };
+
+  const handleSaveFlight = async (e: React.FormEvent) => {
     e.preventDefault();
     setSaving(true);
 
     try {
-      const res = await fetch('/api/flights', {
-        method: 'POST',
+      const isEdit = !!editingFlightId;
+      const url = '/api/flights';
+      const method = isEdit ? 'PUT' : 'POST';
+
+      const res = await fetch(url, {
+        method,
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({
+          ...(isEdit ? { id: editingFlightId } : {}),
           flightNumber, pnr, airline, departureCity, arrivalCity,
           departureTime: new Date().toISOString(),
           arrivalTime: new Date(Date.now() + 6 * 60 * 60 * 1000).toISOString(),
-          duration: 360, totalSeats, availableSeats: totalSeats, pricePerSeat,
-          fareTiers: fareTiers.length > 0 ? JSON.stringify(fareTiers) : undefined,
+          duration: 360, totalSeats, availableSeats: isEdit ? undefined : totalSeats, pricePerSeat,
+          fareTiers: fareTiers.length > 0 ? JSON.stringify(fareTiers) : null,
           baggage, meal, category,
         }),
       });
 
       if (res.ok) {
         setShowModal(false);
-        setMessage('Flight schedule added successfully!');
+        setMessage(isEdit ? 'Flight schedule updated successfully!' : 'Flight schedule added successfully!');
         resetForm();
         fetchData();
       }
@@ -146,8 +175,30 @@ export default function AdminFlightsPage() {
     }
   };
 
+  const handleToggleCancelFlight = async (f: FlightItem) => {
+    const newStatus = f.status === 'cancelled' ? 'active' : 'cancelled';
+    const actionText = newStatus === 'cancelled' ? 'Cancel' : 'Reactivate';
+    if (!confirm(`${actionText} flight ${f.flightNumber}?`)) return;
+
+    try {
+      const res = await fetch('/api/flights', {
+        method: 'PUT',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ id: f.id, status: newStatus }),
+      });
+
+      if (res.ok) {
+        setMessage(`Flight ${f.flightNumber} ${newStatus === 'cancelled' ? 'cancelled' : 'reactivated'}.`);
+        fetchData();
+      }
+    } catch (err) {
+      console.error(err);
+    }
+    setTimeout(() => setMessage(''), 3000);
+  };
+
   const handleDeleteFlight = async (id: string) => {
-    if (!confirm('Remove this flight from schedule?')) return;
+    if (!confirm('Permanently remove this flight from schedule?')) return;
 
     try {
       const res = await fetch(`/api/flights?id=${id}`, { method: 'DELETE' });
@@ -209,7 +260,7 @@ export default function AdminFlightsPage() {
           <h1 className="text-3xl font-black text-foreground tracking-tight">Flight Schedules</h1>
           <p className="text-muted-foreground mt-1">Manage airline ticket blocks, dynamic fare tiers, and flight categories</p>
         </div>
-        <button onClick={() => setShowModal(true)} className="px-5 py-2.5 bg-primary text-primary-foreground font-bold rounded-xl hover:bg-primary/90 transition shadow-md shadow-primary/20 inline-flex items-center gap-2 text-sm shrink-0">
+        <button onClick={handleOpenAddModal} className="px-5 py-2.5 bg-primary text-primary-foreground font-bold rounded-xl hover:bg-primary/90 transition shadow-md shadow-primary/20 inline-flex items-center gap-2 text-sm shrink-0">
           <Plus className="w-4 h-4" />
           <span>Add Flight</span>
         </button>
@@ -271,15 +322,15 @@ export default function AdminFlightsPage() {
         </form>
       </div>
 
-      {/* Add Flight Modal */}
+      {/* Add/Edit Flight Modal */}
       {showModal && (
         <div className="fixed inset-0 z-50 bg-black/50 backdrop-blur-sm flex items-center justify-center p-4">
           <div className="bg-card rounded-2xl border border-border p-6 sm:p-8 max-w-lg w-full space-y-6 shadow-2xl max-h-[90vh] overflow-y-auto">
             <div className="border-b border-border pb-4 flex justify-between items-center">
-              <h2 className="text-xl font-bold">Add Flight Schedule</h2>
+              <h2 className="text-xl font-bold">{editingFlightId ? 'Edit Flight Schedule' : 'Add Flight Schedule'}</h2>
               <button onClick={() => setShowModal(false)} className="text-muted-foreground hover:text-foreground font-bold">✕</button>
             </div>
-            <form onSubmit={handleAddFlight} className="space-y-4">
+            <form onSubmit={handleSaveFlight} className="space-y-4">
               {/* Flight # & PNR */}
               <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                 <div>
@@ -355,7 +406,7 @@ export default function AdminFlightsPage() {
                   </div>
                   <button type="button" onClick={addTier} className="text-xs font-bold text-primary hover:underline">+ Add Tier</button>
                 </div>
-                <p className="text-[11px] text-muted-foreground -mt-1">Define price tiers based on seats sold.</p>
+                <p className="text-[11px] text-muted-foreground -mt-1">Define price tiers based on seat numbers up to limit.</p>
 
                 {fareTiers.map((tier, idx) => (
                   <div key={idx} className="flex items-center gap-3 p-3 bg-muted/40 rounded-xl border border-border/60">
@@ -413,6 +464,7 @@ export default function AdminFlightsPage() {
             <table className="w-full text-left border-collapse text-sm">
               <thead>
                 <tr className="border-b border-border bg-muted/40 text-xs uppercase font-bold text-muted-foreground whitespace-nowrap">
+                  <th className="px-6 py-4">Status</th>
                   <th className="px-6 py-4">Flight #</th>
                   <th className="px-6 py-4">PNR</th>
                   <th className="px-6 py-4">Airline</th>
@@ -430,8 +482,17 @@ export default function AdminFlightsPage() {
                 {filteredFlights.map((f) => {
                   const tiers = parseTiers(f.fareTiers);
                   const seatsSold = f.totalSeats - f.availableSeats;
+                  const isCancelled = f.status === 'cancelled';
+
                   return (
-                    <tr key={f.id} className="border-b border-border/60 hover:bg-muted/20">
+                    <tr key={f.id} className={`border-b border-border/60 hover:bg-muted/20 ${isCancelled ? 'bg-red-500/5' : ''}`}>
+                      <td className="px-6 py-4 whitespace-nowrap">
+                        {isCancelled ? (
+                          <span className="px-2.5 py-1 bg-destructive/15 text-destructive border border-destructive/30 text-xs rounded-lg font-black uppercase">Cancelled</span>
+                        ) : (
+                          <span className="px-2.5 py-1 bg-emerald-500/15 text-emerald-600 dark:text-emerald-400 border border-emerald-500/30 text-xs rounded-lg font-black uppercase">Active</span>
+                        )}
+                      </td>
                       <td className="px-6 py-4 font-bold text-foreground font-mono whitespace-nowrap">{f.flightNumber}</td>
                       <td className="px-6 py-4 font-mono text-xs font-bold text-muted-foreground whitespace-nowrap">{f.pnr || '—'}</td>
                       <td className="px-6 py-4 font-bold text-foreground whitespace-nowrap">{f.airline}</td>
@@ -444,7 +505,7 @@ export default function AdminFlightsPage() {
                       <td className="px-6 py-4 text-foreground whitespace-nowrap">{f.baggage || '—'}</td>
                       <td className="px-6 py-4 text-foreground whitespace-nowrap">{f.meal ? 'Yes' : 'No'}</td>
                       <td className="px-6 py-4 text-foreground whitespace-nowrap">
-                        <span className="px-2.5 py-1 bg-slate-100 text-slate-700 text-xs rounded-lg font-bold">{f.category || 'None'}</span>
+                        <span className="px-2.5 py-1 bg-slate-100 dark:bg-slate-800 text-foreground text-xs rounded-lg font-bold">{f.category || 'None'}</span>
                       </td>
                       <td className="px-6 py-4 whitespace-nowrap">
                         <span className="font-black text-primary">PKR {f.currentFare?.toLocaleString()}</span>
@@ -465,8 +526,26 @@ export default function AdminFlightsPage() {
                           <span className="text-xs text-muted-foreground">Fixed</span>
                         )}
                       </td>
-                      <td className="px-6 py-4 text-right whitespace-nowrap">
-                        <button onClick={() => handleDeleteFlight(f.id)} className="p-2 text-destructive hover:bg-destructive/10 rounded-lg transition" title="Remove flight">
+                      <td className="px-6 py-4 text-right whitespace-nowrap space-x-1">
+                        <button 
+                          onClick={() => handleEditFlight(f)} 
+                          className="p-2 text-primary hover:bg-primary/10 rounded-lg transition" 
+                          title="Edit flight schedule"
+                        >
+                          <Edit className="w-4 h-4" />
+                        </button>
+                        <button 
+                          onClick={() => handleToggleCancelFlight(f)} 
+                          className={`p-2 rounded-lg transition ${isCancelled ? 'text-emerald-500 hover:bg-emerald-500/10' : 'text-amber-500 hover:bg-amber-500/10'}`} 
+                          title={isCancelled ? 'Reactivate flight' : 'Cancel flight'}
+                        >
+                          {isCancelled ? <RotateCcw className="w-4 h-4" /> : <Ban className="w-4 h-4" />}
+                        </button>
+                        <button 
+                          onClick={() => handleDeleteFlight(f.id)} 
+                          className="p-2 text-destructive hover:bg-destructive/10 rounded-lg transition" 
+                          title="Permanently remove flight"
+                        >
                           <Trash2 className="w-4 h-4" />
                         </button>
                       </td>

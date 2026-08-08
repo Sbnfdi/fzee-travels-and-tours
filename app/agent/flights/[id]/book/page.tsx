@@ -12,6 +12,7 @@ interface FlightItem {
   departureCity: string;
   arrivalCity: string;
   pricePerSeat: number;
+  currentFare: number;
   availableSeats: number;
 }
 
@@ -184,7 +185,14 @@ export default function BookFlightPage() {
           <div className="pt-6 border-t border-border flex items-center justify-between">
             <div>
               <span className="text-xs font-bold text-muted-foreground uppercase block">Total Amount</span>
-              <span className="text-3xl font-black text-primary">PKR {(flight.pricePerSeat * pax).toLocaleString()}</span>
+              <span className="text-3xl font-black text-primary">
+                PKR {((flight.currentFare || flight.pricePerSeat) * pax).toLocaleString()}
+              </span>
+              {flight.currentFare && flight.currentFare !== flight.pricePerSeat && (
+                <span className="text-[10px] text-muted-foreground block font-medium">
+                  Dynamic Tier Fare: PKR {flight.currentFare.toLocaleString()} / seat
+                </span>
+              )}
             </div>
             <button
               type="submit"

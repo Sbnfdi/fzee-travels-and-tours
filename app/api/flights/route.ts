@@ -24,11 +24,11 @@ const createFlightSchema = z.object({
 /**
  * Calculate the current dynamic fare based on how many seats are sold.
  * fareTiers is a JSON array of { upToSeat: number, price: number } sorted by upToSeat ascending.
- * "upToSeat" means: "for seats sold from previous tier up to this seat number, use this price".
+ * "upToSeat" means: "for seat numbers up to this limit, use this price".
  *
- * Example: totalSeats=100, availableSeats=85 => 15 seats sold
- * fareTiers: [{ upToSeat: 10, price: 100000 }, { upToSeat: 30, price: 120000 }, { upToSeat: 100, price: 150000 }]
- * => 15 seats sold falls in the 2nd tier (11-30), so current price = 120000
+ * Example: totalSeats=200, availableSeats=200 => 0 seats sold, next seat to buy is #1
+ * fareTiers: [{ upToSeat: 100, price: 90000 }, { upToSeat: 200, price: 120000 }]
+ * => nextSeatNumber (1) <= 100, so price = 90000
  */
 export function getCurrentFare(flight: { totalSeats: number; availableSeats: number; pricePerSeat: number; fareTiers?: string | null }): number {
   if (!flight.fareTiers) return flight.pricePerSeat;
@@ -38,17 +38,19 @@ export function getCurrentFare(flight: { totalSeats: number; availableSeats: num
     if (!Array.isArray(tiers) || tiers.length === 0) return flight.pricePerSeat;
 
     const seatsSold = flight.totalSeats - flight.availableSeats;
-    // Sort tiers by upToSeat ascending
-    tiers.sort((a, b) => a.upToSeat - b.upToSeat);
+    const nextSeatNumber = seatsSold + 1;
 
-    for (const tier of tiers) {
-      if (seatsSold < tier.upToSeat) {
+    // Sort tiers by upToSeat ascending
+    const sortedTiers = [...tiers].sort((a, b) => a.upToSeat - b.upToSeat);
+
+    for (const tier of sortedTiers) {
+      if (nextSeatNumber <= tier.upToSeat) {
         return tier.price;
       }
     }
 
     // If all tiers exceeded, use the last tier's price
-    return tiers[tiers.length - 1].price;
+    return sortedTiers[sortedTiers.length - 1].price;
   } catch {
     return flight.pricePerSeat;
   }
@@ -57,11 +59,8 @@ export function getCurrentFare(flight: { totalSeats: number; availableSeats: num
 export async function GET(req: NextRequest) {
   try {
     let flights = await prisma.flight.findMany({
-      where: { status: 'active' },
       orderBy: { departureTime: 'asc' },
     });
-
-
 
     // Attach current dynamic fare to each flight
     const flightsWithFare = flights.map((f: any) => ({
@@ -97,6 +96,57 @@ export async function POST(req: NextRequest) {
       return NextResponse.json({ error: 'Validation failed', details: error.issues }, { status: 400 });
     }
     return NextResponse.json({ error: 'Failed to create flight' }, { status: 500 });
+  }
+}
+
+const updateFlightSchema = z.object({
+  id: z.string(),
+  flightNumber: z.string().min(2).optional(),
+  pnr: z.string().optional(),
+  airline: z.string().min(2).optional(),
+  departureCity: z.string().min(2).optional(),
+  arrivalCity: z.string().min(2).optional(),
+  departureTime: z.string().optional(),
+  arrivalTime: z.string().optional(),
+  duration: z.number().positive().optional(),
+  totalSeats: z.number().positive().optional(),
+  availableSeats: z.number().nonnegative().optional(),
+  pricePerSeat: z.number().positive().optional(),
+  fareTiers: z.string().optional().nullable(),
+  aircraftType: z.string().optional(),
+  baggage: z.string().optional(),
+  meal: z.boolean().optional(),
+  category: z.string().optional(),
+  status: z.string().optional(),
+});
+
+export async function PUT(req: NextRequest) {
+  try {
+    const body = await req.json();
+    const data = updateFlightSchema.parse(body);
+    const { id, ...updateData } = data;
+
+    const existing = await prisma.flight.findUnique({ where: { id } });
+    if (!existing) {
+      return NextResponse.json({ error: 'Flight not found' }, { status: 404 });
+    }
+
+    const updatedData: any = { ...updateData };
+    if (updateData.departureTime) updatedData.departureTime = new Date(updateData.departureTime);
+    if (updateData.arrivalTime) updatedData.arrivalTime = new Date(updateData.arrivalTime);
+
+    const updated = await prisma.flight.update({
+      where: { id },
+      data: updatedData,
+    });
+
+    return NextResponse.json({ success: true, data: updated, flight: updated });
+  } catch (error) {
+    console.error('Flights API PUT error:', error);
+    if (error instanceof z.ZodError) {
+      return NextResponse.json({ error: 'Validation failed', details: error.issues }, { status: 400 });
+    }
+    return NextResponse.json({ error: 'Failed to update flight' }, { status: 500 });
   }
 }
 
