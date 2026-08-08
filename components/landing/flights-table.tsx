@@ -84,15 +84,15 @@ export function FlightsTable() {
           <div className="w-full">
             
             {/* Table Header - Hidden on Mobile */}
-            <div className="hidden md:flex bg-primary text-primary-foreground flex-wrap text-sm font-black uppercase py-4 px-6 tracking-widest border-b border-primary-foreground/20 shadow-md">
-              <div className="w-1/6">Date</div>
-              <div className="w-1/6">Sector</div>
-              <div className="w-1/6">Airline</div>
-              <div className="w-1/6">FLT No.</div>
-              <div className="w-[10%]">DEP</div>
-              <div className="w-[10%]">ARR</div>
-              <div className="w-1/6 text-center">FARE</div>
-              <div className="flex-1 text-center">BOOK</div>
+            <div className="hidden md:grid grid-cols-12 items-center bg-primary text-primary-foreground text-xs font-black uppercase py-4 px-6 tracking-widest border-b border-primary-foreground/20 shadow-md">
+              <div className="col-span-2">Date</div>
+              <div className="col-span-2">Sector</div>
+              <div className="col-span-2">Airline</div>
+              <div className="col-span-1">FLT No.</div>
+              <div className="col-span-1">DEP</div>
+              <div className="col-span-1">ARR</div>
+              <div className="col-span-2 text-center">Fare</div>
+              <div className="col-span-1 text-center">Book</div>
             </div>
 
             {/* Loading State */}
@@ -129,62 +129,74 @@ export function FlightsTable() {
                       const fareAmount = (flight.currentFare || flight.pricePerSeat).toLocaleString();
 
                       return (
-                        <div key={flight.id} className="flex flex-col md:flex-row md:items-center text-sm py-4 px-4 sm:px-6 hover:bg-muted/30 transition-colors duration-200 gap-4 md:gap-0 border-b border-border/60 last:border-b-0">
+                        <div key={flight.id} className="py-4 px-4 sm:px-6 hover:bg-muted/30 transition-colors duration-200 border-b border-border/60 last:border-b-0">
                           
-                          {/* Mobile Top Row: Sector, Date, Flt No */}
-                          <div className="flex justify-between items-center md:hidden border-b border-border pb-3">
-                            <div>
-                              <div className="text-[10px] text-muted-foreground uppercase tracking-widest mb-1">Sector</div>
-                              <div className="font-black text-foreground tracking-wide text-lg">{sectorStr}</div>
+                          {/* Mobile Layout */}
+                          <div className="md:hidden flex flex-col gap-3">
+                            <div className="flex justify-between items-center border-b border-border pb-3">
+                              <div>
+                                <div className="text-[10px] text-muted-foreground uppercase tracking-widest mb-1">Sector</div>
+                                <div className="font-black text-foreground tracking-wide text-lg">{sectorStr}</div>
+                              </div>
+                              <div className="text-center">
+                                <div className="text-[10px] text-muted-foreground uppercase tracking-widest mb-1">Date</div>
+                                <div className="font-medium text-foreground">{dateStr}</div>
+                              </div>
+                              <div className="text-right">
+                                <div className="text-[10px] text-muted-foreground uppercase tracking-widest mb-1">Flight</div>
+                                <div className="font-bold text-foreground font-mono">{flight.flightNumber}</div>
+                              </div>
                             </div>
-                            <div className="text-center">
-                              <div className="text-[10px] text-muted-foreground uppercase tracking-widest mb-1">Date</div>
-                              <div className="font-medium text-foreground">{dateStr}</div>
+
+                            <div className="flex justify-between items-center">
+                              <div className="flex items-center gap-6">
+                                <div className="text-center">
+                                  <div className="font-bold text-emerald-600 dark:text-emerald-400 drop-shadow-sm text-xl">{depTime}</div>
+                                </div>
+                                <Plane className="w-5 h-5 text-muted-foreground/40 rotate-45" />
+                                <div className="text-center">
+                                  <div className="font-bold text-rose-600 dark:text-rose-400 drop-shadow-sm text-xl">{arrTime}</div>
+                                </div>
+                              </div>
+                              <div className="text-right">
+                                <div className="text-[10px] text-muted-foreground uppercase tracking-widest mb-1">Fare</div>
+                                <div className="font-black text-xl text-primary">Rs {fareAmount}</div>
+                              </div>
                             </div>
-                            <div className="text-right">
-                              <div className="text-[10px] text-muted-foreground uppercase tracking-widest mb-1">Flight</div>
-                              <div className="font-bold text-foreground font-mono">{flight.flightNumber}</div>
+
+                            <div className="w-full mt-2">
+                              {isAvailable ? (
+                                <Link href="/login" className="px-5 py-2.5 bg-primary text-primary-foreground text-xs font-black rounded-xl shadow-md hover:bg-primary/90 transition-all block text-center uppercase tracking-wider">
+                                  Book Now
+                                </Link>
+                              ) : (
+                                <span className="px-5 py-2.5 bg-muted text-muted-foreground border border-border text-xs font-bold rounded-xl block text-center cursor-not-allowed uppercase tracking-wider">
+                                  Sold Out
+                                </span>
+                              )}
                             </div>
                           </div>
 
                           {/* Desktop Grid Columns */}
-                          <div className="hidden md:block w-1/6 font-medium text-foreground">{dateStr}</div>
-                          <div className="hidden md:block w-1/6 font-black text-foreground tracking-wide">{sectorStr}</div>
-                          <div className="hidden md:block w-1/6 text-muted-foreground font-semibold uppercase tracking-wider">{airline}</div>
-                          <div className="hidden md:block w-1/6 font-bold text-foreground font-mono">{flight.flightNumber}</div>
-                          
-                          {/* Mobile & Desktop: DEP / ARR / FARE */}
-                          <div className="flex justify-between items-center md:hidden">
-                            <div className="flex items-center gap-6">
-                              <div className="text-center">
-                                <div className="font-bold text-emerald-600 dark:text-emerald-400 drop-shadow-sm text-xl">{depTime}</div>
-                              </div>
-                              <Plane className="w-5 h-5 text-muted-foreground/40 rotate-45" />
-                              <div className="text-center">
-                                <div className="font-bold text-rose-600 dark:text-rose-400 drop-shadow-sm text-xl">{arrTime}</div>
-                              </div>
+                          <div className="hidden md:grid grid-cols-12 items-center text-sm">
+                            <div className="col-span-2 font-medium text-foreground">{dateStr}</div>
+                            <div className="col-span-2 font-black text-foreground tracking-wide">{sectorStr}</div>
+                            <div className="col-span-2 text-muted-foreground font-semibold uppercase tracking-wider">{airline}</div>
+                            <div className="col-span-1 font-bold text-foreground font-mono">{flight.flightNumber}</div>
+                            <div className="col-span-1 font-bold text-emerald-600 dark:text-emerald-400">{depTime}</div>
+                            <div className="col-span-1 font-bold text-rose-600 dark:text-rose-400">{arrTime}</div>
+                            <div className="col-span-2 text-center font-black text-base text-primary">Rs {fareAmount}</div>
+                            <div className="col-span-1 flex justify-center">
+                              {isAvailable ? (
+                                <Link href="/login" className="px-4 py-2 bg-primary text-primary-foreground text-xs font-black rounded-xl shadow-md hover:bg-primary/90 transition-all block text-center uppercase tracking-wider">
+                                  Book
+                                </Link>
+                              ) : (
+                                <span className="px-3 py-2 bg-muted text-muted-foreground text-xs font-bold rounded-xl border border-border uppercase tracking-wider">
+                                  Sold Out
+                                </span>
+                              )}
                             </div>
-                            <div className="text-right">
-                              <div className="text-[10px] text-muted-foreground uppercase tracking-widest mb-1">Fare</div>
-                              <div className="font-black text-xl text-primary">Rs {fareAmount}</div>
-                            </div>
-                          </div>
-
-                          <div className="hidden md:block w-[10%] font-bold text-emerald-600 dark:text-emerald-400">{depTime}</div>
-                          <div className="hidden md:block w-[10%] font-bold text-rose-600 dark:text-rose-400">{arrTime}</div>
-                          <div className="hidden md:block w-1/6 text-center font-black text-lg text-primary">Rs {fareAmount}</div>
-                          
-                          {/* Mobile & Desktop: Book Button */}
-                          <div className="w-full md:flex-1 flex justify-center mt-2 md:mt-0">
-                            {isAvailable ? (
-                              <Link href="/login" className="px-5 py-2.5 bg-primary text-primary-foreground text-xs font-black rounded-xl shadow-md hover:shadow-primary/30 hover:bg-primary/90 transition-all block text-center w-full md:max-w-[120px] uppercase tracking-wider">
-                                Book Now
-                              </Link>
-                            ) : (
-                              <span className="px-5 py-2.5 bg-muted text-muted-foreground border border-border text-xs font-bold rounded-xl block text-center w-full md:max-w-[120px] cursor-not-allowed uppercase tracking-wider">
-                                Sold Out
-                              </span>
-                            )}
                           </div>
 
                         </div>

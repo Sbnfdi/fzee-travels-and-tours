@@ -27,7 +27,9 @@ export default function BookFlightPage() {
   const [loading, setLoading] = useState(true);
   
   const [pax, setPax] = useState(1);
-  const [passengers, setPassengers] = useState([{ name: '', passport: '' }]);
+  const [passengers, setPassengers] = useState([
+    { name: '', passportNumber: '', passportExpiry: '', dob: '' }
+  ]);
   const [submitting, setSubmitting] = useState(false);
   const [error, setError] = useState('');
   const [success, setSuccess] = useState('');
@@ -89,7 +91,7 @@ export default function BookFlightPage() {
     
     setPassengers(prev => {
       if (newPax > prev.length) {
-        return [...prev, ...Array(newPax - prev.length).fill({ name: '', passport: '' })];
+        return [...prev, ...Array(newPax - prev.length).fill({ name: '', passportNumber: '', passportExpiry: '', dob: '' })];
       } else {
         return prev.slice(0, newPax);
       }
@@ -104,8 +106,14 @@ export default function BookFlightPage() {
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    if (passengers.some(p => !p.name)) {
-      setError('Please provide names for all passengers.');
+
+    // Check mandatory fields
+    const missing = passengers.some(
+      p => !p.name?.trim() || !p.passportNumber?.trim() || !p.passportExpiry || !p.dob
+    );
+
+    if (missing) {
+      setError('All passenger details (Full Name, Passport Number, Passport Expiry, and Date of Birth) are mandatory for all passengers.');
       return;
     }
 
@@ -189,29 +197,62 @@ export default function BookFlightPage() {
           </div>
 
           <div className="space-y-4">
-            <h3 className="font-bold text-lg border-b border-border pb-2">Passenger Manifest</h3>
+            <div className="flex items-center justify-between border-b border-border pb-2">
+              <h3 className="font-bold text-lg">Passenger Manifest</h3>
+              <span className="text-xs font-bold text-destructive">* All passenger fields mandatory</span>
+            </div>
+
             {passengers.map((p, idx) => (
-              <div key={idx} className="grid grid-cols-2 gap-4 p-4 bg-background border border-border rounded-xl">
-                <div>
-                  <label className="block text-xs font-bold text-muted-foreground mb-1">Passenger {idx + 1} Name</label>
-                  <input
-                    type="text"
-                    required
-                    value={p.name}
-                    onChange={(e) => handlePassengerChange(idx, 'name', e.target.value)}
-                    className="w-full px-3 py-2 rounded-lg border border-input bg-card text-sm focus:outline-none focus:ring-2 focus:ring-primary/50"
-                    placeholder="Full Name as on Passport"
-                  />
+              <div key={idx} className="p-5 bg-background border border-border rounded-2xl space-y-4 shadow-sm">
+                <div className="font-black text-sm text-primary uppercase tracking-wider">
+                  Passenger {idx + 1}
                 </div>
-                <div>
-                  <label className="block text-xs font-bold text-muted-foreground mb-1">Passport Number (Optional)</label>
-                  <input
-                    type="text"
-                    value={p.passport}
-                    onChange={(e) => handlePassengerChange(idx, 'passport', e.target.value)}
-                    className="w-full px-3 py-2 rounded-lg border border-input bg-card text-sm focus:outline-none focus:ring-2 focus:ring-primary/50"
-                    placeholder="e.g. AB123456"
-                  />
+                <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                  <div>
+                    <label className="block text-xs font-bold text-muted-foreground mb-1.5 uppercase">Full Name *</label>
+                    <input
+                      type="text"
+                      required
+                      value={p.name}
+                      onChange={(e) => handlePassengerChange(idx, 'name', e.target.value)}
+                      className="w-full px-3.5 py-2.5 rounded-xl border border-input bg-card text-foreground text-sm focus:outline-none focus:ring-2 focus:ring-primary/50"
+                      placeholder="Full Name as on Passport"
+                    />
+                  </div>
+
+                  <div>
+                    <label className="block text-xs font-bold text-muted-foreground mb-1.5 uppercase">Passport Number *</label>
+                    <input
+                      type="text"
+                      required
+                      value={p.passportNumber}
+                      onChange={(e) => handlePassengerChange(idx, 'passportNumber', e.target.value.toUpperCase())}
+                      className="w-full px-3.5 py-2.5 rounded-xl border border-input bg-card text-foreground text-sm font-mono focus:outline-none focus:ring-2 focus:ring-primary/50"
+                      placeholder="e.g. AB1234567"
+                    />
+                  </div>
+
+                  <div>
+                    <label className="block text-xs font-bold text-muted-foreground mb-1.5 uppercase">Passport Expiry Date *</label>
+                    <input
+                      type="date"
+                      required
+                      value={p.passportExpiry}
+                      onChange={(e) => handlePassengerChange(idx, 'passportExpiry', e.target.value)}
+                      className="w-full px-3.5 py-2.5 rounded-xl border border-input bg-card text-foreground text-sm focus:outline-none focus:ring-2 focus:ring-primary/50"
+                    />
+                  </div>
+
+                  <div>
+                    <label className="block text-xs font-bold text-muted-foreground mb-1.5 uppercase">Date of Birth *</label>
+                    <input
+                      type="date"
+                      required
+                      value={p.dob}
+                      onChange={(e) => handlePassengerChange(idx, 'dob', e.target.value)}
+                      className="w-full px-3.5 py-2.5 rounded-xl border border-input bg-card text-foreground text-sm focus:outline-none focus:ring-2 focus:ring-primary/50"
+                    />
+                  </div>
                 </div>
               </div>
             ))}

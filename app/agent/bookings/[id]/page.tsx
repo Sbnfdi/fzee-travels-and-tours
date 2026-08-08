@@ -13,7 +13,7 @@ interface BookingDetail {
   numberOfPax: number;
   totalAmount: number;
   status: string;
-  passengerDetails: { seatNumber?: string; seat?: string; title?: string; name?: string; fullName?: string; email?: string; phone?: string; passport?: string; cnic?: string; gender?: string; age?: number }[];
+  passengerDetails: { seatNumber?: string; seat?: string; title?: string; name?: string; fullName?: string; email?: string; phone?: string; passport?: string; passportNumber?: string; passportExpiry?: string; dob?: string; cnic?: string; gender?: string; age?: number }[];
   specialRequests?: string;
   createdAt: string;
   group: any;
@@ -227,37 +227,34 @@ export default function BookingDetailPage() {
 
           {/* Passenger List */}
           <div className="space-y-4">
-            <h2 className="text-lg font-bold text-foreground">Passenger & Seat Manifest</h2>
+            <h2 className="text-lg font-bold text-foreground">Passenger Manifest</h2>
             <div className="border border-border rounded-xl divide-y divide-border/60">
               {booking.passengerDetails.map((p, idx) => {
-                const seatNo = p.seatNumber || p.seat || `Seat ${idx + 1}`;
-                const titleStr = p.title ? `${p.title} ` : '';
-                const fullName = titleStr + (p.name || p.fullName || `Passenger ${idx + 1}`);
-                const docStr = p.passport || p.cnic;
+                const fullName = p.name || p.fullName || `Passenger ${idx + 1}`;
+                const passportNum = p.passportNumber || p.passport || 'N/A';
+                const expiry = p.passportExpiry || 'N/A';
+                const dob = p.dob || 'N/A';
 
                 return (
                   <div key={idx} className="p-4 flex flex-col sm:flex-row sm:items-center justify-between gap-3">
                     <div className="flex items-center gap-3">
-                      <span className="px-2.5 py-1 bg-primary/10 text-primary font-black rounded-lg text-xs border border-primary/20 shrink-0">
-                        {seatNo}
+                      <span className="w-8 h-8 rounded-full bg-primary/10 text-primary font-black text-xs flex items-center justify-center border border-primary/20 shrink-0">
+                        {idx + 1}
                       </span>
                       <div>
-                        <span className="font-bold text-foreground block">{fullName}</span>
-                        {(p.email || p.phone) && (
-                          <span className="text-xs text-muted-foreground font-medium mt-0.5 block">
-                            {p.email} {p.email && p.phone && '•'} {p.phone}
-                          </span>
-                        )}
+                        <span className="font-bold text-foreground block text-sm">{fullName}</span>
+                        <span className="text-xs font-mono font-bold text-primary block mt-0.5">
+                          Passport: {passportNum}
+                        </span>
                       </div>
                     </div>
-                    <div className="flex items-center gap-2">
-                      {p.gender && (
-                        <span className="text-xs font-semibold text-muted-foreground bg-muted px-2.5 py-1 rounded-full">
-                          {p.gender} {p.age ? `(${p.age} yrs)` : ''}
-                        </span>
-                      )}
-                      <span className="text-xs font-mono font-semibold text-muted-foreground bg-muted px-3 py-1 rounded-full">
-                        {docStr ? `Doc: ${docStr}` : `PAX Record #${idx + 1}`}
+
+                    <div className="flex items-center gap-3 text-xs text-muted-foreground font-semibold">
+                      <span className="bg-muted px-3 py-1 rounded-lg border border-border/60">
+                        Expiry: <strong className="text-foreground">{expiry}</strong>
+                      </span>
+                      <span className="bg-muted px-3 py-1 rounded-lg border border-border/60">
+                        DOB: <strong className="text-foreground">{dob}</strong>
                       </span>
                     </div>
                   </div>

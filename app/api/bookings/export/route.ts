@@ -45,7 +45,8 @@ export const GET = withAuth(async (req: NextRequest) => {
       { header: 'Booking Type', key: 'bookingType', width: 14 },
       { header: 'Agency Name', key: 'agencyName', width: 25 },
       { header: 'Agent Name', key: 'agentName', width: 22 },
-      { header: 'Item / Package Name', key: 'itemName', width: 30 },
+      { header: 'Item / Package Name', key: 'itemName', width: 28 },
+      { header: 'Passenger Details (Name, Passport #, Expiry, DOB)', key: 'paxDetails', width: 50 },
       { header: 'PAX Count', key: 'numberOfPax', width: 12 },
       { header: 'Total Amount (PKR)', key: 'totalAmount', width: 20 },
       { header: 'Commission (PKR)', key: 'commission', width: 18 },
@@ -73,12 +74,21 @@ export const GET = withAuth(async (req: NextRequest) => {
       if (b.bookingType === 'HOTEL') itemName = b.hotel?.name || 'Hotel';
       if (b.bookingType === 'VISA') itemName = b.visa?.country ? `${b.visa.country} Visa` : 'Visa';
 
+      let paxSummary = 'N/A';
+      try {
+        const pList = typeof b.passengerDetails === 'string' ? JSON.parse(b.passengerDetails) : b.passengerDetails;
+        if (Array.isArray(pList) && pList.length > 0) {
+          paxSummary = pList.map((p: any) => `${p.name || 'PAX'} (P#: ${p.passportNumber || p.passport || 'N/A'}, Exp: ${p.passportExpiry || 'N/A'}, DOB: ${p.dob || 'N/A'})`).join('; ');
+        }
+      } catch (e) {}
+
       const row = worksheet.addRow({
         bookingNumber: b.bookingNumber,
         bookingType: b.bookingType,
         agencyName: b.agency?.businessName || 'N/A',
         agentName: b.agent?.user?.name || 'N/A',
         itemName: itemName,
+        paxDetails: paxSummary,
         numberOfPax: b.numberOfPax,
         totalAmount: b.totalAmount,
         commission: b.commission || 0,

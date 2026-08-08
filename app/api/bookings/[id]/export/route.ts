@@ -74,13 +74,13 @@ export const GET = withAuth(async (req: NextRequest, { params }: any) => {
     // Setup Columns
     sheet.columns = [
       { width: 8 },   // A: #
-      { width: 14 },  // B: Seat #
-      { width: 10 },  // C: Title
-      { width: 28 },  // D: Full Name
-      { width: 15 },  // E: Gender/Type
-      { width: 22 },  // F: Passport/CNIC
-      { width: 28 },  // G: Contact Details
-      { width: 25 },  // H: Special Notes
+      { width: 28 },  // B: Full Name
+      { width: 22 },  // C: Passport Number
+      { width: 20 },  // D: Passport Expiry
+      { width: 20 },  // E: Date of Birth
+      { width: 25 },  // F: Special Instructions
+      { width: 12 },  // G: Blank
+      { width: 12 },  // H: Blank
     ];
 
     // Colors
@@ -205,13 +205,13 @@ export const GET = withAuth(async (req: NextRequest, { params }: any) => {
     // Table Headers
     const tableHeader = sheet.addRow([
       'S.#',
-      'Seat #',
-      'Title',
       'Passenger Full Name',
-      'Gender / Age',
-      'Passport / CNIC',
-      'Contact Details',
+      'Passport Number',
+      'Passport Expiry',
+      'Date of Birth',
       'Special Requests',
+      '',
+      '',
     ]);
     tableHeader.height = 24;
     tableHeader.eachCell((cell) => {
@@ -223,53 +223,42 @@ export const GET = withAuth(async (req: NextRequest, { params }: any) => {
 
     // Populate Passengers
     if (passengers.length === 0) {
-      // If no explicit passenger array, populate placeholder rows based on pax count
       for (let i = 1; i <= booking.numberOfPax; i++) {
         passengers.push({
-          seatNumber: `Seat ${i}`,
-          title: 'Mr',
           name: `Passenger ${i}`,
-          gender: 'N/A',
-          passport: 'N/A',
-          phone: '',
-          email: '',
+          passportNumber: 'N/A',
+          passportExpiry: 'N/A',
+          dob: 'N/A',
         });
       }
     }
 
     passengers.forEach((p: any, idx: number) => {
-      const seatNo = p.seatNumber || p.seat || `Seat ${idx + 1}`;
-      const title = p.title || 'Mr/Ms';
       const fullName = p.name || p.fullName || `Passenger ${idx + 1}`;
-      const gender = p.gender ? `${p.gender}${p.age ? ` (${p.age} yrs)` : ''}` : (p.type || 'Adult');
-      const doc = p.passport || p.cnic || 'N/A';
-      const contact = [p.phone, p.email].filter(Boolean).join(' | ') || 'N/A';
+      const passportNum = p.passportNumber || p.passport || 'N/A';
+      const passportExp = p.passportExpiry || 'N/A';
+      const dobStr = p.dob || 'N/A';
       const notes = p.notes || p.specialRequests || booking.specialRequests || '-';
 
       const pRow = sheet.addRow([
         idx + 1,
-        seatNo,
-        title,
         fullName,
-        gender,
-        doc,
-        contact,
+        passportNum,
+        passportExp,
+        dobStr,
         notes,
+        '',
+        '',
       ]);
       pRow.height = 20;
 
       pRow.eachCell((cell, colNumber) => {
         cell.font = { size: 10 };
         cell.border = THIN_BORDER;
-        cell.alignment = colNumber === 1 || colNumber === 2 || colNumber === 3
+        cell.alignment = colNumber === 1 || colNumber === 3 || colNumber === 4 || colNumber === 5
           ? { horizontal: 'center', vertical: 'middle' }
           : { horizontal: 'left', vertical: 'middle' };
       });
-
-      // Highlight Seat Column
-      const seatCell = pRow.getCell(2);
-      seatCell.font = { bold: true, color: { argb: '1E3A8A' } };
-      seatCell.fill = MUTE_FILL;
     });
 
     sheet.addRow([]); // Empty row

@@ -405,34 +405,28 @@ export default function AdminBookingDetailPage() {
               <thead>
                 <tr className="border-b border-border bg-muted/40 text-xs font-bold text-muted-foreground uppercase">
                   <th className="px-4 py-3 text-center">#</th>
-                  <th className="px-4 py-3">Seat #</th>
-                  <th className="px-4 py-3">Title & Name</th>
-                  <th className="px-4 py-3">Gender / Age</th>
-                  <th className="px-4 py-3">Passport / CNIC</th>
-                  <th className="px-4 py-3">Contact</th>
+                  <th className="px-4 py-3">Passenger Name</th>
+                  <th className="px-4 py-3">Passport #</th>
+                  <th className="px-4 py-3">Passport Expiry</th>
+                  <th className="px-4 py-3">Date of Birth</th>
                 </tr>
               </thead>
               <tbody className="divide-y divide-border/60">
                 {passengers.length > 0 ? (
-                  passengers.map((p, idx) => (
+                  passengers.map((p: any, idx: number) => (
                     <tr key={idx} className="hover:bg-muted/20">
                       <td className="px-4 py-3 text-center font-bold text-muted-foreground">{idx + 1}</td>
-                      <td className="px-4 py-3">
-                        <span className="px-2.5 py-1 bg-primary/10 text-primary font-black rounded-md text-xs border border-primary/20">
-                          {p.seatNumber || p.seat || `Seat ${idx + 1}`}
-                        </span>
-                      </td>
                       <td className="px-4 py-3 font-bold text-foreground">
-                        {p.title ? `${p.title} ` : ''}{p.name || p.fullName || `Passenger ${idx + 1}`}
+                        {p.name || p.fullName || `Passenger ${idx + 1}`}
+                      </td>
+                      <td className="px-4 py-3 font-mono text-xs text-primary font-bold">
+                        {p.passportNumber || p.passport || 'N/A'}
                       </td>
                       <td className="px-4 py-3 text-muted-foreground font-medium">
-                        {p.gender || 'N/A'} {p.age ? `(${p.age} yrs)` : ''}
+                        {p.passportExpiry || 'N/A'}
                       </td>
-                      <td className="px-4 py-3 font-mono text-xs text-foreground font-semibold">
-                        {p.passport || p.cnic || 'N/A'}
-                      </td>
-                      <td className="px-4 py-3 text-xs text-muted-foreground">
-                        {[p.phone, p.email].filter(Boolean).join(' • ') || 'N/A'}
+                      <td className="px-4 py-3 text-muted-foreground font-medium">
+                        {p.dob || 'N/A'}
                       </td>
                     </tr>
                   ))
@@ -440,15 +434,10 @@ export default function AdminBookingDetailPage() {
                   Array.from({ length: booking.numberOfPax }).map((_, idx) => (
                     <tr key={idx} className="hover:bg-muted/20">
                       <td className="px-4 py-3 text-center font-bold text-muted-foreground">{idx + 1}</td>
-                      <td className="px-4 py-3">
-                        <span className="px-2.5 py-1 bg-primary/10 text-primary font-black rounded-md text-xs border border-primary/20">
-                          Seat {idx + 1}
-                        </span>
-                      </td>
                       <td className="px-4 py-3 font-bold text-foreground">Passenger {idx + 1}</td>
-                      <td className="px-4 py-3 text-muted-foreground font-medium">Adult</td>
                       <td className="px-4 py-3 font-mono text-xs text-foreground font-semibold">N/A</td>
-                      <td className="px-4 py-3 text-xs text-muted-foreground">N/A</td>
+                      <td className="px-4 py-3 text-muted-foreground font-medium">N/A</td>
+                      <td className="px-4 py-3 text-muted-foreground font-medium">N/A</td>
                     </tr>
                   ))
                 )}

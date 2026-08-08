@@ -15,6 +15,8 @@ interface FlightItem {
   airline: string;
   departureCity: string;
   arrivalCity: string;
+  departureTime: string;
+  arrivalTime: string;
   pricePerSeat: number;
   currentFare: number;
   totalSeats: number;
@@ -53,6 +55,10 @@ export default function AdminFlightsPage() {
   const [arrivalCity, setArrivalCity] = useState('');
   const [pricePerSeat, setPricePerSeat] = useState(100000);
   const [totalSeats, setTotalSeats] = useState(200);
+
+  // Date & Time fields
+  const [departureTime, setDepartureTime] = useState('');
+  const [arrivalTime, setArrivalTime] = useState('');
 
   // Additional fields
   const [baggage, setBaggage] = useState('20 KG');
@@ -113,6 +119,13 @@ export default function AdminFlightsPage() {
     setFlightNumber(''); setPnr(''); setAirline('');
     setDepartureCity(''); setArrivalCity('');
     setPricePerSeat(100000); setTotalSeats(200);
+
+    const now = new Date();
+    const depDefault = new Date(now.getTime() + 24 * 60 * 60 * 1000).toISOString().slice(0, 16);
+    const arrDefault = new Date(now.getTime() + (24 + 5) * 60 * 60 * 1000).toISOString().slice(0, 16);
+    setDepartureTime(depDefault);
+    setArrivalTime(arrDefault);
+
     setFareTiers([{ upToSeat: 100, price: 90000 }, { upToSeat: 200, price: 120000 }]);
     setBaggage('20 KG'); setMeal(false); setCategory('All Types');
   };
@@ -129,6 +142,8 @@ export default function AdminFlightsPage() {
     setAirline(f.airline || '');
     setDepartureCity(f.departureCity || '');
     setArrivalCity(f.arrivalCity || '');
+    setDepartureTime(f.departureTime ? new Date(f.departureTime).toISOString().slice(0, 16) : '');
+    setArrivalTime(f.arrivalTime ? new Date(f.arrivalTime).toISOString().slice(0, 16) : '');
     setPricePerSeat(f.pricePerSeat || 100000);
     setTotalSeats(f.totalSeats || 200);
     setBaggage(f.baggage || '20 KG');
@@ -147,14 +162,17 @@ export default function AdminFlightsPage() {
       const url = '/api/flights';
       const method = isEdit ? 'PUT' : 'POST';
 
+      const depDate = departureTime ? new Date(departureTime).toISOString() : new Date().toISOString();
+      const arrDate = arrivalTime ? new Date(arrivalTime).toISOString() : new Date(Date.now() + 6 * 60 * 60 * 1000).toISOString();
+
       const res = await fetch(url, {
         method,
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({
           ...(isEdit ? { id: editingFlightId } : {}),
           flightNumber, pnr, airline, departureCity, arrivalCity,
-          departureTime: new Date().toISOString(),
-          arrivalTime: new Date(Date.now() + 6 * 60 * 60 * 1000).toISOString(),
+          departureTime: depDate,
+          arrivalTime: arrDate,
           duration: 360, totalSeats, availableSeats: isEdit ? undefined : totalSeats, pricePerSeat,
           fareTiers: fareTiers.length > 0 ? JSON.stringify(fareTiers) : null,
           baggage, meal, category,
@@ -358,6 +376,30 @@ export default function AdminFlightsPage() {
                 <div>
                   <label className="block text-xs font-bold uppercase tracking-wider text-foreground mb-1.5">To</label>
                   <input type="text" value={arrivalCity} onChange={(e) => setArrivalCity(e.target.value)} placeholder="Jeddah" className="w-full px-4 py-3 rounded-xl border border-input bg-background text-foreground text-sm focus:outline-none focus:ring-2 focus:ring-primary/50" required />
+                </div>
+              </div>
+
+              {/* Date & Time */}
+              <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                <div>
+                  <label className="block text-xs font-bold uppercase tracking-wider text-foreground mb-1.5">Departure Date & Time</label>
+                  <input
+                    type="datetime-local"
+                    value={departureTime}
+                    onChange={(e) => setDepartureTime(e.target.value)}
+                    className="w-full px-4 py-3 rounded-xl border border-input bg-background text-foreground text-sm focus:outline-none focus:ring-2 focus:ring-primary/50 font-medium"
+                    required
+                  />
+                </div>
+                <div>
+                  <label className="block text-xs font-bold uppercase tracking-wider text-foreground mb-1.5">Arrival Date & Time</label>
+                  <input
+                    type="datetime-local"
+                    value={arrivalTime}
+                    onChange={(e) => setArrivalTime(e.target.value)}
+                    className="w-full px-4 py-3 rounded-xl border border-input bg-background text-foreground text-sm focus:outline-none focus:ring-2 focus:ring-primary/50 font-medium"
+                    required
+                  />
                 </div>
               </div>
 
