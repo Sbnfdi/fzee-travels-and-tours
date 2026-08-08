@@ -13,17 +13,17 @@ export function Hero() {
     {
       name: 'Baku',
       subtext: 'Group Packages',
-      image: 'https://images.unsplash.com/photo-1541872703-74c5e44368f9?auto=format&fit=crop&w=600&q=80',
+      image: '/destinations/baku.png',
     },
     {
       name: 'Muscat',
       subtext: 'Group Fares',
-      image: 'https://images.unsplash.com/photo-1549944811-c148c6897799?auto=format&fit=crop&w=600&q=80',
+      image: '/destinations/muscat.png',
     },
     {
       name: 'Qatar',
       subtext: 'Group Seats',
-      image: 'https://images.unsplash.com/photo-1568605117036-5fe5e7bab0b7?auto=format&fit=crop&w=600&q=80',
+      image: '/destinations/qatar.png',
     },
     {
       name: 'UK',
@@ -38,7 +38,7 @@ export function Hero() {
     {
       name: 'Saudi Arabia',
       subtext: 'Hajj & Umrah',
-      image: 'https://images.unsplash.com/photo-1565552645632-d725f8bfc19a?auto=format&fit=crop&w=600&q=80',
+      image: '/destinations/saudi.png',
     },
   ];
 
