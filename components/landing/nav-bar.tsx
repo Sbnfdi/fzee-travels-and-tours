@@ -15,7 +15,7 @@ export function NavBar() {
           <Link href="/" className="flex items-center gap-2 group">
             <div className="flex flex-col">
               <span className="text-3xl font-black text-white leading-none tracking-tight drop-shadow-md transition-colors group-hover:text-primary">fzee</span>
-              <span className="text-[10px] uppercase font-bold text-white/70 tracking-widest mt-1">Travels & Tours</span>
+              <span className="text-[10px] uppercase font-bold text-white/70 tracking-widest mt-1">Travel & Tours</span>
             </div>
           </Link>
 

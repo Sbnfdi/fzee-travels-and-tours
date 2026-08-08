@@ -48,7 +48,7 @@ export function Hero() {
           <h1 className="text-5xl md:text-7xl font-black uppercase tracking-tight md:tracking-widest drop-shadow-2xl mb-6">
             <span className="text-white">Welcome To B2B Portal Of</span>
             <span className="block mt-2 bg-gradient-to-r from-primary via-amber-400 to-primary bg-clip-text text-transparent animate-gradient-x bg-[length:200%_auto]">
-              Fzee Travels & Tours
+              Fzee Travel & Tours
             </span>
           </h1>
           

@@ -104,7 +104,7 @@ export default function DashboardPage() {
       {/* Header */}
       <div className="border-b border-white/10 pb-6">
         <h1 className="text-3xl font-black text-white tracking-tight">Admin Overview</h1>
-        <p className="text-white/60 mt-1">Fzee Travels & Tours Enterprise Control Center</p>
+        <p className="text-white/60 mt-1">Fzee Travel & Tours Enterprise Control Center</p>
       </div>
 
       {/* Stats Grid */}

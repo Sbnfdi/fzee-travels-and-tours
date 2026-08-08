@@ -13,7 +13,7 @@ export function CTA() {
 
           <div className="space-y-4 max-w-3xl mx-auto relative z-10">
             <h2 className="text-3xl sm:text-4xl md:text-5xl font-black text-foreground tracking-tight leading-tight">
-              Start Growing Your Agency Today with <span className="text-primary">Fzee Travels & Tours</span>
+              Start Growing Your Agency Today with <span className="text-primary">Fzee Travel & Tours</span>
             </h2>
             <p className="text-base sm:text-lg text-muted-foreground">
               Register your agency for free in less than 2 minutes and gain instant access to B2B inventories, bookings, and automated agent tools.

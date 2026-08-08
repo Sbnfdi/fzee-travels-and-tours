@@ -17,12 +17,12 @@ export function Footer() {
               </div>
               <div className="flex flex-col">
                 <span className="leading-none text-white font-black text-2xl tracking-tight">FZEE</span>
-                <span className="text-[11px] tracking-widest uppercase text-primary font-extrabold">Travels & Tours</span>
+                <span className="text-[11px] tracking-widest uppercase text-primary font-extrabold">Travel & Tours</span>
               </div>
             </Link>
             <div className="space-y-3 text-sm text-white/70 leading-relaxed font-medium">
               <p>
-                Established in 2012, Fzee Travels & Tours is a premier B2B travel management company empowering travel agents across Pakistan with exclusive deals and seamless booking technology.
+                Established in 2012, Fzee Travel & Tours is a premier B2B travel management company empowering travel agents across Pakistan with exclusive deals and seamless booking technology.
               </p>
               <ul className="space-y-2 pt-2 text-xs">
                 <li className="flex items-center gap-2"><CheckCircle2 className="w-4 h-4 text-primary" /> IATA Accredited Agent</li>
@@ -109,8 +109,8 @@ export function Footer() {
 
         {/* Bottom Bar */}
         <div className="pt-8 border-t border-white/10 flex flex-col md:flex-row justify-between items-center gap-4">
-          <p className="text-white/50 text-xs font-medium">
-            &copy; {new Date().getFullYear()} Fzee Travels & Tours. All rights reserved.
+          <p className="text-sm font-semibold text-white/50">
+            &copy; {new Date().getFullYear()} Fzee Travel & Tours. All rights reserved.
           </p>
           <div className="flex gap-6">
             <Link href="#" className="text-white/50 hover:text-white text-xs font-medium transition-colors">Privacy Policy</Link>

@@ -179,7 +179,7 @@ export default function WalletPage() {
 
             <div className="p-4 bg-muted/60 rounded-xl border border-border/80 space-y-1">
               <p className="text-xs font-bold uppercase tracking-wider text-foreground">Bank Transfer Details:</p>
-              <p className="text-sm font-medium text-foreground">Account Title: Fzee Travels & Tours (Pvt) Ltd</p>
+              <p className="text-sm font-medium text-foreground">Account Title: Fzee Travel & Tours (Pvt) Ltd</p>
               <p className="text-sm font-medium text-foreground">Account Number: 0123-4567890-01</p>
               <p className="text-sm font-medium text-foreground">Bank: Fzee Travels Bank Pakistan</p>
               <p className="text-xs text-muted-foreground pt-1">After transfer, submit request above for admin approval.</p>

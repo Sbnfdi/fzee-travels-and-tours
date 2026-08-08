@@ -49,7 +49,7 @@ export default function AboutPage() {
               <span className="text-primary mt-2 block">B2B Travel in Pakistan</span>
             </h1>
             <p className="text-white/80 text-lg md:text-xl font-medium max-w-3xl mx-auto leading-relaxed">
-              Fzee Travels & Tours empowers hundreds of travel agencies across Pakistan with state-of-the-art booking technology, exclusive group fares, and dedicated support.
+              Fzee Travel & Tours empowers hundreds of travel agencies across Pakistan with state-of-the-art booking technology, exclusive group fares, and dedicated support.
             </p>
           </div>
         </section>

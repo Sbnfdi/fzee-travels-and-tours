@@ -92,8 +92,8 @@ export default function AgentLayout({
                 <Plane className="w-4 h-4 fill-current" />
               </div>
               <div className="flex flex-col">
-                <span className="leading-none text-white font-black text-base">FZEE</span>
-                <span className="text-[9px] tracking-widest uppercase text-primary font-bold">Travels & Tours</span>
+                <span className="leading-none text-foreground font-black text-xl tracking-tight">FZEE</span>
+                <span className="text-[9px] tracking-widest uppercase text-primary font-bold">Travel & Tours</span>
               </div>
             </Link>
           </div>

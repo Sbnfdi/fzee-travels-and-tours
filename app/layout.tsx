@@ -4,8 +4,8 @@ import { FloatingSupportHub } from '@/components/support/floating-support-hub'
 import './globals.css'
 
 export const metadata: Metadata = {
-  title: 'Fzee Travels and Tours - Premium B2B Travel Portal',
-  description: 'Connect travel agencies, manage group bookings, flights, and hotels effortlessly with Fzee Travels and Tours enterprise portal.',
+  title: 'Fzee Travel and Tours - Premium B2B Travel Portal',
+  description: 'Connect travel agencies, manage group bookings, flights, and hotels effortlessly with Fzee Travel and Tours enterprise portal.',
   generator: 'v0.app',
   icons: {
     icon: [

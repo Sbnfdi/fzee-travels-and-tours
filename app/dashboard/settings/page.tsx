@@ -8,7 +8,7 @@ export default function AdminSettingsPage() {
   const [currency, setCurrency] = useState('PKR');
   const [defaultCreditLimit, setDefaultCreditLimit] = useState(100000);
   const [autoApproveAgencies, setAutoApproveAgencies] = useState(true);
-  const [bankAccountName, setBankAccountName] = useState('Fzee Travels & Tours (Pvt) Ltd');
+  const [bankAccountName, setBankAccountName] = useState('Fzee Travel & Tours (Pvt) Ltd');
   const [bankAccountNumber, setBankAccountNumber] = useState('0123-4567890-01');
   const [bankName, setBankName] = useState('Fzee Travels Bank Pakistan');
   const [loading, setLoading] = useState(false);

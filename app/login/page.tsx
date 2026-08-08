@@ -81,7 +81,7 @@ export default function LoginPage() {
           </div>
           <div className="flex flex-col">
             <span className="leading-none text-foreground font-black text-2xl tracking-tight">FZEE</span>
-            <span className="text-[11px] tracking-widest uppercase text-primary font-extrabold">Travels & Tours</span>
+            <span className="text-[11px] tracking-widest uppercase text-primary font-extrabold">Travel & Tours</span>
           </div>
         </Link>
 

@@ -31,7 +31,7 @@ const features = [
   {
     icon: ShieldCheck,
     title: 'Free Agent Registration',
-    description: 'Join Fzee Travels & Tours network with zero upfront registration charges or hidden software costs.',
+    description: 'Join Fzee Travel & Tours network with zero upfront registration charges or hidden software costs.',
   },
 ];
 

@@ -8,21 +8,21 @@ const testimonials = [
     company: 'Al-Noor Travels, Islamabad',
     role: 'CEO',
     rating: 5,
-    content: 'Fzee Travels & Tours transformed how we manage Umrah group bookings. We\'ve increased operational efficiency by 40% and our clients love the quick turnaround.',
+    content: 'Fzee Travel & Tours transformed how we manage Umrah group bookings. We\'ve increased operational efficiency by 40% and our clients love the quick turnaround.',
   },
   {
     name: 'Imran Khan',
     company: 'Shaheen Travels, Lahore',
     role: 'Operations Manager',
     rating: 5,
-    content: 'The B2B agent portal is fast and reliable. Managing group inventories and payments with Fzee Travels has made our agent operations seamless.',
+    content: 'The B2B agent portal is fast and reliable. Managing group inventories and payments with Fzee Travel & Tours has made our agent operations seamless.',
   },
   {
     name: 'Fatima Ali',
     company: 'Makka Tours, Islamabad',
     role: 'Founder',
     rating: 5,
-    content: 'From small beginnings to handling hundreds of passenger bookings monthly. Fzee Travels & Tours provided the perfect portal to scale our business.',
+    content: 'From small beginnings to handling hundreds of passenger bookings monthly. Fzee Travel & Tours provided the perfect portal to scale our business.',
   },
 ];
 
@@ -38,7 +38,7 @@ export function Testimonials() {
             Trusted by top travel agents across Pakistan
           </h2>
           <p className="text-base sm:text-lg text-white/80 font-medium max-w-2xl mx-auto">
-            Hear what registered travel agencies have to say about working with Fzee Travels & Tours.
+            Hear what registered travel agencies have to say about working with Fzee Travel & Tours.
           </p>
         </div>
 

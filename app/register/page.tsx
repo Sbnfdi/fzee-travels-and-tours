@@ -86,7 +86,7 @@ export default function RegisterPage() {
           </div>
           <div className="flex flex-col">
             <span className="leading-none text-foreground font-black text-2xl tracking-tight">FZEE</span>
-            <span className="text-[11px] tracking-widest uppercase text-primary font-extrabold">Travels & Tours</span>
+            <span className="text-[11px] tracking-widest uppercase text-primary font-extrabold">Travel & Tours</span>
           </div>
         </Link>
 
@@ -94,7 +94,7 @@ export default function RegisterPage() {
         <div className="bg-slate-900/60 backdrop-blur-2xl rounded-[2rem] border border-white/10 p-8 sm:p-10 space-y-6 shadow-[0_0_50px_rgba(0,0,0,0.5)]">
           <div className="space-y-2 text-center">
             <h1 className="text-2xl sm:text-3xl font-black text-foreground tracking-tight">Agent Registration</h1>
-            <p className="text-sm text-muted-foreground">Join Fzee Travels & Tours network and manage bookings instantly</p>
+            <p className="text-sm text-muted-foreground">Join Fzee Travel & Tours network and manage bookings instantly</p>
           </div>
 
           {/* Approval Timeline */}
@@ -222,8 +222,8 @@ export default function RegisterPage() {
         </div>
 
         {/* Footer */}
-        <p className="text-center text-xs text-muted-foreground">
-          By registering, you agree to <span className="text-foreground font-medium">Fzee Travels & Tours</span> Partner Terms & Conditions.
+        <p className="text-center text-xs text-muted-foreground pt-4">
+          By registering, you agree to <span className="text-foreground font-medium">Fzee Travel & Tours</span> Partner Terms & Conditions.
         </p>
       </div>
     </div>

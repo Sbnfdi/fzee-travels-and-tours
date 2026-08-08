@@ -30,7 +30,7 @@ export type WhatsAppTopic =
 
 const TOPIC_PRESETS: Record<WhatsAppTopic, { message: string; numberKey: 'primary' | 'secondary' }> = {
   general: {
-    message: 'Hello Fzee Travels & Tours! I would like to inquire about your travel services.',
+    message: 'Hello Fzee Travel & Tours! I would like to inquire about your travel services.',
     numberKey: 'primary',
   },
   umrah: {
