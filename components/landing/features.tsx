@@ -15,8 +15,8 @@ const features = [
   },
   {
     icon: TrendingUp,
-    title: 'B2B Wallet & Finance',
-    description: 'Track commission earnings, agency top-ups, and financial statements with live ledger reports.',
+    title: 'Business Growth & Analytics',
+    description: 'Track commission earnings, agency top-ups, and financial statements with live dashboard reports.',
   },
   {
     icon: Lock,
@@ -37,17 +37,17 @@ const features = [
 
 export function Features() {
   return (
-    <section id="features" className="w-full py-24 relative overflow-hidden">
+    <section id="features" className="w-full py-24 bg-background border-t border-border/40">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 space-y-16">
         
         <div className="text-center space-y-4 max-w-3xl mx-auto">
-          <div className="inline-block text-primary font-bold text-xs uppercase tracking-[0.2em] bg-white/5 backdrop-blur-md px-4 py-1.5 rounded-full border border-white/20 shadow-md">
-            Platform Capabilities
+          <div className="inline-block text-primary font-black text-xs uppercase tracking-[0.2em] bg-rose-50 px-4 py-1.5 rounded-full border border-rose-200/80 shadow-xs">
+            PLATFORM CAPABILITIES
           </div>
-          <h2 className="text-3xl sm:text-4xl md:text-5xl font-black text-white tracking-tight drop-shadow-lg">
+          <h2 className="text-3xl sm:text-4xl md:text-5xl font-black text-foreground tracking-tight">
             Everything your travel business needs to excel
           </h2>
-          <p className="text-base sm:text-lg text-white/80 font-medium max-w-2xl mx-auto">
+          <p className="text-base sm:text-lg text-muted-foreground font-medium max-w-2xl mx-auto">
             Complete B2B tools tailored for travel agents and tour operators. Streamlined, fast, and completely free.
           </p>
         </div>
@@ -56,14 +56,14 @@ export function Features() {
           {features.map((feature, idx) => (
             <div
               key={idx}
-              className="group p-8 rounded-2xl bg-white/5 backdrop-blur-xl border border-white/10 hover:border-primary/50 shadow-lg hover:shadow-2xl hover:shadow-primary/20 hover:-translate-y-2 transition-all duration-300 flex flex-col justify-between"
+              className="group p-8 rounded-2xl bg-card border border-border/80 shadow-sm hover:shadow-xl hover:border-primary/30 hover:-translate-y-1.5 transition-all duration-300 flex flex-col justify-between"
             >
               <div>
-                <div className="w-14 h-14 bg-white/10 border border-white/20 rounded-xl flex items-center justify-center mb-6 group-hover:bg-primary text-primary group-hover:text-primary-foreground transition-colors duration-300 shadow-inner">
+                <div className="w-14 h-14 bg-rose-50 border border-rose-100 rounded-xl flex items-center justify-center mb-6 group-hover:bg-primary text-primary group-hover:text-primary-foreground transition-colors duration-300 shadow-xs">
                   <feature.icon className="w-7 h-7" />
                 </div>
-                <h3 className="text-xl font-bold mb-3 text-white group-hover:text-primary transition-colors tracking-wide">{feature.title}</h3>
-                <p className="text-white/70 leading-relaxed text-sm font-medium">{feature.description}</p>
+                <h3 className="text-xl font-extrabold mb-3 text-foreground group-hover:text-primary transition-colors tracking-tight">{feature.title}</h3>
+                <p className="text-muted-foreground leading-relaxed text-sm font-medium">{feature.description}</p>
               </div>
             </div>
           ))}
