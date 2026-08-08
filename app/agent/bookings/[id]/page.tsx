@@ -17,6 +17,7 @@ interface BookingDetail {
   specialRequests?: string;
   createdAt: string;
   group: any;
+  flight?: any;
 }
 
 export default function BookingDetailPage() {
@@ -224,6 +225,46 @@ export default function BookingDetailPage() {
               <span className="text-xl font-black text-primary mt-1 block">PKR {booking.totalAmount.toLocaleString()}</span>
             </div>
           </div>
+
+          {/* Flight Schedule Card if FLIGHT booking */}
+          {booking.flight && (
+            <div className="bg-muted/30 p-5 rounded-2xl border border-border space-y-4">
+              <div className="flex items-center justify-between border-b border-border pb-3">
+                <div className="flex items-center gap-3">
+                  <Plane className="w-5 h-5 text-primary" />
+                  <span className="font-black text-foreground text-base">{booking.flight.airline} ({booking.flight.flightNumber})</span>
+                  {booking.flight.pnr && (
+                    <span className="px-2.5 py-0.5 bg-primary/10 text-primary font-mono font-bold text-xs rounded-md border border-primary/20">
+                      PNR: {booking.flight.pnr}
+                    </span>
+                  )}
+                </div>
+                <span className="font-extrabold text-xs text-muted-foreground uppercase tracking-widest">{booking.flight.departureCity} → {booking.flight.arrivalCity}</span>
+              </div>
+
+              <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                <div className="bg-background p-4 rounded-xl border border-border/60">
+                  <span className="text-[10px] font-bold text-muted-foreground uppercase tracking-wider block">Departure Date & Time</span>
+                  <span className="text-base font-bold text-foreground block mt-1">
+                    {booking.flight.departureTime ? new Date(booking.flight.departureTime).toLocaleDateString('en-GB', { day: '2-digit', month: 'short', year: 'numeric' }) : '—'}
+                  </span>
+                  <span className="text-sm font-bold text-emerald-600 dark:text-emerald-400 block mt-0.5">
+                    {booking.flight.departureTime ? new Date(booking.flight.departureTime).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' }) : '—'}
+                  </span>
+                </div>
+
+                <div className="bg-background p-4 rounded-xl border border-border/60">
+                  <span className="text-[10px] font-bold text-muted-foreground uppercase tracking-wider block">Arrival Date & Time</span>
+                  <span className="text-base font-bold text-foreground block mt-1">
+                    {booking.flight.arrivalTime ? new Date(booking.flight.arrivalTime).toLocaleDateString('en-GB', { day: '2-digit', month: 'short', year: 'numeric' }) : '—'}
+                  </span>
+                  <span className="text-sm font-bold text-rose-600 dark:text-rose-400 block mt-0.5">
+                    {booking.flight.arrivalTime ? new Date(booking.flight.arrivalTime).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' }) : '—'}
+                  </span>
+                </div>
+              </div>
+            </div>
+          )}
 
           {/* Passenger List */}
           <div className="space-y-4">

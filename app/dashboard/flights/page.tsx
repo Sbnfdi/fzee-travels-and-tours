@@ -511,6 +511,8 @@ export default function AdminFlightsPage() {
                   <th className="px-6 py-4">PNR</th>
                   <th className="px-6 py-4">Airline</th>
                   <th className="px-6 py-4">Route</th>
+                  <th className="px-6 py-4">Departure Date & Time</th>
+                  <th className="px-6 py-4">Arrival Date & Time</th>
                   <th className="px-6 py-4">Seats</th>
                   <th className="px-6 py-4">Baggage</th>
                   <th className="px-6 py-4">Meal</th>
@@ -539,6 +541,14 @@ export default function AdminFlightsPage() {
                       <td className="px-6 py-4 font-mono text-xs font-bold text-muted-foreground whitespace-nowrap">{f.pnr || '—'}</td>
                       <td className="px-6 py-4 font-bold text-foreground whitespace-nowrap">{f.airline}</td>
                       <td className="px-6 py-4 text-muted-foreground whitespace-nowrap">{f.departureCity} → {f.arrivalCity}</td>
+                      <td className="px-6 py-4 whitespace-nowrap">
+                        <div className="font-bold text-foreground text-xs">{f.departureTime ? new Date(f.departureTime).toLocaleDateString() : '—'}</div>
+                        <div className="font-bold text-emerald-600 dark:text-emerald-400 text-xs">{f.departureTime ? new Date(f.departureTime).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' }) : '—'}</div>
+                      </td>
+                      <td className="px-6 py-4 whitespace-nowrap">
+                        <div className="font-bold text-foreground text-xs">{f.arrivalTime ? new Date(f.arrivalTime).toLocaleDateString() : '—'}</div>
+                        <div className="font-bold text-rose-600 dark:text-rose-400 text-xs">{f.arrivalTime ? new Date(f.arrivalTime).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' }) : '—'}</div>
+                      </td>
                       <td className="px-6 py-4 whitespace-nowrap">
                         <span className="font-bold text-foreground">{f.availableSeats}</span>
                         <span className="text-muted-foreground text-xs">/{f.totalSeats}</span>

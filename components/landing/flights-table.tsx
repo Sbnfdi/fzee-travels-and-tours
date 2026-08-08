@@ -85,12 +85,11 @@ export function FlightsTable() {
             
             {/* Table Header - Hidden on Mobile */}
             <div className="hidden md:grid grid-cols-12 items-center bg-primary text-primary-foreground text-xs font-black uppercase py-4 px-6 tracking-widest border-b border-primary-foreground/20 shadow-md">
-              <div className="col-span-2">Date</div>
               <div className="col-span-2">Sector</div>
               <div className="col-span-2">Airline</div>
               <div className="col-span-1">FLT No.</div>
-              <div className="col-span-1">DEP</div>
-              <div className="col-span-1">ARR</div>
+              <div className="col-span-2">Departure Date & Time</div>
+              <div className="col-span-2">Arrival Date & Time</div>
               <div className="col-span-2 text-center">Fare</div>
               <div className="col-span-1 text-center">Book</div>
             </div>
@@ -122,10 +121,13 @@ export function FlightsTable() {
                     {/* Flights List */}
                     {grouped[airline].map((flight) => {
                       const isAvailable = flight.availableSeats > 0;
-                      const dateStr = formatDate(flight.departureTime);
+                      const depDateStr = formatDate(flight.departureTime);
+                      const depTimeStr = formatTime(flight.departureTime);
+
+                      const arrDateStr = formatDate(flight.arrivalTime);
+                      const arrTimeStr = formatTime(flight.arrivalTime);
+
                       const sectorStr = `${flight.departureCity}-${flight.arrivalCity}`;
-                      const depTime = formatTime(flight.departureTime);
-                      const arrTime = formatTime(flight.arrivalTime);
                       const fareAmount = (flight.currentFare || flight.pricePerSeat).toLocaleString();
 
                       return (
@@ -138,53 +140,62 @@ export function FlightsTable() {
                                 <div className="text-[10px] text-muted-foreground uppercase tracking-widest mb-1">Sector</div>
                                 <div className="font-black text-foreground tracking-wide text-lg">{sectorStr}</div>
                               </div>
-                              <div className="text-center">
-                                <div className="text-[10px] text-muted-foreground uppercase tracking-widest mb-1">Date</div>
-                                <div className="font-medium text-foreground">{dateStr}</div>
-                              </div>
                               <div className="text-right">
                                 <div className="text-[10px] text-muted-foreground uppercase tracking-widest mb-1">Flight</div>
                                 <div className="font-bold text-foreground font-mono">{flight.flightNumber}</div>
                               </div>
                             </div>
 
-                            <div className="flex justify-between items-center">
-                              <div className="flex items-center gap-6">
-                                <div className="text-center">
-                                  <div className="font-bold text-emerald-600 dark:text-emerald-400 drop-shadow-sm text-xl">{depTime}</div>
-                                </div>
-                                <Plane className="w-5 h-5 text-muted-foreground/40 rotate-45" />
-                                <div className="text-center">
-                                  <div className="font-bold text-rose-600 dark:text-rose-400 drop-shadow-sm text-xl">{arrTime}</div>
-                                </div>
+                            <div className="grid grid-cols-2 gap-4 bg-muted/40 p-3 rounded-xl border border-border/60 text-xs">
+                              <div>
+                                <div className="text-[10px] text-muted-foreground uppercase font-bold tracking-wider">Departure</div>
+                                <div className="font-bold text-foreground">{depDateStr}</div>
+                                <div className="font-bold text-emerald-600 dark:text-emerald-400 text-sm mt-0.5">{depTimeStr}</div>
                               </div>
-                              <div className="text-right">
-                                <div className="text-[10px] text-muted-foreground uppercase tracking-widest mb-1">Fare</div>
-                                <div className="font-black text-xl text-primary">Rs {fareAmount}</div>
+                              <div>
+                                <div className="text-[10px] text-muted-foreground uppercase font-bold tracking-wider">Arrival</div>
+                                <div className="font-bold text-foreground">{arrDateStr}</div>
+                                <div className="font-bold text-rose-600 dark:text-rose-400 text-sm mt-0.5">{arrTimeStr}</div>
                               </div>
                             </div>
 
-                            <div className="w-full mt-2">
-                              {isAvailable ? (
-                                <Link href="/login" className="px-5 py-2.5 bg-primary text-primary-foreground text-xs font-black rounded-xl shadow-md hover:bg-primary/90 transition-all block text-center uppercase tracking-wider">
-                                  Book Now
-                                </Link>
-                              ) : (
-                                <span className="px-5 py-2.5 bg-muted text-muted-foreground border border-border text-xs font-bold rounded-xl block text-center cursor-not-allowed uppercase tracking-wider">
-                                  Sold Out
-                                </span>
-                              )}
+                            <div className="flex justify-between items-center">
+                              <div>
+                                <div className="text-[10px] text-muted-foreground uppercase tracking-widest mb-1">Fare</div>
+                                <div className="font-black text-xl text-primary">Rs {fareAmount}</div>
+                              </div>
+                              <div className="w-1/2">
+                                {isAvailable ? (
+                                  <Link href="/login" className="px-5 py-2.5 bg-primary text-primary-foreground text-xs font-black rounded-xl shadow-md hover:bg-primary/90 transition-all block text-center uppercase tracking-wider">
+                                    Book Now
+                                  </Link>
+                                ) : (
+                                  <span className="px-5 py-2.5 bg-muted text-muted-foreground border border-border text-xs font-bold rounded-xl block text-center cursor-not-allowed uppercase tracking-wider">
+                                    Sold Out
+                                  </span>
+                                )}
+                              </div>
                             </div>
                           </div>
 
                           {/* Desktop Grid Columns */}
                           <div className="hidden md:grid grid-cols-12 items-center text-sm">
-                            <div className="col-span-2 font-medium text-foreground">{dateStr}</div>
                             <div className="col-span-2 font-black text-foreground tracking-wide">{sectorStr}</div>
                             <div className="col-span-2 text-muted-foreground font-semibold uppercase tracking-wider">{airline}</div>
                             <div className="col-span-1 font-bold text-foreground font-mono">{flight.flightNumber}</div>
-                            <div className="col-span-1 font-bold text-emerald-600 dark:text-emerald-400">{depTime}</div>
-                            <div className="col-span-1 font-bold text-rose-600 dark:text-rose-400">{arrTime}</div>
+                            
+                            {/* Departure Date & Time */}
+                            <div className="col-span-2">
+                              <div className="font-bold text-foreground text-xs">{depDateStr}</div>
+                              <div className="font-bold text-emerald-600 dark:text-emerald-400">{depTimeStr}</div>
+                            </div>
+
+                            {/* Arrival Date & Time */}
+                            <div className="col-span-2">
+                              <div className="font-bold text-foreground text-xs">{arrDateStr}</div>
+                              <div className="font-bold text-rose-600 dark:text-rose-400">{arrTimeStr}</div>
+                            </div>
+
                             <div className="col-span-2 text-center font-black text-base text-primary">Rs {fareAmount}</div>
                             <div className="col-span-1 flex justify-center">
                               {isAvailable ? (

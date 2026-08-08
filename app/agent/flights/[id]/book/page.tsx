@@ -11,6 +11,8 @@ interface FlightItem {
   airline: string;
   departureCity: string;
   arrivalCity: string;
+  departureTime: string;
+  arrivalTime: string;
   pricePerSeat: number;
   currentFare: number;
   availableSeats: number;
@@ -161,13 +163,29 @@ export default function BookFlightPage() {
       </Link>
 
       <div className="bg-card rounded-2xl border border-border p-8 shadow-xl">
-        <div className="flex items-center gap-4 border-b border-border pb-6 mb-6">
-          <div className="w-12 h-12 rounded-xl bg-primary/10 flex items-center justify-center text-primary">
-            <Plane className="w-6 h-6" />
+        <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 border-b border-border pb-6 mb-6">
+          <div className="flex items-center gap-4">
+            <div className="w-12 h-12 rounded-xl bg-primary/10 flex items-center justify-center text-primary shrink-0">
+              <Plane className="w-6 h-6" />
+            </div>
+            <div>
+              <h1 className="text-2xl font-black">{flight.airline}</h1>
+              <p className="text-sm text-muted-foreground font-semibold">Flight #{flight.flightNumber} • {flight.departureCity} to {flight.arrivalCity}</p>
+            </div>
           </div>
-          <div>
-            <h1 className="text-2xl font-black">{flight.airline}</h1>
-            <p className="text-sm text-muted-foreground">Flight #{flight.flightNumber} • {flight.departureCity} to {flight.arrivalCity}</p>
+
+          <div className="flex items-center gap-4 bg-muted/40 p-3 rounded-xl border border-border/60 text-xs shrink-0">
+            <div>
+              <span className="text-[10px] text-muted-foreground uppercase font-bold tracking-wider block">Departure</span>
+              <span className="font-bold text-foreground block">{new Date(flight.departureTime).toLocaleDateString('en-GB', { day: '2-digit', month: 'short', year: 'numeric' })}</span>
+              <span className="font-bold text-emerald-600 dark:text-emerald-400 block">{new Date(flight.departureTime).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}</span>
+            </div>
+            <div className="h-8 w-px bg-border"></div>
+            <div>
+              <span className="text-[10px] text-muted-foreground uppercase font-bold tracking-wider block">Arrival</span>
+              <span className="font-bold text-foreground block">{new Date(flight.arrivalTime).toLocaleDateString('en-GB', { day: '2-digit', month: 'short', year: 'numeric' })}</span>
+              <span className="font-bold text-rose-600 dark:text-rose-400 block">{new Date(flight.arrivalTime).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}</span>
+            </div>
           </div>
         </div>
 

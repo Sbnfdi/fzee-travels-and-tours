@@ -175,10 +175,10 @@ export default function AgentFlightsPage() {
           <table className="w-full text-left text-sm border-collapse whitespace-nowrap">
             <thead>
               <tr className="bg-primary text-primary-foreground uppercase text-xs">
-                <th className="px-4 py-3 font-semibold">Date</th>
                 <th className="px-4 py-3 font-semibold">Flight#</th>
-                <th className="px-4 py-3 font-semibold">Origin-Destination</th>
-                <th className="px-4 py-3 font-semibold">Time</th>
+                <th className="px-4 py-3 font-semibold">Sector</th>
+                <th className="px-4 py-3 font-semibold">Departure Date & Time</th>
+                <th className="px-4 py-3 font-semibold">Arrival Date & Time</th>
                 <th className="px-4 py-3 font-semibold">Baggage</th>
                 <th className="px-4 py-3 font-semibold">Meal</th>
                 <th className="px-4 py-3 font-semibold">Price</th>
@@ -213,18 +213,22 @@ export default function AgentFlightsPage() {
                   {/* Flight Rows */}
                   {group.flights.map((f, i) => (
                     <tr key={f.id} className={`border-b border-border/40 hover:bg-muted/20 transition ${i % 2 === 0 ? 'bg-card' : 'bg-muted/10'}`}>
-                      <td className="px-4 py-3 text-primary font-semibold flex items-center gap-1.5">
-                        <Plane className="w-3.5 h-3.5" />
-                        {formatDate(f.departureTime)}
+                      <td className="px-4 py-3 font-bold text-foreground flex items-center gap-1.5">
+                        <Plane className="w-3.5 h-3.5 text-primary" />
+                        {f.flightNumber}
                       </td>
-                      <td className="px-4 py-3 font-medium">{f.flightNumber}</td>
-                      <td className="px-4 py-3">{f.departureCity}-{f.arrivalCity}</td>
-                      <td className="px-4 py-3 text-muted-foreground">
-                        {formatTime(f.departureTime)}-{formatTime(f.arrivalTime)}
+                      <td className="px-4 py-3 font-black text-foreground">{f.departureCity}-{f.arrivalCity}</td>
+                      <td className="px-4 py-3">
+                        <div className="font-bold text-foreground text-xs">{formatDate(f.departureTime)}</div>
+                        <div className="font-bold text-emerald-600 dark:text-emerald-400 text-xs">{formatTime(f.departureTime)}</div>
+                      </td>
+                      <td className="px-4 py-3">
+                        <div className="font-bold text-foreground text-xs">{formatDate(f.arrivalTime)}</div>
+                        <div className="font-bold text-rose-600 dark:text-rose-400 text-xs">{formatTime(f.arrivalTime)}</div>
                       </td>
                       <td className="px-4 py-3 font-bold text-foreground">{f.baggage || '20 KG'}</td>
                       <td className="px-4 py-3 font-medium text-muted-foreground">{f.meal ? 'Yes' : 'No'}</td>
-                      <td className="px-4 py-3 font-bold text-foreground">PKR {(f.currentFare || f.pricePerSeat).toLocaleString()}</td>
+                      <td className="px-4 py-3 font-bold text-primary">PKR {(f.currentFare || f.pricePerSeat).toLocaleString()}</td>
                       <td className="px-4 py-3 text-center">
                         <button
                           onClick={() => handleBookFlight(f.id)}
