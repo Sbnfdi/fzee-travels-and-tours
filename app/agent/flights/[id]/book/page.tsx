@@ -223,11 +223,6 @@ export default function BookFlightPage() {
               <span className="text-3xl font-black text-primary">
                 PKR {totalPrice.toLocaleString()}
               </span>
-              {pax > 1 && (
-                <span className="text-[10px] text-muted-foreground block font-medium">
-                  Avg Fare: PKR {Math.round(totalPrice / pax).toLocaleString()} / seat
-                </span>
-              )}
             </div>
             <button
               type="submit"
