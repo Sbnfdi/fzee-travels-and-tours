@@ -52,15 +52,11 @@ export function PromoPopup() {
     setIsMounted(true);
     setTimeLeft(calculateTimeLeft());
 
-    const isDismissed = sessionStorage.getItem('fzee_azadi_promo_dismissed');
-    if (isDismissed === 'true') {
-      return;
-    }
-
+    // Show popup after smooth 600ms delay on every refresh
     const timer = setTimeout(() => {
       setIsOpen(true);
       requestAnimationFrame(() => setIsAnimating(true));
-    }, 800);
+    }, 600);
 
     const countdownInterval = setInterval(() => {
       setTimeLeft(calculateTimeLeft());
@@ -76,7 +72,6 @@ export function PromoPopup() {
     setIsAnimating(false);
     setTimeout(() => {
       setIsOpen(false);
-      sessionStorage.setItem('fzee_azadi_promo_dismissed', 'true');
     }, 400);
   };
 
@@ -92,7 +87,7 @@ export function PromoPopup() {
         onClick={handleClose}
       />
       
-      {/* Modal Dialog Card — Expanded in width on desktop (md:max-w-[760px] lg:max-w-[820px]) */}
+      {/* Modal Dialog Card — Desktop Side-by-Side (md:max-w-[760px] lg:max-w-[820px]) */}
       <div className={`relative w-full max-w-[340px] sm:max-w-[400px] md:max-w-[760px] lg:max-w-[820px] my-auto transition-all duration-500 ease-out ${isAnimating ? 'opacity-100 scale-100 translate-y-0' : 'opacity-0 scale-90 translate-y-8'}`}>
         
         {/* Multi-layered Ambient Light Glows */}
@@ -101,7 +96,7 @@ export function PromoPopup() {
         {/* Main Card Container — Grid on desktop, Column on mobile */}
         <div className="relative bg-slate-950 border border-emerald-500/35 rounded-2xl sm:rounded-3xl shadow-[0_25px_100px_rgba(0,0,0,0.95),0_0_60px_rgba(16,185,129,0.25)] overflow-hidden max-h-[92vh] flex flex-col md:grid md:grid-cols-12">
           
-          {/* Close Button — absolute top-right position */}
+          {/* Close Button */}
           <button 
             onClick={handleClose}
             className="absolute top-3 right-3 z-30 w-8 h-8 flex items-center justify-center rounded-full bg-slate-900/90 text-slate-200 hover:text-white hover:bg-red-600 backdrop-blur-md transition-all duration-300 shadow-lg border border-white/15 hover:border-red-500/50 hover:scale-110 active:scale-95"
@@ -110,14 +105,15 @@ export function PromoPopup() {
             <X className="w-4 h-4" strokeWidth={2.5} />
           </button>
 
-          {/* Left Column: Visual Flyer Poster (Desktop: 5 cols, Mobile: Top Banner) */}
-          <div className="md:col-span-5 relative bg-slate-950 flex items-center justify-center p-2.5 sm:p-3 md:p-4 border-b md:border-b-0 md:border-r border-emerald-500/20 group overflow-hidden">
-            <div className="relative w-full h-full min-h-[220px] sm:min-h-[260px] md:min-h-[380px] flex items-center justify-center rounded-xl overflow-hidden bg-slate-950">
+          {/* Left Column: Visual Flyer Poster (Desktop: 5 cols) */}
+          <div className="md:col-span-5 relative bg-slate-950 flex items-center justify-center p-3 sm:p-4 border-b md:border-b-0 md:border-r border-emerald-500/20 group overflow-hidden">
+            <div className="relative w-full flex items-center justify-center rounded-xl overflow-hidden bg-slate-950">
               <Image 
                 src="/azadi-sale.jpg" 
                 alt="FZEE Travels Azadi Sale - 10% OFF Air Tickets" 
-                fill
-                className="object-contain md:object-cover transition-transform duration-700 group-hover:scale-105"
+                width={600}
+                height={1067}
+                className="w-full h-auto max-h-[220px] sm:max-h-[260px] md:max-h-[380px] object-contain transition-transform duration-700 group-hover:scale-105"
                 priority
                 sizes="(max-width: 768px) 100vw, 360px"
               />
@@ -130,7 +126,7 @@ export function PromoPopup() {
             <div className="absolute -top-12 -right-12 w-44 h-44 bg-emerald-500/10 rounded-full blur-3xl pointer-events-none" />
             
             {/* Header Title & Badge */}
-            <div className="pr-8 mb-3">
+            <div className="pr-8 mb-2 sm:mb-3">
               <div className="flex items-center gap-2 mb-1.5">
                 <span className="text-xl sm:text-2xl">🇵🇰</span>
                 <span className="inline-flex items-center gap-1.5 px-2.5 py-0.5 rounded-full bg-emerald-500/10 border border-emerald-500/30 text-[10px] sm:text-[11px] font-black uppercase tracking-widest text-emerald-300">
@@ -239,5 +235,6 @@ export function PromoPopup() {
     </div>
   );
 }
+
 
 
