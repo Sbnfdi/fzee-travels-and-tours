@@ -1,129 +1,141 @@
 'use client';
 
 import Link from 'next/link';
-import { ShieldCheck, CheckCircle2, ArrowRight, Compass, Zap, Plane, Users, FileText } from 'lucide-react';
+import { ArrowRight, Plane, ShieldCheck, CheckCircle2, MapPin } from 'lucide-react';
 
 export function Hero() {
+  const destinations = [
+    {
+      name: 'Dubai',
+      subtext: 'Fixed Seats',
+      image: 'https://images.unsplash.com/photo-1512453979798-5ea266f8880c?q=80&w=600&auto=format&fit=crop',
+    },
+    {
+      name: 'Baku',
+      subtext: 'Group Packages',
+      image: 'https://images.unsplash.com/photo-1579783902614-a3fb3927b675?q=80&w=600&auto=format&fit=crop',
+    },
+    {
+      name: 'Muscat',
+      subtext: 'Group Fares',
+      image: 'https://images.unsplash.com/photo-1549944811-c148c6897799?q=80&w=600&auto=format&fit=crop',
+    },
+    {
+      name: 'Qatar',
+      subtext: 'Group Seats',
+      image: 'https://images.unsplash.com/photo-1580674684081-7617fbf3d745?q=80&w=600&auto=format&fit=crop',
+    },
+    {
+      name: 'UK',
+      subtext: 'Direct Flights',
+      image: 'https://images.unsplash.com/photo-1513635269975-59663e0ac1ad?q=80&w=600&auto=format&fit=crop',
+    },
+    {
+      name: 'Maldives',
+      subtext: 'Honeymoon Packages',
+      image: 'https://images.unsplash.com/photo-1514282401047-d79a71a590e8?q=80&w=600&auto=format&fit=crop',
+    },
+    {
+      name: 'Saudi Arabia',
+      subtext: 'Hajj & Umrah',
+      image: 'https://images.unsplash.com/photo-1591604466107-ec97de577aff?q=80&w=600&auto=format&fit=crop',
+    },
+  ];
+
   return (
-    <section className="w-full pt-8 pb-16 md:pt-16 md:pb-24 bg-gradient-to-b from-rose-50/40 via-background to-background">
+    <section className="w-full pt-12 pb-20 md:pt-20 md:pb-28 bg-gradient-to-b from-rose-50/40 via-background to-background relative overflow-hidden">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         
-        <div className="grid grid-cols-1 lg:grid-cols-12 gap-12 items-center">
+        {/* Main Header Content - Centered */}
+        <div className="text-center max-w-4xl mx-auto space-y-6">
           
-          {/* Left Column: Headline & Controls */}
-          <div className="lg:col-span-7 space-y-6 text-left">
-            
-            {/* Top Pill Badge */}
-            <div className="inline-flex items-center gap-2 px-3.5 py-1.5 rounded-full bg-rose-50 border border-rose-200/80 text-primary text-xs font-black uppercase tracking-wider shadow-xs">
-              <span className="w-2 h-2 rounded-full bg-primary animate-pulse" />
-              <span>OFFICIAL B2B PARTNER PORTAL</span>
-            </div>
+          {/* Badge */}
+          <div className="inline-flex items-center gap-2 px-4 py-1.5 rounded-full bg-rose-50 border border-rose-200/80 text-primary text-xs font-black uppercase tracking-widest shadow-xs">
+            <span className="w-2 h-2 rounded-full bg-primary animate-pulse" />
+            <span>OFFICIAL B2B AGENT NETWORK</span>
+          </div>
 
-            {/* Headline */}
-            <h1 className="text-4xl sm:text-5xl lg:text-6xl font-black text-foreground tracking-tight leading-[1.1]">
-              Empower Your Travel Agency with{' '}
-              <span className="relative inline-block text-primary">
-                Fzee Travel & Tours
-                <svg className="absolute -bottom-2 left-0 w-full h-3 text-primary/30" viewBox="0 0 100 20" preserveAspectRatio="none">
-                  <path d="M0 15 Q 25 5, 50 15 T 100 15" fill="none" stroke="currentColor" strokeWidth="4" />
-                </svg>
-              </span>
+          {/* Headline matching user image structure */}
+          <div className="space-y-2">
+            <h1 className="text-3xl sm:text-5xl lg:text-6xl font-black text-foreground tracking-tight uppercase leading-tight">
+              WELCOME TO B2B PORTAL OF
             </h1>
-
-            {/* Subtitle */}
-            <p className="text-muted-foreground text-base sm:text-lg max-w-2xl leading-relaxed font-medium">
-              Register your agency instantly and streamline your group tours, flight bookings, and hotel arrangements. Zero setup fees, unlimited growth.
-            </p>
-
-            {/* Action Buttons */}
-            <div className="flex flex-col sm:flex-row items-stretch sm:items-center gap-4 pt-2">
-              <Link 
-                href="/register" 
-                className="px-8 py-4 bg-primary text-primary-foreground font-black text-sm rounded-xl shadow-lg shadow-primary/25 hover:bg-primary/90 hover:shadow-primary/40 hover:-translate-y-0.5 transition-all flex items-center justify-center gap-2 uppercase tracking-wider"
-              >
-                <span>Register Agency Free</span>
-                <ArrowRight className="w-4 h-4" />
-              </Link>
-
-              <Link 
-                href="#features" 
-                className="px-8 py-4 bg-card border border-border text-foreground font-bold text-sm rounded-xl hover:bg-muted/60 transition-all flex items-center justify-center gap-2"
-              >
-                <span>Explore Features</span>
-                <Compass className="w-4 h-4 text-muted-foreground" />
-              </Link>
-            </div>
-
-            {/* Trust Badges */}
-            <div className="flex items-center gap-6 pt-4 flex-wrap text-xs font-bold text-muted-foreground">
-              <div className="flex items-center gap-1.5">
-                <CheckCircle2 className="w-4 h-4 text-primary" />
-                <span>Instant Agent Approval</span>
-              </div>
-              <div className="flex items-center gap-1.5">
-                <CheckCircle2 className="w-4 h-4 text-primary" />
-                <span>Zero Subscription Fees</span>
-              </div>
-              <div className="flex items-center gap-1.5">
-                <CheckCircle2 className="w-4 h-4 text-primary" />
-                <span>24/7 Dedicated Support</span>
-              </div>
-            </div>
-
+            <h2 className="text-4xl sm:text-6xl lg:text-7xl font-black text-primary tracking-tight uppercase leading-none drop-shadow-xs">
+              FZEE TRAVEL & TOURS
+            </h2>
           </div>
 
-          {/* Right Column: Live Portal Mockup Card */}
-          <div className="lg:col-span-5">
-            <div className="bg-card border border-border rounded-3xl p-6 shadow-2xl space-y-4 relative overflow-hidden">
-              <div className="flex items-center justify-between border-b border-border pb-4">
-                <div className="flex items-center gap-2">
-                  <span className="w-3 h-3 rounded-full bg-primary animate-ping" />
-                  <span className="font-extrabold text-sm text-foreground">Live Portal Overview</span>
-                </div>
-                <span className="px-3 py-1 bg-rose-50 text-primary text-[10px] font-black rounded-md border border-rose-200 uppercase">
-                  B2B ACTIVE
-                </span>
-              </div>
+          {/* Subtitle matching user image */}
+          <p className="text-muted-foreground text-base sm:text-xl font-medium max-w-2xl mx-auto leading-relaxed">
+            Your premium gateway for seamless group bookings, flights, and exclusive travel packages.
+          </p>
 
-              {/* Feature Item 1 */}
-              <div className="flex items-center gap-4 p-4 bg-muted/30 rounded-2xl border border-border/50 hover:bg-muted/50 transition">
-                <div className="w-12 h-12 rounded-xl bg-primary/10 text-primary flex items-center justify-center shrink-0">
-                  <Users className="w-6 h-6" />
-                </div>
-                <div>
-                  <h4 className="font-bold text-sm text-foreground">Real-time Group Bookings</h4>
-                  <p className="text-xs text-muted-foreground mt-0.5">Instant seats reservation for Umrah & Group tours</p>
-                </div>
-              </div>
+          {/* Action CTAs */}
+          <div className="flex flex-wrap items-center justify-center gap-4 pt-2">
+            <Link 
+              href="/register" 
+              className="px-8 py-4 bg-primary text-primary-foreground font-black text-sm rounded-xl shadow-lg shadow-primary/25 hover:bg-primary/90 hover:shadow-primary/40 hover:-translate-y-0.5 transition-all flex items-center justify-center gap-2 uppercase tracking-wider"
+            >
+              <span>Register Agency Free</span>
+              <ArrowRight className="w-4 h-4" />
+            </Link>
 
-              {/* Feature Item 2 */}
-              <div className="flex items-center gap-4 p-4 bg-muted/30 rounded-2xl border border-border/50 hover:bg-muted/50 transition">
-                <div className="w-12 h-12 rounded-xl bg-primary/10 text-primary flex items-center justify-center shrink-0">
-                  <Plane className="w-6 h-6" />
-                </div>
-                <div>
-                  <h4 className="font-bold text-sm text-foreground">Global Flight Inventory</h4>
-                  <p className="text-xs text-muted-foreground mt-0.5">Direct B2B rates for major international airlines</p>
-                </div>
-              </div>
+            <Link 
+              href="/login" 
+              className="px-8 py-4 bg-card border border-border/90 text-foreground font-black text-sm rounded-xl hover:bg-muted/60 transition-all flex items-center justify-center gap-2 uppercase tracking-wider"
+            >
+              <span>Agent Sign In</span>
+            </Link>
+          </div>
 
-              {/* Feature Item 3 */}
-              <div className="flex items-center gap-4 p-4 bg-muted/30 rounded-2xl border border-border/50 hover:bg-muted/50 transition">
-                <div className="w-12 h-12 rounded-xl bg-primary/10 text-primary flex items-center justify-center shrink-0">
-                  <FileText className="w-6 h-6" />
-                </div>
-                <div>
-                  <h4 className="font-bold text-sm text-foreground">Automated Voucher System</h4>
-                  <p className="text-xs text-muted-foreground mt-0.5">Seamless Excel export and instant pdf invoices</p>
-                </div>
-              </div>
-
-              <div className="pt-2 text-center text-[10px] text-muted-foreground font-semibold uppercase tracking-widest">
-                Trusted by 500+ Registered Travel Agencies Nationwide
-              </div>
+          {/* Key Indicators */}
+          <div className="flex flex-wrap items-center justify-center gap-6 pt-2 text-xs font-extrabold text-muted-foreground">
+            <div className="flex items-center gap-1.5">
+              <CheckCircle2 className="w-4 h-4 text-primary" />
+              <span>Instant Confirmation</span>
+            </div>
+            <div className="flex items-center gap-1.5">
+              <CheckCircle2 className="w-4 h-4 text-primary" />
+              <span>Wholesale Group Fares</span>
+            </div>
+            <div className="flex items-center gap-1.5">
+              <CheckCircle2 className="w-4 h-4 text-primary" />
+              <span>24/7 Agent Support</span>
             </div>
           </div>
 
+        </div>
+
+        {/* Destination Cards Row matching user image */}
+        <div className="mt-16 sm:mt-20">
+          <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-7 gap-3 sm:gap-4">
+            {destinations.map((dest, idx) => (
+              <div 
+                key={idx}
+                className="group relative h-48 sm:h-56 md:h-64 rounded-2xl overflow-hidden border border-border/80 shadow-md hover:shadow-2xl hover:-translate-y-1.5 transition-all duration-300 bg-card cursor-pointer"
+              >
+                {/* Background Image */}
+                <img 
+                  src={dest.image} 
+                  alt={dest.name}
+                  className="absolute inset-0 w-full h-full object-cover group-hover:scale-110 transition-transform duration-700"
+                />
+
+                {/* Dark Gradient Overlay for Text Readability */}
+                <div className="absolute inset-0 bg-gradient-to-t from-black/90 via-black/40 to-transparent" />
+
+                {/* Content Overlay */}
+                <div className="absolute inset-x-0 bottom-0 p-3 sm:p-4 text-center text-white flex flex-col items-center justify-end">
+                  <h3 className="font-black text-sm sm:text-base md:text-lg tracking-tight drop-shadow-md leading-tight group-hover:text-amber-400 transition-colors">
+                    {dest.name}
+                  </h3>
+                  <span className="text-[10px] sm:text-[11px] font-bold text-white/80 tracking-wider uppercase mt-0.5">
+                    {dest.subtext}
+                  </span>
+                </div>
+              </div>
+            ))}
+          </div>
         </div>
 
       </div>
