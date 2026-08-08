@@ -80,11 +80,11 @@ export function FlightsTable() {
     <section className="w-full py-16">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         
-        <div className="w-full bg-black/40 backdrop-blur-2xl border border-white/20 shadow-[0_0_40px_rgba(0,0,0,0.5)] rounded-2xl overflow-hidden">
+        <div className="w-full bg-card border border-border shadow-2xl rounded-2xl overflow-hidden text-foreground">
           <div className="w-full">
             
             {/* Table Header - Hidden on Mobile */}
-            <div className="hidden md:flex bg-primary text-primary-foreground flex-wrap text-sm font-bold uppercase py-4 px-6 tracking-widest border-b border-primary-foreground/20">
+            <div className="hidden md:flex bg-primary text-primary-foreground flex-wrap text-sm font-black uppercase py-4 px-6 tracking-widest border-b border-primary-foreground/20 shadow-md">
               <div className="w-1/6">Date</div>
               <div className="w-1/6">Sector</div>
               <div className="w-1/6">Airline</div>
@@ -97,25 +97,25 @@ export function FlightsTable() {
 
             {/* Loading State */}
             {loading ? (
-              <div className="py-16 text-center text-white/70 font-bold flex items-center justify-center gap-3">
+              <div className="py-16 text-center text-muted-foreground font-bold flex items-center justify-center gap-3">
                 <Plane className="w-6 h-6 animate-pulse text-primary" />
                 <span>Fetching Live Published Schedules...</span>
               </div>
             ) : airlineNames.length === 0 ? (
-              <div className="py-16 text-center text-white/60 space-y-2">
-                <AlertCircle className="w-10 h-10 text-white/30 mx-auto" />
-                <p className="font-bold text-white text-base">No Published Flights Available</p>
-                <p className="text-xs text-white/50">Check back soon for new flight schedules published by admins.</p>
+              <div className="py-16 text-center text-muted-foreground space-y-2">
+                <AlertCircle className="w-10 h-10 text-primary/40 mx-auto" />
+                <p className="font-bold text-foreground text-base">No Published Flights Available</p>
+                <p className="text-xs text-muted-foreground">Check back soon for new flight schedules published by admins.</p>
               </div>
             ) : (
               /* Dynamic Table Body */
-              <div className="divide-y divide-white/10">
+              <div className="divide-y divide-border">
                 {airlineNames.map((airline, groupIdx) => (
                   <div key={groupIdx}>
                     {/* Airline Section Header */}
-                    <div className="bg-white/5 py-4 px-4 sm:px-6 flex justify-center border-y border-white/10">
-                      <div className="flex items-center justify-center h-10 px-8 bg-white/10 rounded-lg border border-white/20 shadow-inner">
-                        <span className="font-black text-white text-lg tracking-[0.2em] uppercase drop-shadow-sm">{airline}</span>
+                    <div className="bg-muted/40 py-3.5 px-4 sm:px-6 flex justify-center border-y border-border">
+                      <div className="flex items-center justify-center h-10 px-8 bg-primary/10 rounded-xl border border-primary/20 shadow-inner">
+                        <span className="font-black text-primary text-lg tracking-[0.2em] uppercase drop-shadow-sm">{airline}</span>
                       </div>
                     </div>
 
@@ -129,59 +129,59 @@ export function FlightsTable() {
                       const fareAmount = (flight.currentFare || flight.pricePerSeat).toLocaleString();
 
                       return (
-                        <div key={flight.id} className="flex flex-col md:flex-row md:items-center text-sm py-4 px-4 sm:px-6 hover:bg-white/10 transition-colors duration-200 gap-4 md:gap-0">
+                        <div key={flight.id} className="flex flex-col md:flex-row md:items-center text-sm py-4 px-4 sm:px-6 hover:bg-muted/30 transition-colors duration-200 gap-4 md:gap-0 border-b border-border/60 last:border-b-0">
                           
                           {/* Mobile Top Row: Sector, Date, Flt No */}
-                          <div className="flex justify-between items-center md:hidden border-b border-white/10 pb-3">
+                          <div className="flex justify-between items-center md:hidden border-b border-border pb-3">
                             <div>
-                              <div className="text-[10px] text-white/50 uppercase tracking-widest mb-1">Sector</div>
-                              <div className="font-bold text-white tracking-wide text-lg">{sectorStr}</div>
+                              <div className="text-[10px] text-muted-foreground uppercase tracking-widest mb-1">Sector</div>
+                              <div className="font-black text-foreground tracking-wide text-lg">{sectorStr}</div>
                             </div>
                             <div className="text-center">
-                              <div className="text-[10px] text-white/50 uppercase tracking-widest mb-1">Date</div>
-                              <div className="font-medium text-white/90">{dateStr}</div>
+                              <div className="text-[10px] text-muted-foreground uppercase tracking-widest mb-1">Date</div>
+                              <div className="font-medium text-foreground">{dateStr}</div>
                             </div>
                             <div className="text-right">
-                              <div className="text-[10px] text-white/50 uppercase tracking-widest mb-1">Flight</div>
-                              <div className="font-bold text-white">{flight.flightNumber}</div>
+                              <div className="text-[10px] text-muted-foreground uppercase tracking-widest mb-1">Flight</div>
+                              <div className="font-bold text-foreground font-mono">{flight.flightNumber}</div>
                             </div>
                           </div>
 
                           {/* Desktop Grid Columns */}
-                          <div className="hidden md:block w-1/6 font-medium text-white/90">{dateStr}</div>
-                          <div className="hidden md:block w-1/6 font-bold text-white tracking-wide">{sectorStr}</div>
-                          <div className="hidden md:block w-1/6 text-white/60 font-medium uppercase tracking-wider">{airline}</div>
-                          <div className="hidden md:block w-1/6 font-bold text-white">{flight.flightNumber}</div>
+                          <div className="hidden md:block w-1/6 font-medium text-foreground">{dateStr}</div>
+                          <div className="hidden md:block w-1/6 font-black text-foreground tracking-wide">{sectorStr}</div>
+                          <div className="hidden md:block w-1/6 text-muted-foreground font-semibold uppercase tracking-wider">{airline}</div>
+                          <div className="hidden md:block w-1/6 font-bold text-foreground font-mono">{flight.flightNumber}</div>
                           
                           {/* Mobile & Desktop: DEP / ARR / FARE */}
                           <div className="flex justify-between items-center md:hidden">
                             <div className="flex items-center gap-6">
                               <div className="text-center">
-                                <div className="font-bold text-[#4ade80] drop-shadow-sm text-xl">{depTime}</div>
+                                <div className="font-bold text-emerald-600 dark:text-emerald-400 drop-shadow-sm text-xl">{depTime}</div>
                               </div>
-                              <Plane className="w-5 h-5 text-white/30 rotate-45" />
+                              <Plane className="w-5 h-5 text-muted-foreground/40 rotate-45" />
                               <div className="text-center">
-                                <div className="font-bold text-[#f87171] drop-shadow-sm text-xl">{arrTime}</div>
+                                <div className="font-bold text-rose-600 dark:text-rose-400 drop-shadow-sm text-xl">{arrTime}</div>
                               </div>
                             </div>
                             <div className="text-right">
-                              <div className="text-[10px] text-white/50 uppercase tracking-widest mb-1">Fare</div>
-                              <div className="font-black text-xl text-white">Rs {fareAmount}</div>
+                              <div className="text-[10px] text-muted-foreground uppercase tracking-widest mb-1">Fare</div>
+                              <div className="font-black text-xl text-primary">Rs {fareAmount}</div>
                             </div>
                           </div>
 
-                          <div className="hidden md:block w-[10%] font-bold text-[#4ade80] drop-shadow-sm">{depTime}</div>
-                          <div className="hidden md:block w-[10%] font-bold text-[#f87171] drop-shadow-sm">{arrTime}</div>
-                          <div className="hidden md:block w-1/6 text-center font-black text-lg text-white">Rs {fareAmount}</div>
+                          <div className="hidden md:block w-[10%] font-bold text-emerald-600 dark:text-emerald-400">{depTime}</div>
+                          <div className="hidden md:block w-[10%] font-bold text-rose-600 dark:text-rose-400">{arrTime}</div>
+                          <div className="hidden md:block w-1/6 text-center font-black text-lg text-primary">Rs {fareAmount}</div>
                           
                           {/* Mobile & Desktop: Book Button */}
                           <div className="w-full md:flex-1 flex justify-center mt-2 md:mt-0">
                             {isAvailable ? (
-                              <Link href="/login" className="px-5 py-3 md:py-2 bg-primary text-primary-foreground text-sm md:text-xs font-black rounded-full shadow-lg hover:shadow-primary/50 hover:bg-primary/90 hover:-translate-y-0.5 transition-all block text-center w-full md:max-w-[120px] uppercase tracking-wider">
+                              <Link href="/login" className="px-5 py-2.5 bg-primary text-primary-foreground text-xs font-black rounded-xl shadow-md hover:shadow-primary/30 hover:bg-primary/90 transition-all block text-center w-full md:max-w-[120px] uppercase tracking-wider">
                                 Book Now
                               </Link>
                             ) : (
-                              <span className="px-5 py-3 md:py-2 bg-white/10 border border-white/20 text-white/50 text-sm md:text-xs font-bold rounded-full block text-center w-full md:max-w-[120px] cursor-not-allowed uppercase tracking-wider">
+                              <span className="px-5 py-2.5 bg-muted text-muted-foreground border border-border text-xs font-bold rounded-xl block text-center w-full md:max-w-[120px] cursor-not-allowed uppercase tracking-wider">
                                 Sold Out
                               </span>
                             )}
