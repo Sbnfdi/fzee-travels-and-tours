@@ -2,7 +2,7 @@
 
 import Link from 'next/link';
 import { useState } from 'react';
-import { Menu, X, Home, Compass, Star, MessageCircle, LogIn, UserPlus } from 'lucide-react';
+import { Menu, X, Home, Compass, Star, MessageCircle, LogIn, UserPlus, Info } from 'lucide-react';
 
 export function NavBar() {
   const [isOpen, setIsOpen] = useState(false);
@@ -28,6 +28,11 @@ export function NavBar() {
             <Link href="/" className="flex items-center gap-1.5 text-foreground hover:text-primary transition-colors py-1">
               <Home className="w-4 h-4 text-primary" />
               <span>Home</span>
+            </Link>
+
+            <Link href="/about" className="flex items-center gap-1.5 text-muted-foreground hover:text-foreground transition-colors py-1">
+              <Info className="w-4 h-4 text-primary" />
+              <span>About Us</span>
             </Link>
 
             <Link href="#features" className="flex items-center gap-1.5 text-muted-foreground hover:text-foreground transition-colors py-1">
@@ -97,6 +102,11 @@ export function NavBar() {
             <Link href="/" onClick={() => setIsOpen(false)} className="flex items-center gap-3 px-4 py-3 text-sm font-bold text-foreground hover:bg-rose-50 hover:text-primary rounded-xl transition-colors">
               <Home className="w-4 h-4 text-primary" />
               <span>Home Page</span>
+            </Link>
+
+            <Link href="/about" onClick={() => setIsOpen(false)} className="flex items-center gap-3 px-4 py-3 text-sm font-bold text-foreground hover:bg-rose-50 hover:text-primary rounded-xl transition-colors">
+              <Info className="w-4 h-4 text-primary" />
+              <span>About Us</span>
             </Link>
 
             <Link href="#features" onClick={() => setIsOpen(false)} className="flex items-center gap-3 px-4 py-3 text-sm font-bold text-foreground hover:bg-rose-50 hover:text-primary rounded-xl transition-colors">
