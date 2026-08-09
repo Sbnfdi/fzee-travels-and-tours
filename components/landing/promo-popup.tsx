@@ -24,14 +24,14 @@ export function PromoPopup() {
     isExpired: false,
   });
 
-  // Calculate remaining time until August 10th 00:00:00 PKT
+  // Calculate remaining time until August 14th 23:59:59 PKT
   const calculateTimeLeft = (): TimeLeft => {
     const now = new Date();
     const year = now.getFullYear();
-    let target = new Date(year, 7, 10, 0, 0, 0);
+    let target = new Date(year, 7, 14, 23, 59, 59);
 
     if (now > target) {
-      target = new Date(year + 1, 7, 10, 0, 0, 0);
+      target = new Date(year + 1, 7, 14, 23, 59, 59);
     }
 
     const diff = target.getTime() - now.getTime();
@@ -149,11 +149,11 @@ export function PromoPopup() {
                 <div className="flex items-center gap-1.5">
                   <Clock className="w-4 h-4 text-amber-400 animate-spin-slow" />
                   <span className="text-xs font-bold text-slate-200 tracking-wide uppercase">
-                    Sale Starts In:
+                    Sale Ends In:
                   </span>
                 </div>
                 <span className="text-[10px] font-extrabold text-amber-300 bg-amber-400/10 px-2 py-0.5 rounded-md border border-amber-400/20">
-                  Starts 10 Aug
+                  Ends 14 Aug
                 </span>
               </div>
 
