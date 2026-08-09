@@ -58,7 +58,7 @@ export function Hero() {
           {/* Headline matching user image structure */}
           <div className="space-y-2">
             <h1 className="text-3xl sm:text-5xl lg:text-6xl font-black text-foreground tracking-tight uppercase leading-tight">
-              WELCOME TO B2B PORTAL OF
+              WELCOME TO
             </h1>
             <h2 className="text-4xl sm:text-6xl lg:text-7xl font-black text-primary tracking-tight uppercase leading-none drop-shadow-xs">
               FZEE TRAVEL & TOURS
