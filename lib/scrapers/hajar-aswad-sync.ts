@@ -261,25 +261,38 @@ export async function syncHajarAswadFlightsToDB() {
   let updatedCount = 0;
 
   for (const f of scrapedFlights) {
-    // Unique matching key: flightNumber + departureCity + arrivalCity + departureTime
+    // Unique matching key: flightNumber + departureCity + arrivalCity
+    // Check if a flight on the same day exists
+    const startOfDay = new Date(f.departureTime);
+    startOfDay.setUTCHours(0, 0, 0, 0);
+
+    const endOfDay = new Date(f.departureTime);
+    endOfDay.setUTCHours(23, 59, 59, 999);
+
     const existing = await prisma.flight.findFirst({
       where: {
         flightNumber: f.flightNumber,
         departureCity: f.departureCity,
         arrivalCity: f.arrivalCity,
-        departureTime: f.departureTime,
+        departureTime: {
+          gte: startOfDay,
+          lte: endOfDay,
+        },
       },
     });
 
     if (existing) {
+      // PRESERVE existing pricePerSeat and fareTiers set by admin!
       await prisma.flight.update({
         where: { id: existing.id },
         data: {
+          departureTime: f.departureTime,
           arrivalTime: f.arrivalTime,
           baggage: f.baggage,
           meal: f.meal,
           airline: f.airline,
           status: 'active',
+          // Note: pricePerSeat and fareTiers are intentionally NOT updated here to preserve admin overrides!
         },
       });
       updatedCount++;

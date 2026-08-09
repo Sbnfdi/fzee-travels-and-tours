@@ -173,11 +173,11 @@ export const POST = withRole('SUPER_ADMIN', 'ADMIN', 'BOOKING_MANAGER')(async (r
 
 const updateFlightSchema = z.object({
   id: z.string(),
-  flightNumber: z.string().min(2).optional(),
-  pnr: z.string().optional(),
-  airline: z.string().min(2).optional(),
-  departureCity: z.string().min(2).optional(),
-  arrivalCity: z.string().min(2).optional(),
+  flightNumber: z.string().optional(),
+  pnr: z.string().optional().nullable(),
+  airline: z.string().optional(),
+  departureCity: z.string().optional(),
+  arrivalCity: z.string().optional(),
   departureTime: z.string().optional(),
   arrivalTime: z.string().optional(),
   duration: z.number().positive().optional(),
@@ -185,10 +185,10 @@ const updateFlightSchema = z.object({
   availableSeats: z.number().nonnegative().optional(),
   pricePerSeat: z.number().positive().optional(),
   fareTiers: z.string().optional().nullable(),
-  aircraftType: z.string().optional(),
-  baggage: z.string().optional(),
+  aircraftType: z.string().optional().nullable(),
+  baggage: z.string().optional().nullable(),
   meal: z.boolean().optional(),
-  category: z.string().optional(),
+  category: z.string().optional().nullable(),
   status: z.string().optional(),
 });
 

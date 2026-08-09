@@ -171,41 +171,38 @@ export default function AgentFlightsPage() {
 
       {/* Main Table */}
       <div className="bg-card rounded-2xl shadow-sm border border-border overflow-hidden">
-        <div className="overflow-x-auto w-full">
-          <table className="w-full text-left text-sm border-collapse whitespace-nowrap">
+        <div className="w-full">
+          <table className="w-full text-left text-xs sm:text-sm border-collapse">
             <thead>
-              <tr className="bg-primary text-primary-foreground uppercase text-xs">
-                <th className="px-4 py-3 font-semibold">Flight#</th>
-                <th className="px-4 py-3 font-semibold">Sector</th>
-                <th className="px-4 py-3 font-semibold">Departure Date & Time</th>
-                <th className="px-4 py-3 font-semibold">Arrival Date & Time</th>
-                <th className="px-4 py-3 font-semibold">Baggage</th>
-                <th className="px-4 py-3 font-semibold">Meal</th>
-                <th className="px-4 py-3 font-semibold">Price</th>
-                <th className="px-4 py-3 font-semibold text-center">Action</th>
+              <tr className="bg-primary text-primary-foreground uppercase text-[11px] font-bold">
+                <th className="px-3 py-3">Flight# & Sector</th>
+                <th className="px-3 py-3">Schedule (Dep / Arr)</th>
+                <th className="px-3 py-3">Baggage & Meal</th>
+                <th className="px-3 py-3">Fare (PKR)</th>
+                <th className="px-3 py-3 text-center">Action</th>
               </tr>
             </thead>
             {loading ? (
               <tbody>
                 <tr>
-                  <td colSpan={8} className="p-8 text-center text-slate-500">Loading flights...</td>
+                  <td colSpan={5} className="p-8 text-center text-muted-foreground font-bold">Loading flights...</td>
                 </tr>
               </tbody>
             ) : Object.keys(grouped).length === 0 ? (
               <tbody>
                 <tr>
-                  <td colSpan={8} className="p-8 text-center text-slate-500">No flights found matching your criteria.</td>
+                  <td colSpan={5} className="p-8 text-center text-muted-foreground font-bold">No flights found matching your criteria.</td>
                 </tr>
               </tbody>
             ) : (
               Object.values(grouped).map((group, gIndex) => (
                 <tbody key={gIndex}>
                   {/* Group Header */}
-                  <tr className="bg-muted/30 border-b border-border/60">
-                    <td colSpan={8} className="py-4 text-center">
-                      <div className="flex items-center justify-center gap-2 font-black text-lg">
+                  <tr className="bg-muted/40 border-b border-border/60">
+                    <td colSpan={5} className="py-2.5 px-4">
+                      <div className="flex items-center gap-2 font-black text-sm sm:text-base">
                         <span className="text-primary">{group.airline}</span>
-                        <span className="text-foreground">{group.route}</span>
+                        <span className="text-foreground">— {group.route}</span>
                       </div>
                     </td>
                   </tr>
@@ -213,26 +210,36 @@ export default function AgentFlightsPage() {
                   {/* Flight Rows */}
                   {group.flights.map((f, i) => (
                     <tr key={f.id} className={`border-b border-border/40 hover:bg-muted/20 transition ${i % 2 === 0 ? 'bg-card' : 'bg-muted/10'}`}>
-                      <td className="px-4 py-3 font-bold text-foreground flex items-center gap-1.5">
-                        <Plane className="w-3.5 h-3.5 text-primary" />
-                        {f.flightNumber}
+                      <td className="px-3 py-3 font-bold text-foreground">
+                        <div className="flex items-center gap-1.5 font-mono text-xs text-foreground">
+                          <Plane className="w-3.5 h-3.5 text-primary shrink-0" />
+                          <span>{f.flightNumber}</span>
+                        </div>
+                        <div className="text-xs font-semibold text-primary mt-0.5">{f.departureCity} → {f.arrivalCity}</div>
                       </td>
-                      <td className="px-4 py-3 font-black text-foreground">{f.departureCity}-{f.arrivalCity}</td>
-                      <td className="px-4 py-3">
-                        <div className="font-bold text-foreground text-xs">{formatDate(f.departureTime)}</div>
-                        <div className="font-bold text-emerald-600 dark:text-emerald-400 text-xs">{formatTime(f.departureTime)}</div>
+                      <td className="px-3 py-3 text-xs">
+                        <div className="font-bold text-foreground">
+                          <span className="text-muted-foreground mr-1">Dep:</span> 
+                          {formatDate(f.departureTime)} 
+                          <span className="text-emerald-600 dark:text-emerald-400 font-extrabold ml-1.5">{formatTime(f.departureTime)}</span>
+                        </div>
+                        <div className="font-bold text-foreground mt-1">
+                          <span className="text-muted-foreground mr-1">Arr:</span> 
+                          {formatDate(f.arrivalTime)} 
+                          <span className="text-rose-600 dark:text-rose-400 font-extrabold ml-1.5">{formatTime(f.arrivalTime)}</span>
+                        </div>
                       </td>
-                      <td className="px-4 py-3">
-                        <div className="font-bold text-foreground text-xs">{formatDate(f.arrivalTime)}</div>
-                        <div className="font-bold text-rose-600 dark:text-rose-400 text-xs">{formatTime(f.arrivalTime)}</div>
+                      <td className="px-3 py-3 text-xs">
+                        <div className="font-bold text-foreground">Bag: {f.baggage || '20 KG'}</div>
+                        <div className="text-muted-foreground text-[11px] mt-0.5">Meal: <strong className="text-foreground">{f.meal ? 'Included' : 'No'}</strong></div>
                       </td>
-                      <td className="px-4 py-3 font-bold text-foreground">{f.baggage || '20 KG'}</td>
-                      <td className="px-4 py-3 font-medium text-muted-foreground">{f.meal ? 'Yes' : 'No'}</td>
-                      <td className="px-4 py-3 font-bold text-primary">PKR {(f.currentFare || f.pricePerSeat).toLocaleString()}</td>
-                      <td className="px-4 py-3 text-center">
+                      <td className="px-3 py-3 font-black text-primary text-sm sm:text-base">
+                        PKR {(f.currentFare || f.pricePerSeat).toLocaleString()}
+                      </td>
+                      <td className="px-3 py-3 text-center">
                         <button
                           onClick={() => handleBookFlight(f.id)}
-                          className="bg-primary hover:bg-primary/90 text-primary-foreground px-5 py-1.5 rounded-lg shadow-sm font-bold text-sm transition"
+                          className="bg-primary hover:bg-primary/90 text-primary-foreground px-4 py-1.5 rounded-lg shadow-sm font-bold text-xs sm:text-sm transition"
                         >
                           Book now
                         </button>

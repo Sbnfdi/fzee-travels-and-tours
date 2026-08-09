@@ -165,31 +165,45 @@ export default function AdminFlightsPage() {
       const depDate = departureTime ? new Date(departureTime).toISOString() : new Date().toISOString();
       const arrDate = arrivalTime ? new Date(arrivalTime).toISOString() : new Date(Date.now() + 6 * 60 * 60 * 1000).toISOString();
 
+      const payload: any = {
+        flightNumber, pnr, airline, departureCity, arrivalCity,
+        departureTime: depDate,
+        arrivalTime: arrDate,
+        duration: 360,
+        totalSeats: Number(totalSeats) || 200,
+        pricePerSeat: Number(pricePerSeat) || 100000,
+        fareTiers: fareTiers.length > 0 ? JSON.stringify(fareTiers) : null,
+        baggage, meal, category,
+      };
+
+      if (isEdit) {
+        payload.id = editingFlightId;
+      } else {
+        payload.availableSeats = Number(totalSeats) || 200;
+      }
+
       const res = await fetch(url, {
         method,
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({
-          ...(isEdit ? { id: editingFlightId } : {}),
-          flightNumber, pnr, airline, departureCity, arrivalCity,
-          departureTime: depDate,
-          arrivalTime: arrDate,
-          duration: 360, totalSeats, availableSeats: isEdit ? undefined : totalSeats, pricePerSeat,
-          fareTiers: fareTiers.length > 0 ? JSON.stringify(fareTiers) : null,
-          baggage, meal, category,
-        }),
+        body: JSON.stringify(payload),
       });
 
-      if (res.ok) {
+      const data = await res.json();
+
+      if (res.ok && data.success) {
         setShowModal(false);
         setMessage(isEdit ? 'Flight schedule updated successfully!' : 'Flight schedule added successfully!');
         resetForm();
         fetchData();
+      } else {
+        setMessage(data.error || 'Failed to save flight schedule.');
       }
     } catch (err) {
-      console.error(err);
+      console.error('Error saving flight:', err);
+      setMessage('Error saving flight schedule.');
     } finally {
       setSaving(false);
-      setTimeout(() => setMessage(''), 3000);
+      setTimeout(() => setMessage(''), 4000);
     }
   };
 
@@ -535,101 +549,110 @@ export default function AdminFlightsPage() {
             <p className="text-xs">Adjust your category filters or add a new flight.</p>
           </div>
         ) : (
-          <div className="overflow-x-auto w-full">
-            <table className="w-full text-left border-collapse text-sm">
+          <div className="w-full">
+            <table className="w-full text-left border-collapse text-xs sm:text-sm">
               <thead>
-                <tr className="border-b border-border bg-muted/40 text-xs uppercase font-bold text-muted-foreground whitespace-nowrap">
-                  <th className="px-6 py-4">Status</th>
-                  <th className="px-6 py-4">Flight #</th>
-                  <th className="px-6 py-4">PNR</th>
-                  <th className="px-6 py-4">Airline</th>
-                  <th className="px-6 py-4">Route</th>
-                  <th className="px-6 py-4">Departure Date & Time</th>
-                  <th className="px-6 py-4">Arrival Date & Time</th>
-                  <th className="px-6 py-4">Seats</th>
-                  <th className="px-6 py-4">Baggage</th>
-                  <th className="px-6 py-4">Meal</th>
-                  <th className="px-6 py-4">Category</th>
-                  <th className="px-6 py-4">Current Fare</th>
-                  <th className="px-6 py-4">Tiers</th>
-                  <th className="px-6 py-4 text-right">Actions</th>
+                <tr className="border-b border-border bg-muted/40 text-[11px] uppercase font-bold text-muted-foreground">
+                  <th className="px-3 py-3">Status & Flight #</th>
+                  <th className="px-3 py-3">Airline & Route</th>
+                  <th className="px-3 py-3">Schedule (Dep / Arr)</th>
+                  <th className="px-3 py-3">Seats & Baggage</th>
+                  <th className="px-3 py-3">Fare & Tiers</th>
+                  <th className="px-3 py-3 text-right">Actions</th>
                 </tr>
               </thead>
-              <tbody>
+              <tbody className="divide-y divide-border/60">
                 {filteredFlights.map((f) => {
                   const tiers = parseTiers(f.fareTiers);
                   const seatsSold = f.totalSeats - f.availableSeats;
                   const isCancelled = f.status === 'cancelled';
 
                   return (
-                    <tr key={f.id} className={`border-b border-border/60 hover:bg-muted/20 ${isCancelled ? 'bg-red-500/5' : ''}`}>
-                      <td className="px-6 py-4 whitespace-nowrap">
-                        {isCancelled ? (
-                          <span className="px-2.5 py-1 bg-destructive/15 text-destructive border border-destructive/30 text-xs rounded-lg font-black uppercase">Cancelled</span>
-                        ) : (
-                          <span className="px-2.5 py-1 bg-emerald-500/15 text-emerald-600 dark:text-emerald-400 border border-emerald-500/30 text-xs rounded-lg font-black uppercase">Active</span>
+                    <tr key={f.id} className={`hover:bg-muted/20 ${isCancelled ? 'bg-red-500/5' : ''}`}>
+                      {/* Status & Flight # */}
+                      <td className="px-3 py-3 align-top">
+                        <div className="flex items-center gap-2 mb-1">
+                          {isCancelled ? (
+                            <span className="px-2 py-0.5 bg-destructive/15 text-destructive border border-destructive/30 text-[10px] rounded-md font-black uppercase">Cancelled</span>
+                          ) : (
+                            <span className="px-2 py-0.5 bg-emerald-500/15 text-emerald-600 dark:text-emerald-400 border border-emerald-500/30 text-[10px] rounded-md font-black uppercase">Active</span>
+                          )}
+                          <span className="font-mono text-xs font-black text-foreground">{f.flightNumber}</span>
+                        </div>
+                        <div className="text-[11px] font-mono text-muted-foreground">PNR: <strong className="text-foreground">{f.pnr || '—'}</strong></div>
+                      </td>
+
+                      {/* Airline & Route */}
+                      <td className="px-3 py-3 align-top">
+                        <div className="font-bold text-foreground text-xs sm:text-sm">{f.airline}</div>
+                        <div className="text-xs font-semibold text-primary mt-0.5">{f.departureCity} → {f.arrivalCity}</div>
+                        {f.category && f.category !== 'All Types' && (
+                          <span className="inline-block mt-1 px-1.5 py-0.5 bg-muted border border-border text-[10px] rounded font-bold text-muted-foreground">{f.category}</span>
                         )}
                       </td>
-                      <td className="px-6 py-4 font-bold text-foreground font-mono whitespace-nowrap">{f.flightNumber}</td>
-                      <td className="px-6 py-4 font-mono text-xs font-bold text-muted-foreground whitespace-nowrap">{f.pnr || '—'}</td>
-                      <td className="px-6 py-4 font-bold text-foreground whitespace-nowrap">{f.airline}</td>
-                      <td className="px-6 py-4 text-muted-foreground whitespace-nowrap">{f.departureCity} → {f.arrivalCity}</td>
-                      <td className="px-6 py-4 whitespace-nowrap">
-                        <div className="font-bold text-foreground text-xs">{f.departureTime ? new Date(f.departureTime).toLocaleDateString() : '—'}</div>
-                        <div className="font-bold text-emerald-600 dark:text-emerald-400 text-xs">{f.departureTime ? new Date(f.departureTime).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' }) : '—'}</div>
+
+                      {/* Schedule */}
+                      <td className="px-3 py-3 align-top text-xs">
+                        <div className="font-bold text-foreground">
+                          <span className="text-muted-foreground mr-1">Dep:</span> 
+                          {f.departureTime ? new Date(f.departureTime).toLocaleDateString('en-GB', { day: '2-digit', month: 'short' }) : '—'} 
+                          <span className="text-emerald-600 dark:text-emerald-400 font-extrabold ml-1.5">{f.departureTime ? new Date(f.departureTime).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' }) : ''}</span>
+                        </div>
+                        <div className="font-bold text-foreground mt-1">
+                          <span className="text-muted-foreground mr-1">Arr:</span> 
+                          {f.arrivalTime ? new Date(f.arrivalTime).toLocaleDateString('en-GB', { day: '2-digit', month: 'short' }) : '—'} 
+                          <span className="text-rose-600 dark:text-rose-400 font-extrabold ml-1.5">{f.arrivalTime ? new Date(f.arrivalTime).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' }) : ''}</span>
+                        </div>
                       </td>
-                      <td className="px-6 py-4 whitespace-nowrap">
-                        <div className="font-bold text-foreground text-xs">{f.arrivalTime ? new Date(f.arrivalTime).toLocaleDateString() : '—'}</div>
-                        <div className="font-bold text-rose-600 dark:text-rose-400 text-xs">{f.arrivalTime ? new Date(f.arrivalTime).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' }) : '—'}</div>
+
+                      {/* Seats & Baggage */}
+                      <td className="px-3 py-3 align-top text-xs">
+                        <div className="font-bold text-foreground">
+                          Seats: <strong className="text-primary font-black">{f.availableSeats}</strong>/{f.totalSeats} 
+                          <span className="text-[10px] text-muted-foreground ml-1">({seatsSold} sold)</span>
+                        </div>
+                        <div className="text-muted-foreground mt-1 font-medium">
+                          Bag: <span className="font-bold text-foreground">{f.baggage || '20 KG'}</span> | Meal: <span className="font-bold text-foreground">{f.meal ? 'Yes' : 'No'}</span>
+                        </div>
                       </td>
-                      <td className="px-6 py-4 whitespace-nowrap">
-                        <span className="font-bold text-foreground">{f.availableSeats}</span>
-                        <span className="text-muted-foreground text-xs">/{f.totalSeats}</span>
-                        <span className="text-xs text-muted-foreground ml-1">({seatsSold} sold)</span>
-                      </td>
-                      <td className="px-6 py-4 text-foreground whitespace-nowrap">{f.baggage || '—'}</td>
-                      <td className="px-6 py-4 text-foreground whitespace-nowrap">{f.meal ? 'Yes' : 'No'}</td>
-                      <td className="px-6 py-4 text-foreground whitespace-nowrap">
-                        <span className="px-2.5 py-1 bg-primary/10 text-primary border border-primary/20 text-xs rounded-lg font-extrabold">{f.category || 'None'}</span>
-                      </td>
-                      <td className="px-6 py-4 whitespace-nowrap">
-                        <span className="font-black text-primary">PKR {(f.currentFare || f.pricePerSeat)?.toLocaleString()}</span>
-                      </td>
-                      <td className="px-6 py-4 whitespace-nowrap">
+
+                      {/* Pricing & Tiers */}
+                      <td className="px-3 py-3 align-top text-xs">
+                        <div className="font-black text-primary text-sm sm:text-base">PKR {(f.currentFare || f.pricePerSeat)?.toLocaleString()}</div>
                         {tiers.length > 0 ? (
-                          <div className="space-y-0.5">
-                            {tiers.map((t, i) => (
-                              <div key={i} className="text-[10px] text-muted-foreground">
-                                <span className="font-bold">≤{t.upToSeat}:</span> PKR {t.price.toLocaleString()}
-                              </div>
-                            ))}
+                          <div className="text-[10px] text-muted-foreground mt-0.5">
+                            <span className="font-bold text-emerald-600 dark:text-emerald-400">{tiers.length} Tier(s)</span> active
                           </div>
                         ) : (
-                          <span className="text-xs text-muted-foreground">Fixed</span>
+                          <span className="text-[10px] text-muted-foreground">Fixed Rate</span>
                         )}
                       </td>
-                      <td className="px-6 py-4 text-right whitespace-nowrap space-x-1">
-                        <button 
-                          onClick={() => handleEditFlight(f)} 
-                          className="p-2 text-primary hover:bg-primary/10 rounded-lg transition" 
-                          title="Edit flight schedule"
-                        >
-                          <Edit className="w-4 h-4" />
-                        </button>
-                        <button 
-                          onClick={() => handleToggleCancelFlight(f)} 
-                          className={`p-2 rounded-lg transition ${isCancelled ? 'text-emerald-500 hover:bg-emerald-500/10' : 'text-amber-500 hover:bg-amber-500/10'}`} 
-                          title={isCancelled ? 'Reactivate flight' : 'Cancel flight'}
-                        >
-                          {isCancelled ? <RotateCcw className="w-4 h-4" /> : <Ban className="w-4 h-4" />}
-                        </button>
-                        <button 
-                          onClick={() => handleDeleteFlight(f.id)} 
-                          className="p-2 text-destructive hover:bg-destructive/10 rounded-lg transition" 
-                          title="Permanently remove flight"
-                        >
-                          <Trash2 className="w-4 h-4" />
-                        </button>
+
+                      {/* Actions */}
+                      <td className="px-3 py-3 align-top text-right">
+                        <div className="flex items-center justify-end gap-1">
+                          <button 
+                            onClick={() => handleEditFlight(f)} 
+                            className="p-1.5 text-primary hover:bg-primary/10 rounded-lg transition" 
+                            title="Edit flight schedule"
+                          >
+                            <Edit className="w-4 h-4" />
+                          </button>
+                          <button 
+                            onClick={() => handleToggleCancelFlight(f)} 
+                            className={`p-1.5 rounded-lg transition ${isCancelled ? 'text-emerald-500 hover:bg-emerald-500/10' : 'text-amber-500 hover:bg-amber-500/10'}`} 
+                            title={isCancelled ? 'Reactivate flight' : 'Cancel flight'}
+                          >
+                            {isCancelled ? <RotateCcw className="w-4 h-4" /> : <Ban className="w-4 h-4" />}
+                          </button>
+                          <button 
+                            onClick={() => handleDeleteFlight(f.id)} 
+                            className="p-1.5 text-destructive hover:bg-destructive/10 rounded-lg transition" 
+                            title="Permanently remove flight"
+                          >
+                            <Trash2 className="w-4 h-4" />
+                          </button>
+                        </div>
                       </td>
                     </tr>
                   );
