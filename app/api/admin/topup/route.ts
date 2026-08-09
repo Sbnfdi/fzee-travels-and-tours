@@ -1,8 +1,9 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { prisma } from '@/lib/prisma';
+import { withRole } from '@/lib/middleware';
 
 // GET all pending wallet top-ups for admin review
-export async function GET(req: NextRequest) {
+export const GET = withRole('SUPER_ADMIN', 'ADMIN', 'FINANCE_ADMIN')(async (req: NextRequest) => {
   try {
     const { searchParams } = new URL(req.url);
     const status = searchParams.get('status') || 'pending';
@@ -37,4 +38,4 @@ export async function GET(req: NextRequest) {
     console.error('Admin topups GET error:', error);
     return NextResponse.json({ error: 'Failed to fetch top-ups' }, { status: 500 });
   }
-}
+});

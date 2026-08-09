@@ -1,5 +1,6 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { prisma } from '@/lib/prisma';
+import { withRole } from '@/lib/middleware';
 import { z } from 'zod';
 
 const createFlightSchema = z.object({
@@ -146,7 +147,7 @@ export async function GET(req: NextRequest) {
   }
 }
 
-export async function POST(req: NextRequest) {
+export const POST = withRole('SUPER_ADMIN', 'ADMIN', 'BOOKING_MANAGER')(async (req: NextRequest) => {
   try {
     const body = await req.json();
     const data = createFlightSchema.parse(body);
@@ -168,7 +169,7 @@ export async function POST(req: NextRequest) {
     }
     return NextResponse.json({ error: 'Failed to create flight' }, { status: 500 });
   }
-}
+});
 
 const updateFlightSchema = z.object({
   id: z.string(),
@@ -191,7 +192,7 @@ const updateFlightSchema = z.object({
   status: z.string().optional(),
 });
 
-export async function PUT(req: NextRequest) {
+export const PUT = withRole('SUPER_ADMIN', 'ADMIN', 'BOOKING_MANAGER')(async (req: NextRequest) => {
   try {
     const body = await req.json();
     const data = updateFlightSchema.parse(body);
@@ -219,9 +220,9 @@ export async function PUT(req: NextRequest) {
     }
     return NextResponse.json({ error: 'Failed to update flight' }, { status: 500 });
   }
-}
+});
 
-export async function DELETE(req: NextRequest) {
+export const DELETE = withRole('SUPER_ADMIN', 'ADMIN', 'BOOKING_MANAGER')(async (req: NextRequest) => {
   try {
     const { searchParams } = new URL(req.url);
     const id = searchParams.get('id');
@@ -237,4 +238,4 @@ export async function DELETE(req: NextRequest) {
     console.error('Flights DELETE error:', error);
     return NextResponse.json({ error: 'Failed to delete flight' }, { status: 500 });
   }
-}
+});

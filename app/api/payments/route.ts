@@ -51,13 +51,31 @@ const handler = withAuth(async (req: NextRequest) => {
         return NextResponse.json({ error: 'Agent profile not found' }, { status: 404 });
       }
 
-      // If paying via wallet, verify balance & perform atomic deduction
-      if (method === 'wallet') {
-        if (agent.walletBalance < amount) {
-          return NextResponse.json({ error: 'Insufficient wallet balance for this payment.' }, { status: 400 });
-        }
+      // Verify booking existence and ownership (IDOR protection)
+      const booking = await prisma.booking.findUnique({ where: { id: bookingId } });
+      if (!booking) {
+        return NextResponse.json({ error: 'Booking not found' }, { status: 404 });
+      }
+      if (user.role === 'TRAVEL_AGENT' && booking.agencyId !== agent.agencyId) {
+        return NextResponse.json({ error: 'Forbidden: Access denied to this booking' }, { status: 403 });
+      }
 
+      // Verify payment amount matches booking total (Payment Amount Bypass protection)
+      if (amount !== booking.totalAmount) {
+        return NextResponse.json({
+          error: `Payment amount (PKR ${amount}) does not match required booking total (PKR ${booking.totalAmount}).`
+        }, { status: 400 });
+      }
+
+      // If paying via wallet, perform atomic deduction & verification inside transaction
+      if (method === 'wallet') {
         const paymentResult = await prisma.$transaction(async (tx: TransactionClient) => {
+          // Re-verify current agent wallet balance inside transaction to prevent race conditions
+          const freshAgent = await tx.agent.findUnique({ where: { id: agent.id } });
+          if (!freshAgent || freshAgent.walletBalance < amount) {
+            throw new Error('INSUFFICIENT_FUNDS');
+          }
+
           const payment = await tx.payment.create({
             data: {
               bookingId,
@@ -73,13 +91,13 @@ const handler = withAuth(async (req: NextRequest) => {
 
           await tx.agent.update({
             where: { id: agent.id },
-            data: { walletBalance: agent.walletBalance - amount },
+            data: { walletBalance: { decrement: amount } },
           });
 
           if (agent.agency.wallet) {
             await tx.wallet.update({
               where: { agencyId: agent.agencyId },
-              data: { balance: agent.agency.wallet.balance - amount },
+              data: { balance: { decrement: amount } },
             });
           }
 
@@ -88,17 +106,20 @@ const handler = withAuth(async (req: NextRequest) => {
             data: { status: 'confirmed' },
           });
 
-          // Create invoice automatically since it's confirmed
-          await tx.invoice.create({
-            data: {
-              invoiceNumber: `INV-${Date.now()}`,
+          // Create or update invoice automatically
+          const invNum = `INV-${booking.bookingNumber.replace('BK-', '')}`;
+          await tx.invoice.upsert({
+            where: { invoiceNumber: invNum },
+            update: { status: 'paid', totalAmount: amount },
+            create: {
+              invoiceNumber: invNum,
               bookingId,
               agencyId: agent.agencyId,
               subtotal: amount,
               tax: 0,
               totalAmount: amount,
               dueDate: new Date(),
-              status: 'paid', // since paid via wallet
+              status: 'paid',
             },
           });
 

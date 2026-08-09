@@ -76,11 +76,24 @@ export const POST = withAuth(async (req: NextRequest) => {
 
 export const DELETE = withAuth(async (req: NextRequest) => {
   try {
+    const user = (req as any).user;
     const { searchParams } = new URL(req.url);
     const id = searchParams.get('id');
 
     if (!id) {
       return NextResponse.json({ error: 'Activity ID is required' }, { status: 400 });
+    }
+
+    const activity = await prisma.cRMActivity.findUnique({ where: { id } });
+    if (!activity) {
+      return NextResponse.json({ error: 'Activity not found' }, { status: 404 });
+    }
+
+    if (user.role === 'TRAVEL_AGENT') {
+      const agent = await prisma.agent.findUnique({ where: { userId: user.userId } });
+      if (!agent || activity.agencyId !== agent.agencyId) {
+        return NextResponse.json({ error: 'Forbidden: Access denied to this activity' }, { status: 403 });
+      }
     }
 
     await prisma.cRMActivity.delete({ where: { id } });

@@ -1,5 +1,6 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { prisma } from '@/lib/prisma';
+import { withRole } from '@/lib/middleware';
 
 export async function GET(req: NextRequest) {
   try {
@@ -13,7 +14,7 @@ export async function GET(req: NextRequest) {
   }
 }
 
-export async function POST(req: NextRequest) {
+export const POST = withRole('SUPER_ADMIN', 'ADMIN', 'BOOKING_MANAGER')(async (req: NextRequest) => {
   try {
     const body = await req.json();
     const { name } = body;
@@ -34,9 +35,9 @@ export async function POST(req: NextRequest) {
     }
     return NextResponse.json({ success: false, error: 'Internal Server Error' }, { status: 500 });
   }
-}
+});
 
-export async function DELETE(req: NextRequest) {
+export const DELETE = withRole('SUPER_ADMIN', 'ADMIN', 'BOOKING_MANAGER')(async (req: NextRequest) => {
   try {
     const { searchParams } = new URL(req.url);
     const id = searchParams.get('id');
@@ -54,4 +55,4 @@ export async function DELETE(req: NextRequest) {
     console.error('Error deleting category:', error);
     return NextResponse.json({ success: false, error: 'Internal Server Error' }, { status: 500 });
   }
-}
+});

@@ -2,8 +2,8 @@ import jwt from 'jsonwebtoken';
 import bcrypt from 'bcryptjs';
 import { cookies } from 'next/headers';
 
-const JWT_SECRET = process.env.JWT_SECRET || 'your-super-secret-jwt-key';
-const JWT_REFRESH_SECRET = process.env.JWT_REFRESH_SECRET || 'your-refresh-secret';
+const JWT_SECRET = process.env.JWT_SECRET || (process.env.NODE_ENV === 'production' ? (() => { throw new Error('JWT_SECRET must be defined in production environment'); })() : 'fallback-dev-secret-fzee-travels-398127391');
+const JWT_REFRESH_SECRET = process.env.JWT_REFRESH_SECRET || (process.env.NODE_ENV === 'production' ? (() => { throw new Error('JWT_REFRESH_SECRET must be defined in production environment'); })() : 'fallback-dev-refresh-secret-fzee-travels-398127391');
 
 export interface TokenPayload {
   userId: string;
@@ -46,16 +46,18 @@ export async function setAuthCookies(accessToken: string, refreshToken: string) 
   const cookieStore = await cookies();
   cookieStore.set('accessToken', accessToken, {
     httpOnly: true,
-    secure: process.env.NODE_ENV === 'production' && process.env.VERCEL === '1',
+    secure: process.env.NODE_ENV === 'production',
     sameSite: 'lax',
     maxAge: 24 * 60 * 60, // 24 hours
+    path: '/',
   });
   
   cookieStore.set('refreshToken', refreshToken, {
     httpOnly: true,
-    secure: process.env.NODE_ENV === 'production' && process.env.VERCEL === '1',
+    secure: process.env.NODE_ENV === 'production',
     sameSite: 'lax',
     maxAge: 7 * 24 * 60 * 60, // 7 days
+    path: '/',
   });
 }
 

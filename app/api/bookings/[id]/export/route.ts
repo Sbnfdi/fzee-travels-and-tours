@@ -5,6 +5,7 @@ import ExcelJS from 'exceljs';
 
 export const GET = withAuth(async (req: NextRequest, { params }: any) => {
   try {
+    const user = (req as any).user;
     const { id } = await params;
 
     const booking = await prisma.booking.findUnique({
@@ -26,6 +27,13 @@ export const GET = withAuth(async (req: NextRequest, { params }: any) => {
 
     if (!booking) {
       return NextResponse.json({ error: 'Booking not found' }, { status: 404 });
+    }
+
+    if (user.role === 'TRAVEL_AGENT') {
+      const agent = await prisma.agent.findUnique({ where: { userId: user.userId } });
+      if (!agent || booking.agencyId !== agent.agencyId) {
+        return NextResponse.json({ error: 'Forbidden: Access denied to this booking' }, { status: 403 });
+      }
     }
 
     // Parse passenger details

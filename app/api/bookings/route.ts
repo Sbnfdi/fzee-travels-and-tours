@@ -125,9 +125,33 @@ const handler = withAuth(async (req: NextRequest) => {
       const commission = totalAmount * (agent.commissionRate / 100);
 
       const booking = await prisma.$transaction(async (tx: TransactionClient) => {
+        // Re-check & decrement inventory atomically inside transaction to prevent overselling race conditions
+        if (inventoryTypeToUpdate === 'GROUP' && inventoryIdToUpdate) {
+          const group = await tx.group.findUnique({ where: { id: inventoryIdToUpdate } });
+          if (!group || group.availableSlots < numberOfPax) {
+            throw new Error('NOT_ENOUGH_SLOTS');
+          }
+          await tx.group.update({
+            where: { id: inventoryIdToUpdate },
+            data: { availableSlots: { decrement: numberOfPax } },
+          });
+        } else if (inventoryTypeToUpdate === 'FLIGHT' && inventoryIdToUpdate) {
+          const flight = await tx.flight.findUnique({ where: { id: inventoryIdToUpdate } });
+          if (!flight || flight.availableSeats < numberOfPax) {
+            throw new Error('NOT_ENOUGH_SEATS');
+          }
+          await tx.flight.update({
+            where: { id: inventoryIdToUpdate },
+            data: { availableSeats: { decrement: numberOfPax } },
+          });
+        }
+
+        const uniqueSuffix = Math.floor(1000 + Math.random() * 9000);
+        const bookingNum = `BK-${Date.now()}-${uniqueSuffix}`;
+
         const newBooking = await tx.booking.create({
           data: {
-            bookingNumber: `BK-${Date.now()}`,
+            bookingNumber: bookingNum,
             bookingType,
             groupId: bookingType === 'GROUP' ? groupId : undefined,
             hotelId: bookingType === 'HOTEL' ? hotelId : undefined,
@@ -143,18 +167,6 @@ const handler = withAuth(async (req: NextRequest) => {
             specialRequests,
           },
         });
-
-        if (inventoryTypeToUpdate === 'GROUP' && inventoryIdToUpdate) {
-          await tx.group.update({
-            where: { id: inventoryIdToUpdate },
-            data: { availableSlots: availableSlots - numberOfPax },
-          });
-        } else if (inventoryTypeToUpdate === 'FLIGHT' && inventoryIdToUpdate) {
-          await tx.flight.update({
-            where: { id: inventoryIdToUpdate },
-            data: { availableSeats: availableSlots - numberOfPax },
-          });
-        }
 
         // Auto-create Invoice for this booking
         const invNum = `INV-${newBooking.bookingNumber.replace('BK-', '')}`;

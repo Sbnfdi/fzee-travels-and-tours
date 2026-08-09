@@ -14,7 +14,10 @@ const handler = withRole('SUPER_ADMIN', 'ADMIN', 'FINANCE_ADMIN', 'BOOKING_MANAG
 
         const agencies = await prisma.agency.findMany({
           where,
-          include: { user: true, agents: true },
+          include: {
+            user: { select: { id: true, name: true, email: true, phone: true, role: true, createdAt: true } },
+            agents: true,
+          },
           orderBy: { createdAt: 'desc' },
         });
 
