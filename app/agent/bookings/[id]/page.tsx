@@ -270,7 +270,7 @@ export default function BookingDetailPage() {
           <div className="space-y-4">
             <h2 className="text-lg font-bold text-foreground">Passenger Manifest</h2>
             <div className="border border-border rounded-xl divide-y divide-border/60">
-              {booking.passengerDetails.map((p, idx) => {
+              {booking.passengerDetails.map((p: any, idx: number) => {
                 const fullName = p.name || p.fullName || `Passenger ${idx + 1}`;
                 const passportNum = p.passportNumber || p.passport || p.passportNo || p.passport_number || p.cnic || 'N/A';
                 const expiry = p.passportExpiry || p.expiry || p.passport_expiry || p.expDate || 'N/A';

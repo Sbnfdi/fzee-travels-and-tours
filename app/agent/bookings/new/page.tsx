@@ -10,6 +10,9 @@ interface PassengerInput {
   title: string;
   name: string;
   passport: string;
+  passportNumber?: string;
+  passportExpiry?: string;
+  dob?: string;
   phone: string;
 }
 
