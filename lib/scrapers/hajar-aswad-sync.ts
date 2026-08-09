@@ -43,10 +43,55 @@ const MONTH_MAP: Record<string, number> = {
   jul: 6, aug: 7, sep: 8, oct: 9, nov: 10, dec: 11
 };
 
-function formatCity(codeOrName: string): string {
-  if (!codeOrName) return '';
-  const clean = codeOrName.replace(/<[^>]*>/g, '').trim().toUpperCase();
-  return CITY_CODE_MAP[clean] || clean;
+function cleanCityName(text: string): string {
+  if (!text) return '';
+  let clean = text.replace(/<[^>]*>/g, ' ').replace(/[^a-zA-Z0-9\s]/g, ' ').replace(/\s+/g, ' ').trim();
+  const words = clean.split(' ').filter(w => w.length > 0);
+  
+  // Remove consecutive duplicates (e.g. MCT MCT -> MCT)
+  const uniqueWords: string[] = [];
+  for (const w of words) {
+    if (uniqueWords.length === 0 || uniqueWords[uniqueWords.length - 1].toUpperCase() !== w.toUpperCase()) {
+      uniqueWords.push(w);
+    }
+  }
+
+  const firstWord = uniqueWords[0]?.toUpperCase() || '';
+  if (CITY_CODE_MAP[firstWord]) {
+    return CITY_CODE_MAP[firstWord];
+  }
+
+  const fullStr = uniqueWords.join(' ').toUpperCase();
+  if (CITY_CODE_MAP[fullStr]) {
+    return CITY_CODE_MAP[fullStr];
+  }
+
+  return uniqueWords.join(' ');
+}
+
+function cleanAirlineName(rawImgAlt: string, sectorId: string): string {
+  if (rawImgAlt) {
+    let clean = rawImgAlt
+      .replace(/\.(png|jpg|jpeg|svg|webp)/gi, '')
+      .replace(/assets\/|img\/|airline-logo\//gi, '')
+      .replace(/-/g, ' ')
+      .replace(/_/g, ' ')
+      .trim();
+    
+    // Remove city codes or sector strings appended
+    clean = clean.replace(/(Islamabad|Peshawar|Lahore|Karachi|Multan|Sialkot|Muscat|Jeddah|Riyadh|Doha|Dubai|Sharjah|Abu Dhabi|MCT|DOH|JED|RUH|DXB|SHJ|AUH|ISB|PEW|LHE|KHI).*/gi, '').trim();
+    if (clean.length >= 2) return clean.toUpperCase();
+  }
+
+  if (sectorId && sectorId.includes('_')) {
+    const parts = sectorId.split('_');
+    const airlinePart = parts[parts.length - 1];
+    if (airlinePart) {
+      return airlinePart.replace(/-/g, ' ').trim().toUpperCase();
+    }
+  }
+
+  return 'PARTNER AIRLINE';
 }
 
 function stripHtml(html: string): string {
@@ -114,8 +159,8 @@ export async function fetchLiveHajarAswadFlights(): Promise<ScrapedFlight[]> {
     const $ = cheerio.load(html);
     const flights: ScrapedFlight[] = [];
 
-    let currentAirline = 'Partner Airline';
-    let currentSectorTitle = '';
+    let currentAirline = 'PARTNER AIRLINE';
+    let currentSectorId = '';
 
     // Loop through table rows
     $('tr').each((_, element) => {
@@ -123,22 +168,9 @@ export async function fetchLiveHajarAswadFlights(): Promise<ScrapedFlight[]> {
 
       // Header sector row
       if (el.hasClass('sector_tr')) {
-        const sectorText = stripHtml(el.find('h5').html() || '');
+        currentSectorId = el.attr('id') || '';
         const imgAlt = el.find('img').attr('alt') || el.find('img').attr('src') || '';
-        
-        if (sectorText) currentSectorTitle = sectorText;
-        if (imgAlt) {
-          const cleanAlt = imgAlt
-            .replace(/\.(png|jpg|jpeg|svg|webp)/gi, '')
-            .replace(/^assets\//i, '')
-            .replace(/^img\//i, '')
-            .replace(/^airline-logo\//i, '')
-            .replace(/-/g, ' ')
-            .replace(/_/g, ' ')
-            .trim()
-            .toUpperCase();
-          if (cleanAlt) currentAirline = cleanAlt;
-        }
+        currentAirline = cleanAirlineName(imgAlt, currentSectorId);
         return;
       }
 
@@ -173,17 +205,12 @@ export async function fetchLiveHajarAswadFlights(): Promise<ScrapedFlight[]> {
 
           if (routeStr && routeStr.includes('-')) {
             const parts = routeStr.split('-');
-            depCityRaw = parts[0]?.trim() || '';
-            arrCityRaw = parts[1]?.trim() || '';
-          } else if (currentSectorTitle.includes('-')) {
-            const parts = currentSectorTitle.split('-');
-            depCityRaw = parts[0]?.trim() || '';
-            arrCityRaw = parts[1]?.trim() || '';
+            depCityRaw = parts[0] || '';
+            arrCityRaw = parts[1] || '';
           }
 
-          const depCity = formatCity(depCityRaw || 'Karachi');
-          const arrCity = formatCity(arrCityRaw || 'Jeddah');
-
+          const depCity = cleanCityName(depCityRaw || 'Karachi');
+          const arrCity = cleanCityName(arrCityRaw || 'Jeddah');
           const departureDate = parseCustomDate(dateStr);
 
           let depHour = 8;
@@ -257,12 +284,24 @@ export async function syncHajarAswadFlightsToDB() {
     return { success: false, syncedCount: 0, message: 'No live flights found or fetch failed' };
   }
 
+  // Purge any old corrupted/duplicated city name records from DB
+  await prisma.flight.deleteMany({
+    where: {
+      OR: [
+        { departureCity: { contains: 'MCT MCT' } },
+        { arrivalCity: { contains: 'MCT MCT' } },
+        { departureCity: { contains: 'DOH DOH' } },
+        { arrivalCity: { contains: 'DOH DOH' } },
+        { airline: { contains: 'Islamabad' } },
+        { airline: { contains: 'Peshawar' } },
+      ]
+    }
+  });
+
   let createdCount = 0;
   let updatedCount = 0;
 
   for (const f of scrapedFlights) {
-    // Unique matching key: flightNumber + departureCity + arrivalCity
-    // Check if a flight on the same day exists
     const startOfDay = new Date(f.departureTime);
     startOfDay.setUTCHours(0, 0, 0, 0);
 
@@ -291,8 +330,9 @@ export async function syncHajarAswadFlightsToDB() {
           baggage: f.baggage,
           meal: f.meal,
           airline: f.airline,
+          departureCity: f.departureCity,
+          arrivalCity: f.arrivalCity,
           status: 'active',
-          // Note: pricePerSeat and fareTiers are intentionally NOT updated here to preserve admin overrides!
         },
       });
       updatedCount++;
