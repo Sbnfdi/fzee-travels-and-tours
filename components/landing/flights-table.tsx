@@ -24,6 +24,31 @@ interface FlightItem {
   status?: string;
 }
 
+const CITY_CODE_MAP: Record<string, string> = {
+  KHI: 'Karachi', ISB: 'Islamabad', LHE: 'Lahore', PEW: 'Peshawar',
+  MUX: 'Multan', SKT: 'Sialkot', JED: 'Jeddah', MED: 'Madinah',
+  RUH: 'Riyadh', DMM: 'Dammam', DXB: 'Dubai', SHJ: 'Sharjah',
+  AUH: 'Abu Dhabi', RKT: 'Ras Al Khaimah', MCT: 'Muscat', DOH: 'Doha',
+  MAN: 'Manchester', AHB: 'Abha',
+};
+
+function formatCityHelper(name: string): string {
+  if (!name) return '';
+  const clean = name.replace(/<[^>]*>/g, '').trim();
+  const words = clean.split(/\s+/).filter(w => w.length > 0);
+  const unique: string[] = [];
+  for (const w of words) {
+    if (unique.length === 0 || unique[unique.length - 1].toUpperCase() !== w.toUpperCase()) {
+      unique.push(w);
+    }
+  }
+  const firstCode = unique[0]?.toUpperCase() || '';
+  if (CITY_CODE_MAP[firstCode]) return CITY_CODE_MAP[firstCode];
+  const fullStr = unique.join(' ').toUpperCase();
+  if (CITY_CODE_MAP[fullStr]) return CITY_CODE_MAP[fullStr];
+  return unique.join(' ');
+}
+
 export function FlightsTable() {
   const [flights, setFlights] = useState<FlightItem[]>([]);
   const [loading, setLoading] = useState(true);
@@ -122,7 +147,7 @@ export function FlightsTable() {
                             const depTimeStr = formatTime(flight.departureTime);
                             const arrDateStr = formatDate(flight.arrivalTime);
                             const arrTimeStr = formatTime(flight.arrivalTime);
-                            const sectorStr = `${flight.departureCity}-${flight.arrivalCity}`;
+                            const sectorStr = `${formatCityHelper(flight.departureCity)} → ${formatCityHelper(flight.arrivalCity)}`;
                             const fareAmount = (flight.currentFare || flight.pricePerSeat).toLocaleString();
 
                             return (
@@ -175,7 +200,7 @@ export function FlightsTable() {
                         const depTimeStr = formatTime(flight.departureTime);
                         const arrDateStr = formatDate(flight.arrivalTime);
                         const arrTimeStr = formatTime(flight.arrivalTime);
-                        const sectorStr = `${flight.departureCity}-${flight.arrivalCity}`;
+                        const sectorStr = `${formatCityHelper(flight.departureCity)} → ${formatCityHelper(flight.arrivalCity)}`;
                         const fareAmount = (flight.currentFare || flight.pricePerSeat).toLocaleString();
 
                         return (
