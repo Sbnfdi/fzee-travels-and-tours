@@ -1,8 +1,5 @@
-require('dotenv').config();
-const { PrismaClient } = require('@prisma/client');
+const fs = require('fs');
 const cheerio = require('cheerio');
-
-const prisma = new PrismaClient();
 
 const CITY_CODE_MAP = {
   KHI: 'Karachi', ISB: 'Islamabad', LHE: 'Lahore', PEW: 'Peshawar',
@@ -50,45 +47,22 @@ function parseCustomDate(dateStr) {
   return isNaN(fallback.getTime()) ? new Date() : fallback;
 }
 
-function estimatePrice(depCity, arrCity, airline) {
-  const arr = arrCity.toUpperCase();
-  if (arr.includes('JED') || arr.includes('MED') || arr.includes('RUH')) {
-    if (airline.toLowerCase().includes('saudi') || airline.toLowerCase().includes('etihad')) return 125000;
-    return 105000;
-  }
-  if (arr.includes('DXB') || arr.includes('SHJ') || arr.includes('AUH')) {
-    if (airline.toLowerCase().includes('fly') || airline.toLowerCase().includes('arabia')) return 78000;
-    return 88000;
-  }
-  if (arr.includes('MCT') || arr.includes('DOH')) return 92000;
-  return 95000;
-}
-
-async function main() {
-  console.log('🌐 Fetching live flight schedules from https://hajaraswadgroups.com/index.php ...');
-  
-  const res = await fetch('https://hajaraswadgroups.com/index.php', {
-    headers: {
-      'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0.0.0 Safari/537.36',
-    }
-  });
-
-  if (!res.ok) {
-    throw new Error(`HTTP Error ${res.status}`);
-  }
-
-  const html = await res.text();
-  const $ = cheerio.load(html);
-  const flights = [];
+function testParser() {
+  const filePath = 'C:\\Users\\Abdullah\\.gemini\\antigravity-ide\\brain\\bf023145-4d87-4394-829c-1d8f906ca219\\.system_generated\\steps\\1997\\content.md';
+  const htmlContent = fs.readFileSync(filePath, 'utf-8');
+  const $ = cheerio.load(htmlContent);
 
   let currentAirline = 'Partner Airline';
   let currentSectorTitle = '';
+  const flights = [];
 
   $('tr').each((_, element) => {
     const el = $(element);
+
     if (el.hasClass('sector_tr')) {
       const sectorText = stripHtml(el.find('h5').html() || '');
       const imgAlt = el.find('img').attr('alt') || el.find('img').attr('src') || '';
+
       if (sectorText) currentSectorTitle = sectorText;
       if (imgAlt) {
         const cleanAlt = imgAlt.replace('.png', '').replace('airline-logo/', '').replace(/-/g, ' ').toUpperCase();
@@ -137,6 +111,7 @@ async function main() {
 
         const depCity = formatCity(depCityRaw || 'Karachi');
         const arrCity = formatCity(arrCityRaw || 'Jeddah');
+
         const departureDate = parseCustomDate(dateStr);
 
         let depHour = 8, depMin = 0, arrHour = 11, arrMin = 0;
@@ -156,95 +131,27 @@ async function main() {
         if (arrivalTime <= departureTime) arrivalTime.setDate(arrivalTime.getDate() + 1);
 
         const duration = Math.max(120, Math.round((arrivalTime.getTime() - departureTime.getTime()) / 60000));
-        const meal = stripHtml(mealHtml).toUpperCase().includes('YES');
         const baggage = bagStr.replace(/[^0-9+KG]/gi, ' ').replace(/\s+/g, ' ').trim() || '20+7 KG';
+        const meal = stripHtml(mealHtml).toUpperCase().includes('YES');
 
         flights.push({
-          flightNumber: flightNo,
+          flightNo,
           airline: currentAirline,
-          departureCity: depCity,
-          arrivalCity: arrCity,
-          departureTime,
-          arrivalTime,
-          duration,
-          totalSeats: 15,
-          availableSeats: 12,
-          pricePerSeat: estimatePrice(depCity, arrCity, currentAirline),
+          depCity,
+          arrCity,
+          dateFormatted: departureDate.toISOString().split('T')[0],
+          depTimeFormatted: `${String(depHour).padStart(2, '0')}:${String(depMin).padStart(2, '0')}`,
+          arrTimeFormatted: `${String(arrHour).padStart(2, '0')}:${String(arrMin).padStart(2, '0')}`,
           baggage,
           meal,
-          category: `${arrCity} Direct Flight`,
         });
       }
     }
   });
 
-  console.log(`✈️ Parsed ${flights.length} live flight legs from Hajar Aswad site! Syncing to DB...`);
-
-  // First, clean up old corrupted duplicate entries
-  await prisma.flight.deleteMany({
-    where: {
-      OR: [
-        { departureCity: { contains: ' ' } },
-        { arrivalCity: { contains: ' ' } },
-        { baggage: { contains: 'KG 2' } },
-      ]
-    }
-  });
-
-  let created = 0, updated = 0;
-
-  for (const f of flights) {
-    const existing = await prisma.flight.findFirst({
-      where: {
-        flightNumber: f.flightNumber,
-        departureCity: f.departureCity,
-        arrivalCity: f.arrivalCity,
-        departureTime: f.departureTime,
-      }
-    });
-
-    if (existing) {
-      await prisma.flight.update({
-        where: { id: existing.id },
-        data: {
-          arrivalTime: f.arrivalTime,
-          baggage: f.baggage,
-          meal: f.meal,
-          airline: f.airline,
-          status: 'active',
-        }
-      });
-      updated++;
-    } else {
-      await prisma.flight.create({
-        data: {
-          flightNumber: f.flightNumber,
-          pnr: `HAJ-${Math.floor(100000 + Math.random() * 900000)}`,
-          airline: f.airline,
-          departureCity: f.departureCity,
-          arrivalCity: f.arrivalCity,
-          departureTime: f.departureTime,
-          arrivalTime: f.arrivalTime,
-          duration: f.duration,
-          totalSeats: f.totalSeats,
-          availableSeats: f.availableSeats,
-          pricePerSeat: f.pricePerSeat,
-          currency: 'PKR',
-          baggage: f.baggage,
-          meal: f.meal,
-          category: f.category,
-          status: 'active',
-        }
-      });
-      created++;
-    }
-  }
-
-  console.log(`✅ Sync Completed! Created: ${created}, Updated: ${updated}, Total Live Flights: ${created + updated}`);
-  await prisma.$disconnect();
+  console.log(`Total Flights Parsed: ${flights.length}`);
+  console.log('Sample Flights (first 10):');
+  console.log(JSON.stringify(flights.slice(0, 10), null, 2));
 }
 
-main().catch(err => {
-  console.error('Sync Error:', err);
-  process.exit(1);
-});
+testParser();

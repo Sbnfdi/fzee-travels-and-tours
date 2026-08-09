@@ -38,32 +38,57 @@ const CITY_CODE_MAP: Record<string, string> = {
   AHB: 'Abha',
 };
 
+const MONTH_MAP: Record<string, number> = {
+  jan: 0, feb: 1, mar: 2, apr: 3, may: 4, jun: 5,
+  jul: 6, aug: 7, sep: 8, oct: 9, nov: 10, dec: 11
+};
+
 function formatCity(codeOrName: string): string {
-  const clean = codeOrName.trim().toUpperCase();
-  return CITY_CODE_MAP[clean] || codeOrName.trim();
+  if (!codeOrName) return '';
+  const clean = codeOrName.replace(/<[^>]*>/g, '').trim().toUpperCase();
+  return CITY_CODE_MAP[clean] || clean;
+}
+
+function stripHtml(html: string): string {
+  if (!html) return '';
+  return html.replace(/<[^>]*>/g, ' ').replace(/\s+/g, ' ').trim();
+}
+
+function splitByBr(html: string): string[] {
+  if (!html) return [];
+  return html
+    .split(/<br\s*\/?>/gi)
+    .map(item => stripHtml(item))
+    .filter(item => item.length > 0);
+}
+
+function parseCustomDate(dateStr: string): Date {
+  if (!dateStr) return new Date();
+  const match = dateStr.match(/(\d{1,2})\s+([A-Za-z]{3,9})\s+(\d{4})/);
+  if (match) {
+    const day = parseInt(match[1]);
+    const monthStr = match[2].toLowerCase().substring(0, 3);
+    const month = MONTH_MAP[monthStr] !== undefined ? MONTH_MAP[monthStr] : 7;
+    const year = parseInt(match[3]);
+    return new Date(Date.UTC(year, month, day));
+  }
+  const fallback = new Date(dateStr);
+  return isNaN(fallback.getTime()) ? new Date() : fallback;
 }
 
 function estimatePrice(depCity: string, arrCity: string, airline: string): number {
-  const dep = depCity.toUpperCase();
   const arr = arrCity.toUpperCase();
-
-  // Saudi routes (Umrah)
-  if (arr.includes('JED') || arr.includes('JEDDAH') || arr.includes('MED') || arr.includes('MADINAH') || arr.includes('RUH') || arr.includes('RIYADH')) {
+  if (arr.includes('JED') || arr.includes('MED') || arr.includes('RUH') || arr.includes('JEDDAH') || arr.includes('RIYADH')) {
     if (airline.toLowerCase().includes('saudi') || airline.toLowerCase().includes('etihad')) return 125000;
     return 105000;
   }
-
-  // UAE routes
-  if (arr.includes('DXB') || arr.includes('DUBAI') || arr.includes('SHJ') || arr.includes('SHARJAH') || arr.includes('AUH') || arr.includes('ABU')) {
+  if (arr.includes('DXB') || arr.includes('SHJ') || arr.includes('AUH') || arr.includes('DUBAI') || arr.includes('SHARJAH')) {
     if (airline.toLowerCase().includes('fly') || airline.toLowerCase().includes('arabia')) return 78000;
     return 88000;
   }
-
-  // Oman / Qatar
-  if (arr.includes('MCT') || arr.includes('MUSCAT') || arr.includes('DOH') || arr.includes('DOHA')) {
+  if (arr.includes('MCT') || arr.includes('DOH') || arr.includes('MUSCAT') || arr.includes('DOHA')) {
     return 92000;
   }
-
   return 95000;
 }
 
@@ -98,7 +123,7 @@ export async function fetchLiveHajarAswadFlights(): Promise<ScrapedFlight[]> {
 
       // Header sector row
       if (el.hasClass('sector_tr')) {
-        const sectorText = el.find('h5').text().trim();
+        const sectorText = stripHtml(el.find('h5').html() || '');
         const imgAlt = el.find('img').attr('alt') || el.find('img').attr('src') || '';
         
         if (sectorText) currentSectorTitle = sectorText;
@@ -111,93 +136,100 @@ export async function fetchLiveHajarAswadFlights(): Promise<ScrapedFlight[]> {
 
       // Flight detail row
       if (el.hasClass('sector_td')) {
-        const dateStr = el.find('td[data-title="Date"]').text().replace(/\s+/g, ' ').trim();
-        const flightNo = el.find('td[data-title="Flight No"]').text().replace(/\s+/g, ' ').trim();
-        const routeText = el.find('td').eq(2).text().replace(/\s+/g, ' ').trim();
-        const timeStr = el.find('td[data-title="Time"]').text().replace(/\s+/g, ' ').trim();
-        const baggageStr = el.find('td[data-title="Bag"]').text().replace(/\s+/g, ' ').trim();
-        const mealText = el.find('td[data-title="Meal"]').text().replace(/\s+/g, ' ').trim();
+        const dateHtml = el.find('td[data-title="Date"]').html() || '';
+        const flightNoHtml = el.find('td[data-title="Flight No"]').html() || '';
+        const routeHtml = el.find('td').eq(2).html() || '';
+        const timeHtml = el.find('td[data-title="Time"]').html() || '';
+        const bagHtml = el.find('td[data-title="Bag"]').html() || '';
+        const mealHtml = el.find('td[data-title="Meal"]').html() || '';
 
-        if (!flightNo || flightNo.length < 2) return;
+        const dates = splitByBr(dateHtml);
+        const flightNos = splitByBr(flightNoHtml);
+        const routes = splitByBr(routeHtml);
+        const times = splitByBr(timeHtml);
+        const bags = splitByBr(bagHtml);
 
-        // Parse route (e.g. PEW - SHJ or Karachi to Jeddah)
-        let depCityRaw = '';
-        let arrCityRaw = '';
+        const legCount = Math.max(dates.length, flightNos.length, routes.length, times.length, 1);
 
-        if (routeText && routeText.includes('-')) {
-          const parts = routeText.split('-');
-          depCityRaw = parts[0]?.trim() || '';
-          arrCityRaw = parts[1]?.trim() || '';
-        } else if (currentSectorTitle.includes('-')) {
-          const parts = currentSectorTitle.split('-');
-          depCityRaw = parts[0]?.trim() || '';
-          arrCityRaw = parts[1]?.trim() || '';
-        }
+        for (let i = 0; i < legCount; i++) {
+          const dateStr = dates[i] || dates[0] || '';
+          const flightNo = flightNos[i] || flightNos[0] || '';
+          const routeStr = routes[i] || routes[0] || '';
+          const timeStr = times[i] || times[0] || '';
+          const bagStr = bags[i] || bags[0] || '20+7 KG';
 
-        const depCity = formatCity(depCityRaw || 'Karachi');
-        const arrCity = formatCity(arrCityRaw || 'Jeddah');
+          if (!flightNo || flightNo.length < 2) continue;
 
-        // Parse Date (e.g. 12 Aug 2026)
-        let departureDate = new Date();
-        if (dateStr) {
-          const parsed = new Date(dateStr);
-          if (!isNaN(parsed.getTime())) {
-            departureDate = parsed;
+          let depCityRaw = '';
+          let arrCityRaw = '';
+
+          if (routeStr && routeStr.includes('-')) {
+            const parts = routeStr.split('-');
+            depCityRaw = parts[0]?.trim() || '';
+            arrCityRaw = parts[1]?.trim() || '';
+          } else if (currentSectorTitle.includes('-')) {
+            const parts = currentSectorTitle.split('-');
+            depCityRaw = parts[0]?.trim() || '';
+            arrCityRaw = parts[1]?.trim() || '';
           }
-        }
 
-        // Parse Time (e.g. 07:30 - 10:00)
-        let depHour = 8;
-        let depMin = 0;
-        let arrHour = 11;
-        let arrMin = 0;
+          const depCity = formatCity(depCityRaw || 'Karachi');
+          const arrCity = formatCity(arrCityRaw || 'Jeddah');
 
-        if (timeStr && timeStr.includes('-')) {
-          const timeParts = timeStr.split('-');
-          const depT = timeParts[0].trim().split(':');
-          const arrT = timeParts[1].trim().split(':');
+          const departureDate = parseCustomDate(dateStr);
 
-          if (depT.length >= 2) {
-            depHour = parseInt(depT[0]) || 8;
-            depMin = parseInt(depT[1]) || 0;
+          let depHour = 8;
+          let depMin = 0;
+          let arrHour = 11;
+          let arrMin = 0;
+
+          if (timeStr && timeStr.includes('-')) {
+            const timeParts = timeStr.split('-');
+            const depT = timeParts[0].trim().split(':');
+            const arrT = timeParts[1].trim().split(':');
+
+            if (depT.length >= 2) {
+              depHour = parseInt(depT[0]) || 8;
+              depMin = parseInt(depT[1]) || 0;
+            }
+            if (arrT.length >= 2) {
+              arrHour = parseInt(arrT[0]) || 11;
+              arrMin = parseInt(arrT[1]) || 0;
+            }
           }
-          if (arrT.length >= 2) {
-            arrHour = parseInt(arrT[0]) || 11;
-            arrMin = parseInt(arrT[1]) || 0;
+
+          const departureTime = new Date(departureDate);
+          departureTime.setUTCHours(depHour, depMin, 0, 0);
+
+          const arrivalTime = new Date(departureDate);
+          arrivalTime.setUTCHours(arrHour, arrMin, 0, 0);
+          if (arrivalTime <= departureTime) {
+            arrivalTime.setDate(arrivalTime.getDate() + 1);
           }
+
+          const durationMinutes = Math.max(120, Math.round((arrivalTime.getTime() - departureTime.getTime()) / 60000));
+          const meal = stripHtml(mealHtml).toUpperCase().includes('YES');
+          const baggage = bagStr.replace(/[^0-9+KG]/gi, ' ').replace(/\s+/g, ' ').trim() || '20+7 KG';
+
+          const category = `${arrCity} Direct Flight`;
+          const pricePerSeat = estimatePrice(depCity, arrCity, currentAirline);
+
+          flights.push({
+            flightNumber: flightNo,
+            airline: currentAirline,
+            departureCity: depCity,
+            arrivalCity: arrCity,
+            departureTime,
+            arrivalTime,
+            duration: durationMinutes,
+            totalSeats: 15,
+            availableSeats: 12,
+            pricePerSeat,
+            baggage,
+            meal,
+            category,
+          });
         }
-
-        const departureTime = new Date(departureDate);
-        departureTime.setHours(depHour, depMin, 0, 0);
-
-        const arrivalTime = new Date(departureDate);
-        arrivalTime.setHours(arrHour, arrMin, 0, 0);
-        if (arrivalTime <= departureTime) {
-          arrivalTime.setDate(arrivalTime.getDate() + 1);
-        }
-
-        const durationMinutes = Math.max(120, Math.round((arrivalTime.getTime() - departureTime.getTime()) / 60000));
-        const meal = mealText.toUpperCase().includes('YES') || mealText.toUpperCase().includes('INCLUDED');
-        const baggage = baggageStr.replace(/[^0-9+KG]/gi, ' ').trim() || '20+07 KG';
-
-        const category = `${arrCity} Direct Flight`;
-        const pricePerSeat = estimatePrice(depCity, arrCity, currentAirline);
-
-        flights.push({
-          flightNumber: flightNo,
-          airline: currentAirline,
-          departureCity: depCity,
-          arrivalCity: arrCity,
-          departureTime,
-          arrivalTime,
-          duration: durationMinutes,
-          totalSeats: 15,
-          availableSeats: 12,
-          pricePerSeat,
-          baggage,
-          meal,
-          category,
-        });
       }
     });
 
@@ -221,12 +253,13 @@ export async function syncHajarAswadFlightsToDB() {
   let updatedCount = 0;
 
   for (const f of scrapedFlights) {
-    // Check if flight already exists by flightNumber and departureCity/arrivalCity/departureTime
+    // Unique matching key: flightNumber + departureCity + arrivalCity + departureTime
     const existing = await prisma.flight.findFirst({
       where: {
         flightNumber: f.flightNumber,
         departureCity: f.departureCity,
         arrivalCity: f.arrivalCity,
+        departureTime: f.departureTime,
       },
     });
 
@@ -234,7 +267,6 @@ export async function syncHajarAswadFlightsToDB() {
       await prisma.flight.update({
         where: { id: existing.id },
         data: {
-          departureTime: f.departureTime,
           arrivalTime: f.arrivalTime,
           baggage: f.baggage,
           meal: f.meal,
@@ -274,6 +306,6 @@ export async function syncHajarAswadFlightsToDB() {
     createdCount,
     updatedCount,
     syncedCount: createdCount + updatedCount,
-    message: `Successfully synced ${createdCount + updatedCount} live flights (${createdCount} new, ${updatedCount} updated).`,
+    message: `Successfully synced ${scrapedFlights.length} live flights (${createdCount} new, ${updatedCount} updated).`,
   };
 }
