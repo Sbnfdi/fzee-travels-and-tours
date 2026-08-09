@@ -57,10 +57,10 @@ export function Hero() {
 
           {/* Headline matching user image structure */}
           <div className="space-y-2">
-            <h1 className="text-3xl sm:text-5xl lg:text-6xl font-black text-foreground tracking-tight uppercase leading-tight">
+            <h1 className="text-xl sm:text-3xl lg:text-4xl font-bold text-muted-foreground tracking-widest uppercase leading-tight">
               WELCOME TO
             </h1>
-            <h2 className="text-4xl sm:text-6xl lg:text-7xl font-black text-primary tracking-tight uppercase leading-none drop-shadow-xs">
+            <h2 className="text-3xl sm:text-5xl lg:text-6xl font-black text-primary tracking-tight uppercase leading-none drop-shadow-xs">
               FZEE TRAVEL & TOURS
             </h2>
           </div>
