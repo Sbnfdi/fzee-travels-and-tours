@@ -122,7 +122,7 @@ const handler = withAuth(async (req: NextRequest) => {
         totalAmount = visa.pricePerPerson * numberOfPax;
       }
 
-      const commission = totalAmount * (agent.commissionRate / 100);
+      const commission = 0;
 
       const booking = await prisma.$transaction(async (tx: TransactionClient) => {
         // Re-check & decrement inventory atomically inside transaction to prevent overselling race conditions

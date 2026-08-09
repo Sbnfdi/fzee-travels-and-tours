@@ -48,12 +48,6 @@ export function Hero() {
         
         {/* Main Header Content - Centered */}
         <div className="text-center max-w-4xl mx-auto space-y-6">
-          
-          {/* Badge */}
-          <div className="inline-flex items-center gap-2 px-4 py-1.5 rounded-full bg-rose-50 border border-rose-200/80 text-primary text-xs font-black uppercase tracking-widest shadow-xs">
-            <span className="w-2 h-2 rounded-full bg-primary animate-pulse" />
-            <span>OFFICIAL B2B AGENT NETWORK</span>
-          </div>
 
           {/* Headline matching user image structure */}
           <div className="space-y-1.5">

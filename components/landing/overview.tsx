@@ -7,7 +7,7 @@ export function Overview() {
   const portalFeatures = [
     { icon: LayoutDashboard, title: 'Live Inventory Browser', desc: 'Browse available flights, hotels, and packages in real-time.' },
     { icon: CalendarDays, title: 'Instant Booking Engine', desc: 'Hold seats, generate PNRs, and confirm group bookings instantly.' },
-    { icon: Wallet, title: 'Wallet & Finance', desc: 'Manage invoices, track commissions, and top-up your agency wallet.' },
+    { icon: Wallet, title: 'Wallet & Finance', desc: 'Manage invoices, track payments, and top-up your agency wallet.' },
   ];
 
   return (

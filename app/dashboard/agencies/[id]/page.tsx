@@ -39,7 +39,7 @@ export default function AdminAgencyDetailPage() {
   const [actionMessage, setActionMessage] = useState('');
   
   const [showAddForm, setShowAddForm] = useState(false);
-  const [newAgent, setNewAgent] = useState({ name: '', email: '', phone: '', password: '', commissionRate: 10 });
+  const [newAgent, setNewAgent] = useState({ name: '', email: '', phone: '', password: '' });
   const [adding, setAdding] = useState(false);
   const [addError, setAddError] = useState('');
 
@@ -129,7 +129,7 @@ export default function AdminAgencyDetailPage() {
         setActionMessage('Agent added successfully.');
         setAgents([data.data, ...agents]);
         setShowAddForm(false);
-        setNewAgent({ name: '', email: '', phone: '', password: '', commissionRate: 10 });
+        setNewAgent({ name: '', email: '', phone: '', password: '' });
       } else {
         setAddError(data.error || 'Failed to add agent');
       }
@@ -257,10 +257,8 @@ export default function AdminAgencyDetailPage() {
                 <input required type="email" placeholder="Email" className="px-3 py-2 rounded-lg text-sm border" value={newAgent.email} onChange={e => setNewAgent({...newAgent, email: e.target.value})} />
                 <input required placeholder="Phone" className="px-3 py-2 rounded-lg text-sm border" value={newAgent.phone} onChange={e => setNewAgent({...newAgent, phone: e.target.value})} />
                 <input required type="password" placeholder="Password (min 6 chars)" minLength={6} className="px-3 py-2 rounded-lg text-sm border" value={newAgent.password} onChange={e => setNewAgent({...newAgent, password: e.target.value})} />
-                <div className="col-span-2 flex items-center gap-2">
-                  <span className="text-sm font-semibold">Commission Rate (%):</span>
-                  <input required type="number" min="0" max="100" className="px-3 py-2 rounded-lg text-sm border w-24" value={newAgent.commissionRate} onChange={e => setNewAgent({...newAgent, commissionRate: Number(e.target.value)})} />
-                  <button type="submit" disabled={adding} className="ml-auto px-4 py-2 bg-primary text-primary-foreground rounded-lg font-bold text-sm disabled:opacity-50 flex items-center gap-2">
+                <div className="col-span-2 flex items-center justify-end">
+                  <button type="submit" disabled={adding} className="px-4 py-2 bg-primary text-primary-foreground rounded-lg font-bold text-sm disabled:opacity-50 flex items-center gap-2">
                     {adding && <Loader2 className="w-4 h-4 animate-spin" />} Create Agent
                   </button>
                 </div>
@@ -284,11 +282,6 @@ export default function AdminAgencyDetailPage() {
                   </div>
                   
                   <div className="flex items-center gap-4">
-                    <div className="text-right">
-                      <span className="text-[10px] uppercase font-bold text-muted-foreground block">Commission</span>
-                      <span className="text-sm font-black text-primary">{agent.commissionRate}%</span>
-                    </div>
-                    
                     <span className={`px-2.5 py-1 rounded-full text-[10px] font-bold uppercase w-20 text-center ${
                       agent.status === 'active' ? 'bg-green-100 text-green-800' : 'bg-red-100 text-red-800'
                     }`}>
@@ -296,17 +289,6 @@ export default function AdminAgencyDetailPage() {
                     </span>
                     
                     <div className="flex gap-2 border-l border-border pl-4 ml-2">
-                      <button 
-                        onClick={() => {
-                          const newRate = prompt('Enter new commission rate (0-100):', agent.commissionRate.toString());
-                          if (newRate !== null && !isNaN(Number(newRate))) {
-                            handleUpdateAgent(agent.id, { commissionRate: Number(newRate) });
-                          }
-                        }}
-                        className="p-2 hover:bg-muted rounded-lg transition" title="Update Commission"
-                      >
-                        <Edit className="w-4 h-4 text-primary" />
-                      </button>
                       <button 
                         onClick={() => handleUpdateAgent(agent.id, { status: agent.status === 'active' ? 'suspended' : 'active' })}
                         className="p-2 hover:bg-muted rounded-lg transition" title="Toggle Status"

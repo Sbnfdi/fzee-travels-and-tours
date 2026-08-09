@@ -331,11 +331,6 @@ export default function AdminBookingDetailPage() {
             </div>
 
             <div className="p-4 bg-muted/40 rounded-xl border border-border/60">
-              <span className="text-xs font-bold uppercase text-muted-foreground block">Agent Commission</span>
-              <span className="text-xl font-black text-emerald-600 mt-1 block">PKR {(booking.commission || 0).toLocaleString()}</span>
-            </div>
-
-            <div className="p-4 bg-muted/40 rounded-xl border border-border/60">
               <span className="text-xs font-bold uppercase text-muted-foreground block">Payment Status</span>
               <span className="text-sm font-bold text-foreground mt-1.5 uppercase block">
                 {booking.payments?.[0]?.status || 'Pending'}
@@ -399,10 +394,6 @@ export default function AdminBookingDetailPage() {
               <div className="flex justify-between py-1 border-b border-border/40">
                 <span className="text-muted-foreground font-semibold">Agent Email:</span>
                 <span className="font-medium text-foreground">{agentEmail}</span>
-              </div>
-              <div className="flex justify-between py-1 border-b border-border/40">
-                <span className="text-muted-foreground font-semibold">Commission Rate:</span>
-                <span className="font-bold text-emerald-600">{booking.agent?.commissionRate || 0}%</span>
               </div>
             </div>
           </div>

@@ -78,7 +78,7 @@ export async function POST(request: NextRequest) {
         data: {
           userId: user.id,
           agencyId: agency.id,
-          commissionRate: 10, // Default 10% commission
+          commissionRate: 0,
           walletBalance: 0,
           status: autoApprove ? 'active' : 'inactive',
         },

@@ -83,7 +83,7 @@ export const POST = withRole('SUPER_ADMIN', 'ADMIN')(async (req: NextRequest) =>
         data: {
           userId: user.id,
           agencyId,
-          commissionRate: commissionRate || 10,
+          commissionRate: 0,
           walletBalance: 0,
           status: 'active',
         },

@@ -16,7 +16,7 @@ const features = [
   {
     icon: TrendingUp,
     title: 'Business Growth & Analytics',
-    description: 'Track commission earnings, agency top-ups, and financial statements with live dashboard reports.',
+    description: 'Track booking performance, agency top-ups, and financial statements with live dashboard reports.',
   },
   {
     icon: Lock,

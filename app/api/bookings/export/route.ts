@@ -49,7 +49,6 @@ export const GET = withAuth(async (req: NextRequest) => {
       { header: 'Passenger Details (Name, Passport #, Expiry, DOB)', key: 'paxDetails', width: 50 },
       { header: 'PAX Count', key: 'numberOfPax', width: 12 },
       { header: 'Total Amount (PKR)', key: 'totalAmount', width: 20 },
-      { header: 'Commission (PKR)', key: 'commission', width: 18 },
       { header: 'Status', key: 'status', width: 14 },
       { header: 'Booking Date', key: 'createdAt', width: 18 },
     ];
@@ -91,7 +90,6 @@ export const GET = withAuth(async (req: NextRequest) => {
         paxDetails: paxSummary,
         numberOfPax: b.numberOfPax,
         totalAmount: b.totalAmount,
-        commission: b.commission || 0,
         status: b.status.toUpperCase(),
         createdAt: new Date(b.createdAt).toLocaleDateString(),
       });
@@ -102,9 +100,6 @@ export const GET = withAuth(async (req: NextRequest) => {
       const amtCell = row.getCell('totalAmount');
       amtCell.numFmt = '#,##0';
       amtCell.font = { bold: true };
-
-      const commCell = row.getCell('commission');
-      commCell.numFmt = '#,##0';
     });
 
     const buffer = await workbook.xlsx.writeBuffer();

@@ -286,7 +286,7 @@ export const GET = withAuth(async (req: NextRequest, { params }: any) => {
     const finData = [
       ['Total Passengers (PAX):', booking.numberOfPax, 'Payment Status:', (booking.payments?.[0]?.status || 'PENDING').toUpperCase()],
       ['Price Rate / PAX (PKR):', basePricePerPax, 'Payment Method:', booking.payments?.[0]?.method ? booking.payments[0].method.toUpperCase() : 'AGENCY WALLET / CASH'],
-      ['Grand Total Amount (PKR):', booking.totalAmount, 'Agent Commission (PKR):', booking.commission || 0],
+      ['Grand Total Amount (PKR):', booking.totalAmount, '', ''],
     ];
 
     finData.forEach((rowVals) => {
