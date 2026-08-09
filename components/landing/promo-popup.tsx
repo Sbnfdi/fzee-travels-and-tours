@@ -24,14 +24,15 @@ export function PromoPopup() {
     isExpired: false,
   });
 
-  // Calculate remaining time until August 13th 12:00 AM Night (00:00:00 PKT)
+  // Calculate remaining time (3 Days Countdown)
   const calculateTimeLeft = (): TimeLeft => {
     const now = new Date();
+    // Target: 3 full days from current time (August 13th 01:25 AM PKT)
     const year = now.getFullYear();
-    let target = new Date(year, 7, 13, 0, 0, 0);
+    let target = new Date(year, 7, 13, 1, 26, 0);
 
     if (now > target) {
-      target = new Date(year + 1, 7, 13, 0, 0, 0);
+      target = new Date(year + 1, 7, 13, 1, 26, 0);
     }
 
     const diff = target.getTime() - now.getTime();
