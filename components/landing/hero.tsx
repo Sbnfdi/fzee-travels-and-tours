@@ -106,34 +106,57 @@ export function Hero() {
 
         </div>
 
-        {/* Destination Cards Row matching user image */}
-        <div className="mt-16 sm:mt-20">
+        {/* Destination Cards Row matching user image - Clickable Links to Login */}
+        <div className="mt-14 sm:mt-18">
+          <div className="flex items-center justify-between mb-6 px-1">
+            <div>
+              <span className="text-xs font-black text-primary uppercase tracking-widest block">Top Destinations & Seat Blocks</span>
+              <h3 className="text-xl sm:text-2xl font-black text-foreground tracking-tight">Explore B2B Group Fares</h3>
+            </div>
+            <Link href="/login" className="text-xs font-black text-primary hover:text-primary/80 flex items-center gap-1 uppercase tracking-wider transition-colors">
+              <span>View All Rates</span>
+              <ArrowRight className="w-3.5 h-3.5" />
+            </Link>
+          </div>
+
           <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-7 gap-3 sm:gap-4">
             {destinations.map((dest, idx) => (
-              <div 
+              <Link 
                 key={idx}
-                className="group relative h-48 sm:h-56 md:h-64 rounded-2xl overflow-hidden border border-border/80 shadow-md hover:shadow-2xl hover:-translate-y-1.5 transition-all duration-300 bg-card cursor-pointer"
+                href="/login"
+                className="group relative h-56 sm:h-64 md:h-72 rounded-2xl sm:rounded-3xl overflow-hidden border border-border/80 shadow-md hover:shadow-2xl hover:shadow-rose-600/20 hover:-translate-y-2 transition-all duration-500 bg-slate-950 flex flex-col justify-between p-3.5 sm:p-4 text-left cursor-pointer"
               >
-                {/* Background Image */}
+                {/* Top Pill Badge */}
+                <div className="relative z-10 self-start px-2 py-0.5 rounded-full bg-black/40 backdrop-blur-md border border-white/20 text-[9px] sm:text-[10px] font-black text-white/90 uppercase tracking-wider shadow-xs group-hover:bg-primary group-hover:border-primary group-hover:text-white transition-all duration-300">
+                  <span>{dest.subtext}</span>
+                </div>
+
+                {/* Background Image with Zoom */}
                 <img 
                   src={dest.image} 
                   alt={dest.name}
-                  className="absolute inset-0 w-full h-full object-cover group-hover:scale-110 transition-transform duration-700"
+                  className="absolute inset-0 w-full h-full object-cover group-hover:scale-110 transition-transform duration-700 ease-out"
                 />
 
-                {/* Dark Gradient Overlay for Text Readability */}
-                <div className="absolute inset-0 bg-gradient-to-t from-black/90 via-black/40 to-transparent" />
+                {/* Dark Gradient Overlay for High Contrast Text */}
+                <div className="absolute inset-0 bg-gradient-to-t from-black/95 via-black/40 to-black/10 group-hover:from-black/90 transition-colors duration-500" />
 
-                {/* Content Overlay */}
-                <div className="absolute inset-x-0 bottom-0 p-3 sm:p-4 text-center text-white flex flex-col items-center justify-end">
-                  <h3 className="font-black text-sm sm:text-base md:text-lg tracking-tight drop-shadow-md leading-tight group-hover:text-amber-400 transition-colors">
-                    {dest.name}
-                  </h3>
-                  <span className="text-[10px] sm:text-[11px] font-bold text-white/80 tracking-wider uppercase mt-0.5">
-                    {dest.subtext}
+                {/* Hover Glowing Border */}
+                <div className="absolute inset-0 rounded-2xl sm:rounded-3xl border-2 border-transparent group-hover:border-primary/60 transition-colors duration-500 z-20 pointer-events-none" />
+
+                {/* Bottom Card Info & Call to Action */}
+                <div className="relative z-10 text-white space-y-1">
+                  <div className="flex items-center justify-between gap-1">
+                    <h3 className="font-black text-base sm:text-lg tracking-tight leading-tight group-hover:text-rose-300 transition-colors duration-300 drop-shadow-md">
+                      {dest.name}
+                    </h3>
+                    <ArrowRight className="w-4 h-4 text-white/70 group-hover:text-primary group-hover:translate-x-1 transition-all duration-300 shrink-0" />
+                  </div>
+                  <span className="text-[10px] font-extrabold text-rose-200/90 tracking-wider uppercase block">
+                    Tap to Book →
                   </span>
                 </div>
-              </div>
+              </Link>
             ))}
           </div>
         </div>
