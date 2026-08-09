@@ -454,13 +454,13 @@ export default function AdminBookingDetailPage() {
                         {p.name || p.fullName || `Passenger ${idx + 1}`}
                       </td>
                       <td className="px-4 py-3 font-mono text-xs text-primary font-bold">
-                        {p.passportNumber || p.passport || 'N/A'}
+                        {p.passportNumber || p.passport || p.passportNo || p.passport_number || p.cnic || 'N/A'}
                       </td>
                       <td className="px-4 py-3 text-muted-foreground font-medium">
-                        {p.passportExpiry || 'N/A'}
+                        {p.passportExpiry || p.expiry || p.passport_expiry || p.expDate || 'N/A'}
                       </td>
                       <td className="px-4 py-3 text-muted-foreground font-medium">
-                        {p.dob || 'N/A'}
+                        {p.dob || p.dateOfBirth || p.date_of_birth || p.birthDate || 'N/A'}
                       </td>
                     </tr>
                   ))

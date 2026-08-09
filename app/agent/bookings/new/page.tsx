@@ -22,7 +22,7 @@ function NewBookingForm() {
 
   const [paxCount, setPaxCount] = useState(1);
   const [passengers, setPassengers] = useState<PassengerInput[]>([
-    { seatNumber: 'Seat 1', title: 'Mr', name: '', passport: '', phone: '' }
+    { seatNumber: 'Seat 1', title: 'Mr', name: '', passport: '', passportNumber: '', passportExpiry: '', dob: '', phone: '' }
   ]);
   const [specialRequests, setSpecialRequests] = useState('');
   const [payWithWallet, setPayWithWallet] = useState(true);
@@ -36,7 +36,7 @@ function NewBookingForm() {
     const list = [...passengers];
     while (list.length < validCount) {
       const idx = list.length + 1;
-      list.push({ seatNumber: `Seat ${idx}`, title: 'Mr', name: '', passport: '', phone: '' });
+      list.push({ seatNumber: `Seat ${idx}`, title: 'Mr', name: '', passport: '', passportNumber: '', passportExpiry: '', dob: '', phone: '' });
     }
     while (list.length > validCount) list.pop();
     setPassengers(list);
@@ -45,6 +45,7 @@ function NewBookingForm() {
   const handlePassengerChange = (index: number, field: keyof PassengerInput, val: string) => {
     const list = [...passengers];
     list[index] = { ...list[index], [field]: val };
+    if (field === 'passport') list[index].passportNumber = val;
     setPassengers(list);
   };
 
@@ -69,7 +70,10 @@ function NewBookingForm() {
             seatNumber: p.seatNumber || `Seat ${i + 1}`,
             title: p.title || 'Mr',
             name: p.name || `Passenger ${i + 1}`,
-            passport: p.passport || '',
+            passport: p.passportNumber || p.passport || '',
+            passportNumber: p.passportNumber || p.passport || '',
+            passportExpiry: p.passportExpiry || '',
+            dob: p.dob || '',
             phone: p.phone || '',
           })),
           specialRequests,
@@ -215,6 +219,26 @@ function NewBookingForm() {
                     value={p.passport}
                     onChange={(e) => handlePassengerChange(i, 'passport', e.target.value)}
                     placeholder="Passport / CNIC Number"
+                    className="w-full px-3 py-2 rounded-lg border border-input bg-background text-foreground text-xs focus:outline-none focus:ring-2 focus:ring-primary/50"
+                  />
+                </div>
+
+                <div className="sm:col-span-4">
+                  <label className="block text-[10px] font-bold uppercase text-muted-foreground mb-1">Passport Expiry</label>
+                  <input
+                    type="date"
+                    value={p.passportExpiry || ''}
+                    onChange={(e) => handlePassengerChange(i, 'passportExpiry', e.target.value)}
+                    className="w-full px-3 py-2 rounded-lg border border-input bg-background text-foreground text-xs focus:outline-none focus:ring-2 focus:ring-primary/50"
+                  />
+                </div>
+
+                <div className="sm:col-span-4">
+                  <label className="block text-[10px] font-bold uppercase text-muted-foreground mb-1">Date of Birth</label>
+                  <input
+                    type="date"
+                    value={p.dob || ''}
+                    onChange={(e) => handlePassengerChange(i, 'dob', e.target.value)}
                     className="w-full px-3 py-2 rounded-lg border border-input bg-background text-foreground text-xs focus:outline-none focus:ring-2 focus:ring-primary/50"
                   />
                 </div>

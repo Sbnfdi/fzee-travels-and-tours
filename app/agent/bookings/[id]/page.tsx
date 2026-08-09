@@ -272,9 +272,9 @@ export default function BookingDetailPage() {
             <div className="border border-border rounded-xl divide-y divide-border/60">
               {booking.passengerDetails.map((p, idx) => {
                 const fullName = p.name || p.fullName || `Passenger ${idx + 1}`;
-                const passportNum = p.passportNumber || p.passport || 'N/A';
-                const expiry = p.passportExpiry || 'N/A';
-                const dob = p.dob || 'N/A';
+                const passportNum = p.passportNumber || p.passport || p.passportNo || p.passport_number || p.cnic || 'N/A';
+                const expiry = p.passportExpiry || p.expiry || p.passport_expiry || p.expDate || 'N/A';
+                const dob = p.dob || p.dateOfBirth || p.date_of_birth || p.birthDate || 'N/A';
 
                 return (
                   <div key={idx} className="p-4 flex flex-col sm:flex-row sm:items-center justify-between gap-3">

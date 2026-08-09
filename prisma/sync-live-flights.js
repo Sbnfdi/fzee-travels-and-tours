@@ -91,7 +91,15 @@ async function main() {
       const imgAlt = el.find('img').attr('alt') || el.find('img').attr('src') || '';
       if (sectorText) currentSectorTitle = sectorText;
       if (imgAlt) {
-        const cleanAlt = imgAlt.replace('.png', '').replace('airline-logo/', '').replace(/-/g, ' ').toUpperCase();
+        const cleanAlt = imgAlt
+          .replace(/\.(png|jpg|jpeg|svg|webp)/gi, '')
+          .replace(/^assets\//i, '')
+          .replace(/^img\//i, '')
+          .replace(/^airline-logo\//i, '')
+          .replace(/-/g, ' ')
+          .replace(/_/g, ' ')
+          .trim()
+          .toUpperCase();
         if (cleanAlt) currentAirline = cleanAlt;
       }
       return;
