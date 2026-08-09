@@ -193,6 +193,29 @@ export default function AdminFlightsPage() {
     }
   };
 
+  const [syncing, setSyncing] = useState(false);
+
+  const handleSyncLiveFlights = async () => {
+    setSyncing(true);
+    setMessage('Syncing live flights from Hajar Aswad website...');
+    try {
+      const res = await fetch('/api/admin/flights/sync');
+      const data = await res.json();
+      if (res.ok && data.success) {
+        setMessage(data.message || 'Live flights synced successfully!');
+        fetchData();
+      } else {
+        setMessage(data.error || 'Failed to sync live flights');
+      }
+    } catch (err) {
+      console.error('Sync error:', err);
+      setMessage('Error syncing live flights');
+    } finally {
+      setSyncing(false);
+      setTimeout(() => setMessage(''), 4000);
+    }
+  };
+
   const handleToggleCancelFlight = async (f: FlightItem) => {
     const newStatus = f.status === 'cancelled' ? 'active' : 'cancelled';
     const actionText = newStatus === 'cancelled' ? 'Cancel' : 'Reactivate';
@@ -276,12 +299,22 @@ export default function AdminFlightsPage() {
       <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 border-b border-border pb-6">
         <div>
           <h1 className="text-3xl font-black text-foreground tracking-tight">Flight Schedules</h1>
-          <p className="text-muted-foreground mt-1">Manage airline ticket blocks, dynamic fare tiers, and flight categories</p>
+          <p className="text-muted-foreground mt-1">Manage airline ticket blocks, dynamic fare tiers, and live auto-synced flight schedules</p>
         </div>
-        <button onClick={handleOpenAddModal} className="px-5 py-2.5 bg-primary text-primary-foreground font-bold rounded-xl hover:bg-primary/90 transition shadow-md shadow-primary/20 inline-flex items-center gap-2 text-sm shrink-0">
-          <Plus className="w-4 h-4" />
-          <span>Add Flight</span>
-        </button>
+        <div className="flex items-center gap-3 shrink-0">
+          <button 
+            onClick={handleSyncLiveFlights}
+            disabled={syncing}
+            className="px-4 py-2.5 bg-card border border-primary/40 text-primary font-bold rounded-xl hover:bg-rose-50 dark:hover:bg-rose-950/30 transition shadow-xs inline-flex items-center gap-2 text-sm disabled:opacity-50"
+          >
+            <RotateCcw className={`w-4 h-4 ${syncing ? 'animate-spin' : ''}`} />
+            <span>{syncing ? 'Syncing...' : 'Sync Live Flights (Hajar Aswad)'}</span>
+          </button>
+          <button onClick={handleOpenAddModal} className="px-5 py-2.5 bg-primary text-primary-foreground font-bold rounded-xl hover:bg-primary/90 transition shadow-md shadow-primary/20 inline-flex items-center gap-2 text-sm">
+            <Plus className="w-4 h-4" />
+            <span>Add Flight</span>
+          </button>
+        </div>
       </div>
 
       {message && (
