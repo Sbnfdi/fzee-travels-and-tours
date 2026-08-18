@@ -106,8 +106,8 @@ export function PromoPopup() {
           <div className="md:col-span-5 relative bg-slate-950 flex items-center justify-center p-3 sm:p-4 border-b md:border-b-0 md:border-r border-emerald-500/20 group overflow-hidden">
             <div className="relative w-full flex items-center justify-center rounded-xl overflow-hidden bg-slate-950">
               <Image 
-                src="/difference-day-sale.jpg" 
-                alt="FZEE Travels Difference Day Sale - 10% OFF Domestic Air Tickets" 
+                src="/defence-day-sale.jpg" 
+                alt="FZEE Travels Defence Day Sale - 10% OFF Domestic Air Tickets" 
                 width={600}
                 height={900}
                 className="w-full h-auto max-h-[240px] sm:max-h-[280px] md:max-h-[400px] object-contain transition-transform duration-700 group-hover:scale-105"
@@ -140,12 +140,12 @@ export function PromoPopup() {
               </div>
 
               <h3 className="text-lg sm:text-xl md:text-2xl font-black tracking-tight text-white leading-tight">
-                6th September <span className="bg-gradient-to-r from-amber-300 via-yellow-200 to-amber-400 bg-clip-text text-transparent">Difference Day Sale</span>
+                6th September <span className="bg-gradient-to-r from-amber-300 via-yellow-200 to-amber-400 bg-clip-text text-transparent">Defence Day Sale</span>
               </h3>
               <p className="text-xs sm:text-sm text-slate-300 font-medium mt-1">
                 {timeLeft.isExpired ? (
                   <span>
-                    This Difference Day special discount has concluded. Contact us for <strong className="text-amber-300 font-bold">today&apos;s lowest fares</strong>!
+                    This Defence Day special discount has concluded. Contact us for <strong className="text-amber-300 font-bold">today&apos;s lowest fares</strong>!
                   </span>
                 ) : (
                   <span>
@@ -175,7 +175,7 @@ export function PromoPopup() {
                     Sale Ended
                   </div>
                   <p className="text-[11px] sm:text-xs text-slate-400">
-                    The 6th September Difference Day countdown has ended. You can still reach out to book the best regular flight fares!
+                    The 6th September Defence Day countdown has ended. You can still reach out to book the best regular flight fares!
                   </p>
                 </div>
               </div>
@@ -253,7 +253,7 @@ export function PromoPopup() {
                 href={
                   timeLeft.isExpired
                     ? "https://wa.me/923304084080?text=Hi%20FZEE%20Travels!%20I%27d%20like%20to%20inquire%20about%20current%20flight%20ticket%20rates%20and%20best%20available%20deals."
-                    : "https://wa.me/923304084080?text=Hi%20FZEE%20Travels!%20I%27m%20interested%20in%20the%206th%20September%20Difference%20Day%20Sale%2010%25%20discount%20on%20domestic%20air%20tickets."
+                    : "https://wa.me/923304084080?text=Hi%20FZEE%20Travels!%20I%27m%20interested%20in%20the%206th%20September%20Defence%20Day%20Sale%2010%25%20discount%20on%20domestic%20air%20tickets."
                 }
                 target="_blank"
                 rel="noopener noreferrer"
