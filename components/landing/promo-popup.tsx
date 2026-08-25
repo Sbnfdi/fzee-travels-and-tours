@@ -49,11 +49,11 @@ export function PromoPopup() {
     setIsMounted(true);
     setTimeLeft(calculateTimeLeft());
 
-    // Show popup smoothly after modern preloader finishes
+    // Show popup after smooth 600ms delay on every refresh
     const timer = setTimeout(() => {
       setIsOpen(true);
       requestAnimationFrame(() => setIsAnimating(true));
-    }, 1600);
+    }, 600);
 
     const countdownInterval = setInterval(() => {
       setTimeLeft(calculateTimeLeft());
