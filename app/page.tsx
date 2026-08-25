@@ -8,7 +8,6 @@ import { Testimonials } from '@/components/landing/testimonials';
 import { Partners } from '@/components/landing/partners';
 import { Footer } from '@/components/landing/footer';
 import { PromoPopup } from '@/components/landing/promo-popup';
-import { CinematicPreloader } from '@/components/landing/cinematic-preloader';
 
 export const revalidate = 60;
 
@@ -16,7 +15,6 @@ export default async function Page() {
   return (
     <div className="relative min-h-screen flex flex-col bg-background text-foreground font-sans">
 
-      <CinematicPreloader />
       <PromoPopup />
       <NavBar />
       <main className="flex-1 relative z-10 flex flex-col items-center w-full overflow-hidden">
