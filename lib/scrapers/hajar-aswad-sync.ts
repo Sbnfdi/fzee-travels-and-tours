@@ -18,24 +18,58 @@ export interface ScrapedFlight {
 }
 
 const CITY_CODE_MAP: Record<string, string> = {
+  // Pakistan
   KHI: 'Karachi',
   ISB: 'Islamabad',
   LHE: 'Lahore',
   PEW: 'Peshawar',
   MUX: 'Multan',
   SKT: 'Sialkot',
+  LYP: 'Faisalabad',
+  FSD: 'Faisalabad',
+  UET: 'Quetta',
+  SKZ: 'Sukkur',
+  GWD: 'Gwadar',
+  TUK: 'Turbat',
+  RYK: 'Rahim Yar Khan',
+  BHW: 'Bahawalpur',
+
+  // Saudi Arabia
   JED: 'Jeddah',
   MED: 'Madinah',
   RUH: 'Riyadh',
   DMM: 'Dammam',
+  AHB: 'Abha',
+  TUU: 'Tabuk',
+  GIZ: 'Jizan',
+  TIF: 'Taif',
+  ELQ: 'Gassim',
+  YNB: 'Yanbu',
+
+  // UAE
   DXB: 'Dubai',
   SHJ: 'Sharjah',
   AUH: 'Abu Dhabi',
   RKT: 'Ras Al Khaimah',
+  AAN: 'Al Ain',
+  DWC: 'Dubai World Central',
+
+  // Gulf & Middle East
   MCT: 'Muscat',
+  SLL: 'Salalah',
   DOH: 'Doha',
+  BAH: 'Bahrain',
+  KWI: 'Kuwait',
+
+  // International
   MAN: 'Manchester',
-  AHB: 'Abha',
+  LHR: 'London Heathrow',
+  LGW: 'London Gatwick',
+  IST: 'Istanbul',
+  CAI: 'Cairo',
+  CMB: 'Colombo',
+  BKK: 'Bangkok',
+  KUL: 'Kuala Lumpur',
 };
 
 const MONTH_MAP: Record<string, number> = {
@@ -43,9 +77,9 @@ const MONTH_MAP: Record<string, number> = {
   jul: 6, aug: 7, sep: 8, oct: 9, nov: 10, dec: 11
 };
 
-function cleanCityName(text: string): string {
+export function cleanCityName(text: string): string {
   if (!text) return '';
-  let clean = text.replace(/<[^>]*>/g, ' ').replace(/[^a-zA-Z0-9\s]/g, ' ').replace(/\s+/g, ' ').trim();
+  const clean = text.replace(/<[^>]*>/g, ' ').replace(/[^a-zA-Z0-9\s]/g, ' ').replace(/\s+/g, ' ').trim();
   const words = clean.split(' ').filter(w => w.length > 0);
   
   // Remove consecutive duplicates (e.g. MCT MCT -> MCT)
@@ -69,7 +103,7 @@ function cleanCityName(text: string): string {
   return uniqueWords.join(' ');
 }
 
-function cleanAirlineName(rawImgAlt: string, sectorId: string): string {
+export function cleanAirlineName(rawImgAlt: string, sectorId: string): string {
   if (rawImgAlt) {
     let clean = rawImgAlt
       .replace(/\.(png|jpg|jpeg|svg|webp)/gi, '')
@@ -107,18 +141,45 @@ function splitByBr(html: string): string[] {
     .filter(item => item.length > 0);
 }
 
-function parseCustomDate(dateStr: string): Date {
+export function parseCustomDate(dateStr: string): Date {
   if (!dateStr) return new Date();
-  const match = dateStr.match(/(\d{1,2})\s+([A-Za-z]{3,9})\s+(\d{4})/);
+  const match = dateStr.match(/(\d{1,2})\s+([A-Za-z]{3,9})(?:\s+(\d{2,4}))?/);
   if (match) {
     const day = parseInt(match[1]);
     const monthStr = match[2].toLowerCase().substring(0, 3);
-    const month = MONTH_MAP[monthStr] !== undefined ? MONTH_MAP[monthStr] : 7;
-    const year = parseInt(match[3]);
+    const month = MONTH_MAP[monthStr] !== undefined ? MONTH_MAP[monthStr] : 0;
+    let year = match[3] ? parseInt(match[3]) : new Date().getFullYear();
+    if (year < 100) year += 2000;
     return new Date(Date.UTC(year, month, day));
   }
   const fallback = new Date(dateStr);
   return isNaN(fallback.getTime()) ? new Date() : fallback;
+}
+
+export function determineFlightCategory(depCity: string, arrCity: string): string {
+  const arr = (arrCity || '').toUpperCase();
+  if (arr.includes('JED') || arr.includes('MED') || arr.includes('JEDDAH') || arr.includes('MADINAH') || arr.includes('MAKKAH')) {
+    return 'Umrah Direct Flight';
+  }
+  if (arr.includes('DXB') || arr.includes('SHJ') || arr.includes('AUH') || arr.includes('RKT') || arr.includes('DUBAI') || arr.includes('SHARJAH') || arr.includes('ABU DHABI') || arr.includes('RAS AL KHAIMAH')) {
+    return 'UAE Direct Flight';
+  }
+  if (arr.includes('RUH') || arr.includes('DMM') || arr.includes('AHB') || arr.includes('TUU') || arr.includes('GIZ') || arr.includes('RIYADH') || arr.includes('DAMMAM') || arr.includes('ABHA') || arr.includes('TABUK')) {
+    return 'Saudi Direct Flight';
+  }
+  if (arr.includes('MCT') || arr.includes('SLL') || arr.includes('MUSCAT') || arr.includes('SALALAH')) {
+    return 'Muscat Direct Flight';
+  }
+  if (arr.includes('DOH') || arr.includes('DOHA')) {
+    return 'Qatar Direct Flight';
+  }
+  if (arr.includes('BAH') || arr.includes('BAHRAIN')) {
+    return 'Bahrain Direct Flight';
+  }
+  if (arr.includes('MAN') || arr.includes('LHR') || arr.includes('LGW') || arr.includes('MANCHESTER') || arr.includes('LONDON')) {
+    return 'UK Direct Flight';
+  }
+  return `${arrCity} Direct Flight`;
 }
 
 function estimatePrice(depCity: string, arrCity: string, airline: string): number {
@@ -161,6 +222,7 @@ export async function fetchLiveHajarAswadFlights(): Promise<ScrapedFlight[]> {
 
     let currentAirline = 'PARTNER AIRLINE';
     let currentSectorId = '';
+    let currentSectorTitle = '';
 
     // Loop through table rows
     $('tr').each((_, element) => {
@@ -171,6 +233,7 @@ export async function fetchLiveHajarAswadFlights(): Promise<ScrapedFlight[]> {
         currentSectorId = el.attr('id') || '';
         const imgAlt = el.find('img').attr('alt') || el.find('img').attr('src') || '';
         currentAirline = cleanAirlineName(imgAlt, currentSectorId);
+        currentSectorTitle = el.find('h5').text().trim();
         return;
       }
 
@@ -205,6 +268,10 @@ export async function fetchLiveHajarAswadFlights(): Promise<ScrapedFlight[]> {
 
           if (routeStr && routeStr.includes('-')) {
             const parts = routeStr.split('-');
+            depCityRaw = parts[0] || '';
+            arrCityRaw = parts[1] || '';
+          } else if (currentSectorTitle && currentSectorTitle.includes('-')) {
+            const parts = currentSectorTitle.split('-');
             depCityRaw = parts[0] || '';
             arrCityRaw = parts[1] || '';
           }
@@ -246,19 +313,19 @@ export async function fetchLiveHajarAswadFlights(): Promise<ScrapedFlight[]> {
           const meal = stripHtml(mealHtml).toUpperCase().includes('YES');
           const baggage = bagStr.replace(/[^0-9+KG]/gi, ' ').replace(/\s+/g, ' ').trim() || '20+7 KG';
 
-          const category = `${arrCity} Direct Flight`;
+          const category = determineFlightCategory(depCity, arrCity);
           const pricePerSeat = estimatePrice(depCity, arrCity, currentAirline);
 
           flights.push({
-            flightNumber: flightNo,
+            flightNumber: flightNo.trim(),
             airline: currentAirline,
             departureCity: depCity,
             arrivalCity: arrCity,
             departureTime,
             arrivalTime,
             duration: durationMinutes,
-            totalSeats: 15,
-            availableSeats: 12,
+            totalSeats: 20,
+            availableSeats: 15,
             pricePerSeat,
             baggage,
             meal,
@@ -276,15 +343,27 @@ export async function fetchLiveHajarAswadFlights(): Promise<ScrapedFlight[]> {
 }
 
 /**
- * Sync live scraped flights directly into Prisma database
+ * Sync live scraped flights directly into Prisma database:
+ * 1. Inserts new live flights
+ * 2. Updates matching existing flights
+ * 3. Deletes or deactivates flights that no longer exist on the website
+ * 4. Ensures categories exist in FlightCategory table
  */
 export async function syncHajarAswadFlightsToDB() {
   const scrapedFlights = await fetchLiveHajarAswadFlights();
   if (!scrapedFlights || scrapedFlights.length === 0) {
-    return { success: false, syncedCount: 0, message: 'No live flights found or fetch failed' };
+    return {
+      success: false,
+      syncedCount: 0,
+      createdCount: 0,
+      updatedCount: 0,
+      deletedCount: 0,
+      deactivatedCount: 0,
+      message: 'No live flights found or fetch failed from Hajar Aswad website',
+    };
   }
 
-  // Purge any old corrupted/duplicated city name records from DB
+  // Purge any corrupted/duplicated city name records with no bookings
   await prisma.flight.deleteMany({
     where: {
       OR: [
@@ -294,14 +373,22 @@ export async function syncHajarAswadFlightsToDB() {
         { arrivalCity: { contains: 'DOH DOH' } },
         { airline: { contains: 'Islamabad' } },
         { airline: { contains: 'Peshawar' } },
-      ]
-    }
+      ],
+      bookings: { none: {} },
+    },
   });
+
+  const activeSyncedIds = new Set<string>();
+  const categoriesToEnsure = new Set<string>();
 
   let createdCount = 0;
   let updatedCount = 0;
 
   for (const f of scrapedFlights) {
+    if (f.category) {
+      categoriesToEnsure.add(f.category);
+    }
+
     const startOfDay = new Date(f.departureTime);
     startOfDay.setUTCHours(0, 0, 0, 0);
 
@@ -321,23 +408,26 @@ export async function syncHajarAswadFlightsToDB() {
     });
 
     if (existing) {
-      // PRESERVE existing pricePerSeat and fareTiers set by admin!
-      await prisma.flight.update({
+      // Preserve custom admin price overrides if they were configured
+      const updated = await prisma.flight.update({
         where: { id: existing.id },
         data: {
           departureTime: f.departureTime,
           arrivalTime: f.arrivalTime,
+          duration: f.duration,
           baggage: f.baggage,
           meal: f.meal,
           airline: f.airline,
           departureCity: f.departureCity,
           arrivalCity: f.arrivalCity,
+          category: f.category,
           status: 'active',
         },
       });
+      activeSyncedIds.add(updated.id);
       updatedCount++;
     } else {
-      await prisma.flight.create({
+      const created = await prisma.flight.create({
         data: {
           flightNumber: f.flightNumber,
           pnr: `HAJ-${Math.floor(100000 + Math.random() * 900000)}`,
@@ -357,16 +447,83 @@ export async function syncHajarAswadFlightsToDB() {
           status: 'active',
         },
       });
+      activeSyncedIds.add(created.id);
       createdCount++;
     }
   }
+
+  // Auto-sync FlightCategory table
+  for (const catName of categoriesToEnsure) {
+    try {
+      const catExists = await prisma.flightCategory.findUnique({
+        where: { name: catName },
+      });
+      if (!catExists) {
+        await prisma.flightCategory.create({
+          data: { name: catName },
+        });
+      }
+    } catch {
+      // Ignore unique constraint races
+    }
+  }
+
+  // Find all DB flights that were not present on the website in this sync run
+  const allCurrentDbFlights = await prisma.flight.findMany({
+    select: {
+      id: true,
+      flightNumber: true,
+      departureCity: true,
+      arrivalCity: true,
+      departureTime: true,
+      status: true,
+      _count: {
+        select: { bookings: true },
+      },
+    },
+  });
+
+  const obsoleteFlights = allCurrentDbFlights.filter(f => !activeSyncedIds.has(f.id));
+  let deletedCount = 0;
+  let deactivatedCount = 0;
+
+  for (const obs of obsoleteFlights) {
+    if (obs._count.bookings > 0) {
+      // Flight has real bookings; preserve booking history by marking cancelled/inactive
+      if (obs.status !== 'cancelled') {
+        await prisma.flight.update({
+          where: { id: obs.id },
+          data: { status: 'cancelled' },
+        });
+        deactivatedCount++;
+      }
+    } else {
+      // Flight has no bookings; delete obsolete flight from DB
+      await prisma.flight.delete({
+        where: { id: obs.id },
+      });
+      deletedCount++;
+    }
+  }
+
+  const syncedCount = createdCount + updatedCount;
+  let message = `Sync complete: ${scrapedFlights.length} live flights on website (${createdCount} added, ${updatedCount} updated`;
+  if (deletedCount > 0) {
+    message += `, ${deletedCount} obsolete deleted`;
+  }
+  if (deactivatedCount > 0) {
+    message += `, ${deactivatedCount} deactivated`;
+  }
+  message += ').';
 
   return {
     success: true,
     totalScraped: scrapedFlights.length,
     createdCount,
     updatedCount,
-    syncedCount: createdCount + updatedCount,
-    message: `Successfully synced ${scrapedFlights.length} live flights (${createdCount} new, ${updatedCount} updated).`,
+    deletedCount,
+    deactivatedCount,
+    syncedCount,
+    message,
   };
 }

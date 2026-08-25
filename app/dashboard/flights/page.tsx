@@ -226,7 +226,7 @@ export default function AdminFlightsPage() {
       setMessage('Error syncing live flights');
     } finally {
       setSyncing(false);
-      setTimeout(() => setMessage(''), 4000);
+      setTimeout(() => setMessage(''), 6000);
     }
   };
 
