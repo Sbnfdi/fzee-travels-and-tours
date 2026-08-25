@@ -2,6 +2,7 @@
 
 import { useState } from 'react';
 import Link from 'next/link';
+import Image from 'next/image';
 import { useRouter } from 'next/navigation';
 import { Plane, AlertCircle, ArrowRight } from 'lucide-react';
 
@@ -18,35 +19,29 @@ export default function LoginPage() {
     setError('');
 
     try {
-      const response = await fetch('/api/auth/login', {
+      const res = await fetch('/api/auth/login', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ email, password }),
       });
 
-      const data = await response.json();
+      const data = await res.json();
 
-      if (!response.ok) {
-        setError(data.error || 'Login failed. Invalid credentials.');
+      if (!res.ok) {
+        setError(data.error || 'Failed to login');
         return;
       }
 
-      // Role-based redirection logic
-      const role = data.user?.role;
-      if (
-        role === 'SUPER_ADMIN' ||
-        role === 'ADMIN' ||
-        role === 'FINANCE_ADMIN' ||
-        role === 'BOOKING_MANAGER' ||
-        role === 'SUPPORT_STAFF'
-      ) {
+      // Check role and redirect
+      if (['SUPER_ADMIN', 'ADMIN', 'FINANCE_ADMIN', 'BOOKING_MANAGER', 'SUPPORT_STAFF'].includes(data.user.role)) {
         router.push('/dashboard');
-      } else {
+      } else if (data.user.role === 'TRAVEL_AGENT') {
         router.push('/agent');
+      } else {
+        router.push('/');
       }
-    } catch (err) {
-      setError('An unexpected error occurred. Please try again.');
-      console.error(err);
+    } catch (err: any) {
+      setError(err?.message || 'Something went wrong');
     } finally {
       setLoading(false);
     }
@@ -57,13 +52,19 @@ export default function LoginPage() {
 
       <div className="w-full max-w-md space-y-6 relative z-10">
         {/* Logo */}
-        <Link href="/" className="flex justify-center items-center gap-3 group">
-          <div className="w-12 h-12 rounded-xl bg-primary flex items-center justify-center text-primary-foreground shadow-lg shadow-primary/30 group-hover:scale-105 transition-transform">
-            <Plane className="w-6 h-6 fill-current" />
+        <Link href="/" className="flex justify-center items-center gap-3.5 group">
+          <div className="relative w-14 h-14 rounded-full overflow-hidden shadow-xl shadow-black/25 group-hover:scale-105 transition-transform shrink-0 border border-primary/30">
+            <Image 
+              src="/logo.png" 
+              alt="Fzee Tours & Travels Logo" 
+              fill 
+              className="object-cover"
+              priority
+            />
           </div>
           <div className="flex flex-col">
             <span className="leading-none text-foreground font-black text-2xl tracking-tight">FZEE</span>
-            <span className="text-[11px] tracking-widest uppercase text-primary font-extrabold">Travel & Tours</span>
+            <span className="text-[11px] tracking-widest uppercase text-primary font-extrabold mt-0.5">Tours & Travels</span>
           </div>
         </Link>
 

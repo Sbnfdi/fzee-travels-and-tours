@@ -1,6 +1,7 @@
 'use client';
 
 import Link from 'next/link';
+import Image from 'next/image';
 import { usePathname } from 'next/navigation';
 import { useState, useEffect } from 'react';
 import { 
@@ -40,8 +41,13 @@ export default function AgentLayout({
       {/* Mobile Header */}
       <div className="md:hidden flex items-center justify-between p-4 border-b border-border bg-card shadow-sm">
         <Link href="/" className="flex items-center gap-3 font-black text-lg text-foreground group">
-          <div className="w-8 h-8 rounded-full bg-primary flex items-center justify-center text-primary-foreground font-black shadow-md shadow-primary/20">
-            <span className="text-sm">F</span>
+          <div className="relative w-9 h-9 rounded-full overflow-hidden shadow-md shadow-black/20 shrink-0 border border-primary/30">
+            <Image 
+              src="/logo.png" 
+              alt="Fzee Tours & Travels Logo" 
+              fill 
+              className="object-cover"
+            />
           </div>
           <div className="flex flex-col">
             <span className="leading-none text-foreground font-black text-base">FZEE</span>
@@ -77,8 +83,13 @@ export default function AgentLayout({
           <div className="p-4 border-b border-border/80 hidden md:flex items-center justify-between gap-2">
             {!isCollapsed ? (
               <Link href="/" className="flex items-center gap-3 font-black text-lg text-foreground group overflow-hidden">
-                <div className="w-9 h-9 rounded-full bg-primary flex items-center justify-center text-primary-foreground font-black shadow-md shadow-primary/20 shrink-0">
-                  <span className="text-base">F</span>
+                <div className="relative w-10 h-10 rounded-full overflow-hidden shadow-md shadow-black/20 shrink-0 border border-primary/30">
+                  <Image 
+                    src="/logo.png" 
+                    alt="Fzee Tours & Travels Logo" 
+                    fill 
+                    className="object-cover"
+                  />
                 </div>
                 <div className="flex flex-col">
                   <span className="leading-none text-foreground font-black text-lg tracking-tight">FZEE</span>
@@ -87,8 +98,13 @@ export default function AgentLayout({
               </Link>
             ) : (
               <Link href="/" className="mx-auto" title="FZEE Agent Portal">
-                <div className="w-9 h-9 rounded-full bg-primary flex items-center justify-center text-primary-foreground font-black shadow-md shadow-primary/20">
-                  <span className="text-base">F</span>
+                <div className="relative w-10 h-10 rounded-full overflow-hidden shadow-md shadow-black/20 shrink-0 border border-primary/30">
+                  <Image 
+                    src="/logo.png" 
+                    alt="Fzee Tours & Travels Logo" 
+                    fill 
+                    className="object-cover"
+                  />
                 </div>
               </Link>
             )}

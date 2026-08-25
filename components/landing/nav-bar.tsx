@@ -4,6 +4,8 @@ import Link from 'next/link';
 import { useState } from 'react';
 import { Menu, X, Home, Compass, Star, MessageCircle, LogIn, UserPlus, Info } from 'lucide-react';
 
+import Image from 'next/image';
+
 export function NavBar() {
   const [isOpen, setIsOpen] = useState(false);
 
@@ -14,12 +16,18 @@ export function NavBar() {
           
           {/* Logo Area */}
           <Link href="/" className="flex items-center gap-3 group">
-            <div className="w-10 h-10 rounded-full bg-primary text-primary-foreground flex items-center justify-center font-black shadow-md shadow-primary/20 group-hover:scale-105 transition-transform">
-              <span className="text-lg">F</span>
+            <div className="relative w-12 h-12 rounded-full overflow-hidden shadow-lg shadow-black/20 group-hover:scale-105 transition-transform shrink-0 border border-primary/30">
+              <Image 
+                src="/logo.png" 
+                alt="Fzee Tours & Travels Logo" 
+                fill 
+                className="object-cover"
+                priority
+              />
             </div>
             <div className="flex flex-col">
               <span className="text-xl font-black text-foreground tracking-tight leading-none">FZEE</span>
-              <span className="text-[10px] font-black uppercase text-primary tracking-widest mt-0.5">Travel & Tours</span>
+              <span className="text-[10px] font-black uppercase text-primary tracking-widest mt-0.5">Tours & Travels</span>
             </div>
           </Link>
 

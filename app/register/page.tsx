@@ -2,6 +2,7 @@
 
 import { useState } from 'react';
 import Link from 'next/link';
+import Image from 'next/image';
 import { useRouter } from 'next/navigation';
 import { Plane, AlertCircle, ArrowRight, CheckCircle2 } from 'lucide-react';
 
@@ -18,36 +19,35 @@ export default function RegisterPage() {
 
   const handleRegister = async (e: React.FormEvent) => {
     e.preventDefault();
-    setError('');
-
     if (password !== confirmPassword) {
       setError('Passwords do not match');
       return;
     }
 
     setLoading(true);
+    setError('');
 
     try {
       const response = await fetch('/api/auth/register', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ 
-          email, 
-          name: contactPerson, 
-          password, 
-          role: 'TRAVEL_AGENT',
+        body: JSON.stringify({
           agencyName,
-          phone
+          email,
+          contactPerson,
+          password,
+          phone,
         }),
       });
 
       const data = await response.json();
 
       if (!response.ok) {
-        setError(data.error || 'Registration failed');
+        setError(data.error || 'Registration failed.');
         return;
       }
 
+      // Automatically redirect to agent portal on successful registration
       router.push('/agent');
     } catch (err) {
       setError('An unexpected error occurred. Please try again.');
@@ -62,13 +62,19 @@ export default function RegisterPage() {
 
       <div className="w-full max-w-lg space-y-8 relative z-10">
         {/* Logo */}
-        <Link href="/" className="flex justify-center items-center gap-3 group">
-          <div className="w-12 h-12 rounded-xl bg-primary flex items-center justify-center text-primary-foreground shadow-lg shadow-primary/30 group-hover:scale-105 transition-transform">
-            <Plane className="w-6 h-6 fill-current" />
+        <Link href="/" className="flex justify-center items-center gap-3.5 group">
+          <div className="relative w-14 h-14 rounded-full overflow-hidden shadow-xl shadow-black/25 group-hover:scale-105 transition-transform shrink-0 border border-primary/30">
+            <Image 
+              src="/logo.png" 
+              alt="Fzee Tours & Travels Logo" 
+              fill 
+              className="object-cover"
+              priority
+            />
           </div>
           <div className="flex flex-col">
             <span className="leading-none text-foreground font-black text-2xl tracking-tight">FZEE</span>
-            <span className="text-[11px] tracking-widest uppercase text-primary font-extrabold">Travel & Tours</span>
+            <span className="text-[11px] tracking-widest uppercase text-primary font-extrabold mt-0.5">Tours & Travels</span>
           </div>
         </Link>
 

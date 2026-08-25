@@ -1,6 +1,7 @@
 'use client';
 
 import Link from 'next/link';
+import Image from 'next/image';
 
 export function Footer() {
   return (
@@ -12,12 +13,17 @@ export function Footer() {
           {/* Brand & About Us */}
           <div className="space-y-4">
             <Link href="/" className="flex items-center gap-3 group inline-flex">
-              <div className="w-9 h-9 rounded-full bg-primary text-primary-foreground flex items-center justify-center font-black shadow-md">
-                <span className="text-base">F</span>
+              <div className="relative w-10 h-10 rounded-full overflow-hidden shadow-md shadow-black/20 shrink-0 border border-primary/30">
+                <Image 
+                  src="/logo.png" 
+                  alt="Fzee Tours & Travels Logo" 
+                  fill 
+                  className="object-cover"
+                />
               </div>
               <div className="flex flex-col">
                 <span className="leading-none text-foreground font-black text-lg tracking-tight">FZEE</span>
-                <span className="text-[9px] tracking-widest uppercase text-primary font-black mt-0.5">Travel & Tours</span>
+                <span className="text-[9px] tracking-widest uppercase text-primary font-black mt-0.5">Tours & Travels</span>
               </div>
             </Link>
             <p className="text-xs text-muted-foreground leading-relaxed font-medium">

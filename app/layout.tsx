@@ -4,11 +4,18 @@ import { FloatingSupportHub } from '@/components/support/floating-support-hub'
 import './globals.css'
 
 export const metadata: Metadata = {
-  title: 'Fzee Travel and Tours - Premium B2B Travel Portal',
-  description: 'Connect travel agencies, manage group bookings, flights, and hotels effortlessly with Fzee Travel and Tours enterprise portal.',
+  title: 'Fzee Tours and Travels - Premium B2B Travel Portal',
+  description: 'Connect travel agencies, manage group bookings, flights, and hotels effortlessly with Fzee Tours and Travels enterprise portal.',
   generator: 'v0.app',
   icons: {
     icon: [
+      {
+        url: '/logo.png',
+        type: 'image/png',
+      },
+      {
+        url: '/favicon.ico',
+      },
       {
         url: '/icon-light-32x32.png',
         media: '(prefers-color-scheme: light)',
@@ -17,12 +24,9 @@ export const metadata: Metadata = {
         url: '/icon-dark-32x32.png',
         media: '(prefers-color-scheme: dark)',
       },
-      {
-        url: '/icon.svg',
-        type: 'image/svg+xml',
-      },
     ],
-    apple: '/apple-icon.png',
+    shortcut: '/logo.png',
+    apple: '/logo.png',
   },
 }
 
@@ -42,6 +46,8 @@ export default function RootLayout({
   return (
     <html lang="en">
       <head>
+        <link rel="icon" href="/logo.png" type="image/png" />
+        <link rel="apple-touch-icon" href="/logo.png" />
         <link rel="preconnect" href="https://fonts.googleapis.com" />
         <link rel="preconnect" href="https://fonts.gstatic.com" crossOrigin="anonymous" />
         <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;500;600;700;800&display=swap" rel="stylesheet" />
