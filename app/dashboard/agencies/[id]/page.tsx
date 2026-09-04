@@ -7,7 +7,7 @@ import Link from 'next/link';
 
 interface AgentDetail {
   id: string;
-  commissionRate: number;
+  commissionRate?: number;
   status: string;
   user: { name: string; email: string };
   createdAt: string;

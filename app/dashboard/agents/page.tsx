@@ -4,13 +4,12 @@ import { useState, useEffect } from 'react';
 import Link from 'next/link';
 import { 
   Users, Search, Plus, CheckCircle2, XCircle, Mail, Phone, 
-  Building2, ShieldAlert, ShieldCheck, Loader2, Filter, Percent, ArrowUpRight
+  Building2, ShieldAlert, ShieldCheck, Loader2, Filter, ArrowUpRight
 } from 'lucide-react';
 
 interface Agent {
   id: string;
   agencyId: string;
-  commissionRate: number;
   walletBalance: number;
   status: string;
   createdAt: string;
@@ -48,15 +47,9 @@ export default function AdminAgentsPage() {
     email: '',
     phone: '',
     password: '',
-    commissionRate: 0,
   });
   const [adding, setAdding] = useState(false);
   const [addError, setAddError] = useState('');
-
-  // Edit Commission Modal State
-  const [editingAgent, setEditingAgent] = useState<Agent | null>(null);
-  const [newCommissionRate, setNewCommissionRate] = useState<number>(0);
-  const [savingCommission, setSavingCommission] = useState(false);
 
   // Fetch agents and agencies
   const fetchAgents = async () => {
@@ -117,32 +110,6 @@ export default function AdminAgentsPage() {
     }
   };
 
-  const handleSaveCommission = async (e: React.FormEvent) => {
-    e.preventDefault();
-    if (!editingAgent) return;
-    setSavingCommission(true);
-    try {
-      const res = await fetch('/api/admin/agents', {
-        method: 'PATCH',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ id: editingAgent.id, commissionRate: Number(newCommissionRate) }),
-      });
-      const data = await res.json();
-      if (res.ok && data.success) {
-        setMessage(`Commission rate updated to ${newCommissionRate}%.`);
-        setAgents(agents.map(a => a.id === editingAgent.id ? { ...a, commissionRate: Number(newCommissionRate) } : a));
-        setEditingAgent(null);
-      } else {
-        setError(data.error || 'Failed to update commission rate.');
-      }
-    } catch (err) {
-      setError('An error occurred while updating commission rate.');
-    } finally {
-      setSavingCommission(false);
-      setTimeout(() => { setMessage(''); setError(''); }, 3500);
-    }
-  };
-
   const handleAddAgent = async (e: React.FormEvent) => {
     e.preventDefault();
     setAdding(true);
@@ -163,7 +130,6 @@ export default function AdminAgentsPage() {
           email: '',
           phone: '',
           password: '',
-          commissionRate: 0,
         });
         fetchAgents();
       } else {
@@ -202,7 +168,7 @@ export default function AdminAgentsPage() {
         <div>
           <h1 className="text-3xl font-black text-foreground tracking-tight">Agents Management</h1>
           <p className="text-muted-foreground mt-1 text-sm">
-            Oversee travel agents, configure commission rates, monitor status, and manage agency staff
+            Oversee registered travel agents, monitor account status, and manage agency staff
           </p>
         </div>
 
@@ -345,7 +311,6 @@ export default function AdminAgentsPage() {
                 <tr className="border-b border-border bg-muted/40 text-xs uppercase font-bold text-muted-foreground">
                   <th className="px-6 py-4">Agent Name & Contact</th>
                   <th className="px-6 py-4">Agency</th>
-                  <th className="px-6 py-4">Commission</th>
                   <th className="px-6 py-4">Joined Date</th>
                   <th className="px-6 py-4">Status</th>
                   <th className="px-6 py-4 text-right">Actions</th>
@@ -378,20 +343,6 @@ export default function AdminAgentsPage() {
                         <span>{agent.agency?.businessName || 'Unknown Agency'}</span>
                         <ArrowUpRight className="w-3.5 h-3.5 text-muted-foreground opacity-0 group-hover:opacity-100 transition" />
                       </Link>
-                    </td>
-
-                    <td className="px-6 py-4">
-                      <button
-                        onClick={() => {
-                          setEditingAgent(agent);
-                          setNewCommissionRate(agent.commissionRate || 0);
-                        }}
-                        className="inline-flex items-center gap-1.5 px-2.5 py-1 bg-muted hover:bg-muted/80 rounded-lg text-xs font-bold text-foreground transition"
-                        title="Click to change commission rate"
-                      >
-                        <Percent className="w-3 h-3 text-primary" />
-                        <span>{agent.commissionRate || 0}%</span>
-                      </button>
                     </td>
 
                     <td className="px-6 py-4 text-xs text-muted-foreground font-medium">
@@ -549,65 +500,6 @@ export default function AdminAgentsPage() {
                   type="button"
                   onClick={() => setShowAddModal(false)}
                   className="px-5 py-3 border border-input font-bold rounded-xl hover:bg-muted text-sm"
-                >
-                  Cancel
-                </button>
-              </div>
-            </form>
-          </div>
-        </div>
-      )}
-
-      {/* Edit Commission Modal */}
-      {editingAgent && (
-        <div className="fixed inset-0 z-50 bg-black/60 backdrop-blur-sm flex items-center justify-center p-4">
-          <div className="bg-card rounded-2xl border border-border p-6 sm:p-8 max-w-sm w-full space-y-5 shadow-2xl animate-in fade-in zoom-in-95">
-            <div className="border-b border-border pb-4 flex justify-between items-center">
-              <div>
-                <h2 className="text-lg font-bold text-foreground">Set Commission Rate</h2>
-                <p className="text-xs text-muted-foreground">{editingAgent.user?.name}</p>
-              </div>
-              <button 
-                onClick={() => setEditingAgent(null)} 
-                className="text-muted-foreground hover:text-foreground font-bold"
-              >
-                ✕
-              </button>
-            </div>
-
-            <form onSubmit={handleSaveCommission} className="space-y-4">
-              <div>
-                <label className="block text-xs font-bold uppercase tracking-wider text-foreground mb-1.5">
-                  Commission Percentage (%)
-                </label>
-                <div className="relative">
-                  <input
-                    type="number"
-                    min={0}
-                    max={100}
-                    step={0.5}
-                    required
-                    value={newCommissionRate}
-                    onChange={(e) => setNewCommissionRate(parseFloat(e.target.value) || 0)}
-                    className="w-full px-4 py-2.5 rounded-xl border border-input bg-background text-foreground text-sm font-bold focus:outline-none focus:ring-2 focus:ring-primary/50"
-                  />
-                  <Percent className="w-4 h-4 text-muted-foreground absolute right-3.5 top-1/2 -translate-y-1/2" />
-                </div>
-              </div>
-
-              <div className="flex gap-3 pt-2">
-                <button
-                  type="submit"
-                  disabled={savingCommission}
-                  className="flex-1 py-2.5 bg-primary text-primary-foreground font-bold rounded-xl hover:bg-primary/90 text-xs shadow-md shadow-primary/20 disabled:opacity-50 flex items-center justify-center gap-1.5"
-                >
-                  {savingCommission && <Loader2 className="w-3.5 h-3.5 animate-spin" />}
-                  <span>{savingCommission ? 'Saving...' : 'Update Commission'}</span>
-                </button>
-                <button
-                  type="button"
-                  onClick={() => setEditingAgent(null)}
-                  className="px-4 py-2.5 border border-input font-bold rounded-xl hover:bg-muted text-xs"
                 >
                   Cancel
                 </button>
