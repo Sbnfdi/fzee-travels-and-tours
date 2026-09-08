@@ -5,14 +5,24 @@ import { z } from 'zod';
 
 type TransactionClient = Parameters<Parameters<typeof prisma['$transaction']>[0]>[0];
 
-const registerSchema = z.object({
-  email: z.string().email(),
-  name: z.string().min(2),
-  password: z.string().min(6),
-  agencyName: z.string().min(2),
-  phone: z.string().min(7),
-  role: z.literal('TRAVEL_AGENT'),
-});
+const registerSchema = z
+  .object({
+    email: z.string().email('Please enter a valid email address'),
+    name: z.string().min(2).optional(),
+    contactPerson: z.string().min(2).optional(),
+    password: z.string().min(6, 'Password must be at least 6 characters'),
+    agencyName: z.string().min(2, 'Agency name must be at least 2 characters'),
+    phone: z.string().min(7, 'Please enter a valid phone number'),
+    role: z.literal('TRAVEL_AGENT').optional().default('TRAVEL_AGENT'),
+  })
+  .transform((data) => ({
+    ...data,
+    name: (data.name || data.contactPerson || '').trim(),
+  }))
+  .refine((data) => data.name.length >= 2, {
+    message: 'Contact person name must be at least 2 characters',
+    path: ['name'],
+  });
 
 export async function POST(request: NextRequest) {
   try {

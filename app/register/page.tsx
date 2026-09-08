@@ -34,16 +34,21 @@ export default function RegisterPage() {
         body: JSON.stringify({
           agencyName,
           email,
+          name: contactPerson,
           contactPerson,
           password,
           phone,
+          role: 'TRAVEL_AGENT',
         }),
       });
 
       const data = await response.json();
 
       if (!response.ok) {
-        setError(data.error || 'Registration failed.');
+        const errorMsg = data.details?.length
+          ? data.details.map((d: any) => d.message).join(', ')
+          : data.error || 'Registration failed.';
+        setError(errorMsg);
         return;
       }
 
