@@ -130,7 +130,16 @@ export function calculateTotalFlightFare(
 
 export async function GET(req: NextRequest) {
   try {
+    const { searchParams } = new URL(req.url);
+    const category = searchParams.get('category');
+
+    const whereClause: any = {};
+    if (category && category !== 'All' && category !== 'All Types' && category !== 'All Categories') {
+      whereClause.category = category;
+    }
+
     const flights = await prisma.flight.findMany({
+      where: Object.keys(whereClause).length > 0 ? whereClause : undefined,
       orderBy: { departureTime: 'asc' },
     });
 

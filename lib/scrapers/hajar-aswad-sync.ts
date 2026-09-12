@@ -1,5 +1,11 @@
+import dns from 'dns';
 import * as cheerio from 'cheerio';
 import { prisma } from '@/lib/prisma';
+
+// Force Node.js to use IPv4 first to prevent ECONNREFUSED on Hostinger
+if (typeof (dns as any).setDefaultResultOrder === 'function') {
+  (dns as any).setDefaultResultOrder('ipv4first');
+}
 
 export interface ScrapedFlight {
   flightNumber: string;
@@ -156,45 +162,121 @@ export function parseCustomDate(dateStr: string): Date {
   return isNaN(fallback.getTime()) ? new Date() : fallback;
 }
 
-export function determineFlightCategory(depCity: string, arrCity: string): string {
+export function determineFlightCategory(depCity: string, arrCity: string, sectorTitle?: string): string {
   const arr = (arrCity || '').toUpperCase();
-  if (arr.includes('JED') || arr.includes('MED') || arr.includes('JEDDAH') || arr.includes('MADINAH') || arr.includes('MAKKAH')) {
+  const dep = (depCity || '').toUpperCase();
+  const title = (sectorTitle || '').toUpperCase();
+
+  // Umrah destination (Jeddah, Madinah, Makkah)
+  if (
+    arr.includes('JED') || arr.includes('MED') || arr.includes('JEDDAH') || arr.includes('MADINAH') || arr.includes('MAKKAH') ||
+    title.includes('JEDDAH') || title.includes('MADINAH') || title.includes('UMRAH')
+  ) {
     return 'Umrah Direct Flight';
   }
-  if (arr.includes('DXB') || arr.includes('SHJ') || arr.includes('AUH') || arr.includes('RKT') || arr.includes('DUBAI') || arr.includes('SHARJAH') || arr.includes('ABU DHABI') || arr.includes('RAS AL KHAIMAH')) {
+
+  // UAE destinations (Dubai, Sharjah, Abu Dhabi, Ras Al Khaimah)
+  if (
+    arr.includes('DXB') || arr.includes('SHJ') || arr.includes('AUH') || arr.includes('RKT') ||
+    arr.includes('DUBAI') || arr.includes('SHARJAH') || arr.includes('ABU DHABI') || arr.includes('RAS AL KHAIMAH') ||
+    title.includes('DUBAI') || title.includes('SHARJAH') || title.includes('ABU DHABI')
+  ) {
     return 'UAE Direct Flight';
   }
-  if (arr.includes('RUH') || arr.includes('DMM') || arr.includes('AHB') || arr.includes('TUU') || arr.includes('GIZ') || arr.includes('RIYADH') || arr.includes('DAMMAM') || arr.includes('ABHA') || arr.includes('TABUK')) {
+
+  // Saudi Arabia Other (Riyadh, Dammam, Abha, Tabuk, Gassim, Jizan)
+  if (
+    arr.includes('RUH') || arr.includes('DMM') || arr.includes('AHB') || arr.includes('TUU') || arr.includes('GIZ') ||
+    arr.includes('RIYADH') || arr.includes('DAMMAM') || arr.includes('ABHA') || arr.includes('TABUK') ||
+    title.includes('RIYADH') || title.includes('DAMMAM')
+  ) {
     return 'Saudi Direct Flight';
   }
-  if (arr.includes('MCT') || arr.includes('SLL') || arr.includes('MUSCAT') || arr.includes('SALALAH')) {
+
+  // Muscat / Oman
+  if (arr.includes('MCT') || arr.includes('SLL') || arr.includes('MUSCAT') || arr.includes('SALALAH') || title.includes('MUSCAT')) {
     return 'Muscat Direct Flight';
   }
-  if (arr.includes('DOH') || arr.includes('DOHA')) {
+
+  // Qatar (Doha)
+  if (arr.includes('DOH') || arr.includes('DOHA') || title.includes('DOHA') || title.includes('QATAR')) {
     return 'Qatar Direct Flight';
   }
-  if (arr.includes('BAH') || arr.includes('BAHRAIN')) {
+
+  // Bahrain
+  if (arr.includes('BAH') || arr.includes('BAHRAIN') || title.includes('BAHRAIN')) {
     return 'Bahrain Direct Flight';
   }
-  if (arr.includes('MAN') || arr.includes('LHR') || arr.includes('LGW') || arr.includes('MANCHESTER') || arr.includes('LONDON')) {
+
+  // UK (Manchester, London Heathrow, Gatwick)
+  if (
+    arr.includes('MAN') || arr.includes('LHR') || arr.includes('LGW') || arr.includes('MANCHESTER') || arr.includes('LONDON') ||
+    arr.includes('HEATHROW') || title.includes('MANCHESTER') || title.includes('HEATHROW') || title.includes('LONDON')
+  ) {
     return 'UK Direct Flight';
   }
+
+  // Return legs for Umrah (e.g. Jeddah -> Peshawar/Islamabad/Lahore)
+  if (dep.includes('JED') || dep.includes('MED') || dep.includes('JEDDAH') || dep.includes('MADINAH')) {
+    return 'Umrah Direct Flight';
+  }
+
   return `${arrCity} Direct Flight`;
 }
 
-function estimatePrice(depCity: string, arrCity: string, airline: string): number {
-  const arr = arrCity.toUpperCase();
-  if (arr.includes('JED') || arr.includes('MED') || arr.includes('RUH') || arr.includes('JEDDAH') || arr.includes('RIYADH')) {
-    if (airline.toLowerCase().includes('saudi') || airline.toLowerCase().includes('etihad')) return 125000;
-    return 105000;
+export function estimatePrice(depCity: string, arrCity: string, airline: string, category?: string): number {
+  const arr = (arrCity || '').toUpperCase();
+  const al = (airline || '').toLowerCase();
+  const cat = (category || '').toLowerCase();
+
+  // Umrah (Jeddah / Madinah)
+  if (cat.includes('umrah') || arr.includes('JED') || arr.includes('MED') || arr.includes('JEDDAH') || arr.includes('MADINAH')) {
+    if (al.includes('saudi') || al.includes('etihad') || al.includes('emirates') || al.includes('qatar')) return 135000;
+    if (al.includes('airblue') || al.includes('pia') || al.includes('serene')) return 118000;
+    if (al.includes('fly') || al.includes('jinnah') || al.includes('nas')) return 108000;
+    return 115000;
   }
-  if (arr.includes('DXB') || arr.includes('SHJ') || arr.includes('AUH') || arr.includes('DUBAI') || arr.includes('SHARJAH')) {
-    if (airline.toLowerCase().includes('fly') || airline.toLowerCase().includes('arabia')) return 78000;
+
+  // Saudi Other (Riyadh, Dammam, Abha, Tabuk)
+  if (cat.includes('saudi') || arr.includes('RUH') || arr.includes('DMM') || arr.includes('AHB') || arr.includes('RIYADH') || arr.includes('DAMMAM')) {
+    if (al.includes('saudi') || al.includes('qatar') || al.includes('etihad')) return 115000;
+    if (al.includes('airblue') || al.includes('pia')) return 98000;
+    if (al.includes('sial') || al.includes('jinnah') || al.includes('nas')) return 92000;
+    return 95000;
+  }
+
+  // UAE (Dubai / Sharjah / Abu Dhabi)
+  if (cat.includes('uae') || arr.includes('DXB') || arr.includes('SHJ') || arr.includes('AUH') || arr.includes('DUBAI') || arr.includes('SHARJAH')) {
+    if (al.includes('emirates')) return 95000;
+    if (al.includes('flydubai')) return 85000;
+    if (al.includes('arabia') || al.includes('sial') || al.includes('jinnah')) return 78000;
+    return 82000;
+  }
+
+  // Muscat / Oman
+  if (cat.includes('muscat') || arr.includes('MCT') || arr.includes('SLL') || arr.includes('MUSCAT')) {
+    if (al.includes('oman') || al.includes('salam')) return 88000;
+    return 82000;
+  }
+
+  // Qatar (Doha)
+  if (cat.includes('qatar') || arr.includes('DOH') || arr.includes('DOHA')) {
+    if (al.includes('qatar')) return 118000;
+    return 95000;
+  }
+
+  // Bahrain
+  if (cat.includes('bahrain') || arr.includes('BAH') || arr.includes('BAHRAIN')) {
+    if (al.includes('gulf')) return 98000;
     return 88000;
   }
-  if (arr.includes('MCT') || arr.includes('DOH') || arr.includes('MUSCAT') || arr.includes('DOHA')) {
-    return 92000;
+
+  // United Kingdom (Manchester, Heathrow, London)
+  if (cat.includes('uk') || arr.includes('MAN') || arr.includes('LHR') || arr.includes('LGW') || arr.includes('MANCHESTER') || arr.includes('LONDON')) {
+    if (al.includes('etihad') || al.includes('british') || al.includes('emirates')) return 225000;
+    return 195000;
   }
+
   return 95000;
 }
 
@@ -313,8 +395,8 @@ export async function fetchLiveHajarAswadFlights(): Promise<ScrapedFlight[]> {
           const meal = stripHtml(mealHtml).toUpperCase().includes('YES');
           const baggage = bagStr.replace(/[^0-9+KG]/gi, ' ').replace(/\s+/g, ' ').trim() || '20+7 KG';
 
-          const category = determineFlightCategory(depCity, arrCity);
-          const pricePerSeat = estimatePrice(depCity, arrCity, currentAirline);
+          const category = determineFlightCategory(depCity, arrCity, currentSectorTitle);
+          const pricePerSeat = estimatePrice(depCity, arrCity, currentAirline, category);
 
           flights.push({
             flightNumber: flightNo.trim(),
@@ -345,7 +427,7 @@ export async function fetchLiveHajarAswadFlights(): Promise<ScrapedFlight[]> {
 /**
  * Sync live scraped flights directly into Prisma database:
  * 1. Inserts new live flights
- * 2. Updates matching existing flights
+ * 2. Updates matching existing flights WITH synced fares and categories
  * 3. Deletes or deactivates flights that no longer exist on the website
  * 4. Ensures categories exist in FlightCategory table
  */
@@ -407,14 +489,22 @@ export async function syncHajarAswadFlightsToDB() {
       },
     });
 
+    const tierConfig = JSON.stringify([
+      { upToSeat: Math.round(f.totalSeats * 0.5), price: f.pricePerSeat },
+      { upToSeat: f.totalSeats, price: Math.round(f.pricePerSeat * 1.08) },
+    ]);
+
     if (existing) {
-      // Preserve custom admin price overrides if they were configured
       const updated = await prisma.flight.update({
         where: { id: existing.id },
         data: {
           departureTime: f.departureTime,
           arrivalTime: f.arrivalTime,
           duration: f.duration,
+          totalSeats: f.totalSeats,
+          availableSeats: f.availableSeats,
+          pricePerSeat: f.pricePerSeat, // SYNC FARE
+          fareTiers: existing.fareTiers || tierConfig,
           baggage: f.baggage,
           meal: f.meal,
           airline: f.airline,
@@ -439,7 +529,8 @@ export async function syncHajarAswadFlightsToDB() {
           duration: f.duration,
           totalSeats: f.totalSeats,
           availableSeats: f.availableSeats,
-          pricePerSeat: f.pricePerSeat,
+          pricePerSeat: f.pricePerSeat, // SYNC FARE
+          fareTiers: tierConfig,
           currency: 'PKR',
           baggage: f.baggage,
           meal: f.meal,
@@ -452,7 +543,7 @@ export async function syncHajarAswadFlightsToDB() {
     }
   }
 
-  // Auto-sync FlightCategory table
+  // Auto-sync FlightCategory table with all unique categories
   for (const catName of categoriesToEnsure) {
     try {
       const catExists = await prisma.flightCategory.findUnique({

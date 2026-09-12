@@ -39,6 +39,13 @@ export default function AdminFlightsPage() {
   const [activeCategory, setActiveCategory] = useState<string>('All Types');
   const [loading, setLoading] = useState(true);
   const [showModal, setShowModal] = useState(false);
+
+  const allCategoryNames = Array.from(
+    new Set([
+      ...categories.map(c => c.name),
+      ...flights.map(f => f.category).filter(Boolean) as string[],
+    ])
+  );
   const [editingFlightId, setEditingFlightId] = useState<string | null>(null);
   const [message, setMessage] = useState('');
   const [saving, setSaving] = useState(false);
@@ -347,30 +354,37 @@ export default function AdminFlightsPage() {
               activeCategory === 'All Types' ? 'bg-primary text-primary-foreground' : 'bg-muted/50 text-muted-foreground hover:text-foreground hover:bg-muted'
             }`}
           >
-            All Types
+            All Types ({flights.length})
           </button>
           
-          {categories.map(cat => (
-            <div key={cat.id} className="relative group flex items-center shrink-0">
-              <button
-                onClick={() => setActiveCategory(cat.name)}
-                className={`px-4 py-2 rounded-xl text-sm font-bold whitespace-nowrap transition-colors pr-8 ${
-                  activeCategory === cat.name ? 'bg-primary text-primary-foreground' : 'bg-muted/50 text-muted-foreground hover:text-foreground hover:bg-muted'
-                }`}
-              >
-                {cat.name}
-              </button>
-              <button 
-                onClick={() => handleDeleteCategory(cat.id, cat.name)}
-                className={`absolute right-2 p-1 rounded-full opacity-0 group-hover:opacity-100 transition-opacity ${
-                  activeCategory === cat.name ? 'text-primary-foreground hover:bg-black/20' : 'text-muted-foreground hover:bg-black/10'
-                }`}
-                title="Delete Category"
-              >
-                <X className="w-3 h-3" />
-              </button>
-            </div>
-          ))}
+          {allCategoryNames.map(catName => {
+            const catObj = categories.find(c => c.name === catName);
+            const count = flights.filter(f => f.category === catName).length;
+
+            return (
+              <div key={catName} className="relative group flex items-center shrink-0">
+                <button
+                  onClick={() => setActiveCategory(catName)}
+                  className={`px-4 py-2 rounded-xl text-sm font-bold whitespace-nowrap transition-colors ${catObj ? 'pr-8' : ''} ${
+                    activeCategory === catName ? 'bg-primary text-primary-foreground' : 'bg-muted/50 text-muted-foreground hover:text-foreground hover:bg-muted'
+                  }`}
+                >
+                  {catName} ({count})
+                </button>
+                {catObj && (
+                  <button 
+                    onClick={() => handleDeleteCategory(catObj.id, catObj.name)}
+                    className={`absolute right-2 p-1 rounded-full opacity-0 group-hover:opacity-100 transition-opacity ${
+                      activeCategory === catName ? 'text-primary-foreground hover:bg-black/20' : 'text-muted-foreground hover:bg-black/10'
+                    }`}
+                    title="Delete Category"
+                  >
+                    <X className="w-3 h-3" />
+                  </button>
+                )}
+              </div>
+            );
+          })}
         </div>
 
         <form onSubmit={handleAddCategory} className="flex gap-2 w-full sm:w-auto shrink-0">
@@ -555,6 +569,7 @@ export default function AdminFlightsPage() {
                 <tr className="border-b border-border bg-muted/40 text-[11px] uppercase font-bold text-muted-foreground">
                   <th className="px-3 py-3">Status & Flight #</th>
                   <th className="px-3 py-3">Airline & Route</th>
+                  <th className="px-3 py-3">Category</th>
                   <th className="px-3 py-3">Schedule (Dep / Arr)</th>
                   <th className="px-3 py-3">Seats & Baggage</th>
                   <th className="px-3 py-3">Fare & Tiers</th>
@@ -586,9 +601,13 @@ export default function AdminFlightsPage() {
                       <td className="px-3 py-3 align-top">
                         <div className="font-bold text-foreground text-xs sm:text-sm">{f.airline}</div>
                         <div className="text-xs font-semibold text-primary mt-0.5">{f.departureCity} → {f.arrivalCity}</div>
-                        {f.category && f.category !== 'All Types' && (
-                          <span className="inline-block mt-1 px-1.5 py-0.5 bg-muted border border-border text-[10px] rounded font-bold text-muted-foreground">{f.category}</span>
-                        )}
+                      </td>
+
+                      {/* Category */}
+                      <td className="px-3 py-3 align-top">
+                        <span className="inline-flex items-center px-2.5 py-1 rounded-md text-xs font-bold bg-primary/10 text-primary border border-primary/20 whitespace-nowrap">
+                          {f.category || 'Direct Flight'}
+                        </span>
                       </td>
 
                       {/* Schedule */}
