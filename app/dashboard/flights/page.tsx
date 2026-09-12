@@ -422,21 +422,21 @@ export default function AdminFlightsPage() {
   const filteredFlights = flights.filter(f => activeCategory === 'All Types' || f.category === activeCategory);
 
   return (
-    <div className="space-y-8 text-foreground">
-      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 border-b border-border pb-6">
-        <div>
-          <h1 className="text-3xl font-black text-foreground tracking-tight">Flight Schedules</h1>
-          <p className="text-muted-foreground mt-1">Manage wholesale ticket blocks, dynamic fare tiers, and live auto-synced flight schedules</p>
+    <div className="space-y-8 text-foreground w-full min-w-0">
+      <div className="flex flex-col lg:flex-row lg:items-center justify-between gap-4 border-b border-border pb-6 w-full min-w-0">
+        <div className="min-w-0">
+          <h1 className="text-2xl sm:text-3xl font-black text-foreground tracking-tight">Flight Schedules</h1>
+          <p className="text-muted-foreground mt-1 text-sm">Manage wholesale ticket blocks, dynamic fare tiers, and live auto-synced flight schedules</p>
         </div>
-        <div className="flex flex-wrap items-center gap-3 shrink-0">
-          <div className="hidden sm:flex items-center gap-2.5 px-3.5 py-2 rounded-xl bg-emerald-50 dark:bg-emerald-950/40 border border-emerald-200 dark:border-emerald-800/60 text-emerald-800 dark:text-emerald-300 text-xs font-semibold shadow-xs">
+        <div className="flex flex-wrap items-center gap-2.5 w-full lg:w-auto justify-start lg:justify-end">
+          <div className="flex flex-wrap items-center gap-2 px-3 py-1.5 sm:px-3.5 sm:py-2 rounded-xl bg-emerald-50 dark:bg-emerald-950/40 border border-emerald-200 dark:border-emerald-800/60 text-emerald-800 dark:text-emerald-300 text-xs font-semibold shadow-xs">
             <span className="relative flex h-2 w-2">
               <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-emerald-400 opacity-75"></span>
               <span className="relative inline-flex rounded-full h-2 w-2 bg-emerald-500"></span>
             </span>
             <span>Auto-Sync: <strong>Every 5h</strong></span>
             <span className="text-emerald-600/40 dark:text-emerald-400/40">|</span>
-            <span className="font-mono text-[11px] hidden md:inline">groups.sajidtravels.pk</span>
+            <span className="font-mono text-[11px] hidden sm:inline">groups.sajidtravels.pk</span>
             {effectiveLastSync && (
               <>
                 <span className="text-emerald-600/40 dark:text-emerald-400/40">|</span>
@@ -461,12 +461,15 @@ export default function AdminFlightsPage() {
           <button 
             onClick={handleSyncLiveFlights}
             disabled={syncing}
-            className="px-4 py-2.5 bg-card border border-primary/40 text-primary font-bold rounded-xl hover:bg-rose-50 dark:hover:bg-rose-950/30 transition shadow-xs inline-flex items-center gap-2 text-sm disabled:opacity-50 cursor-pointer"
+            className="px-3.5 py-2 sm:px-4 sm:py-2.5 bg-card border border-primary/40 text-primary font-bold rounded-xl hover:bg-rose-50 dark:hover:bg-rose-950/30 transition shadow-xs inline-flex items-center gap-2 text-xs sm:text-sm disabled:opacity-50 cursor-pointer shrink-0"
           >
             <RotateCcw className={`w-4 h-4 ${syncing ? 'animate-spin' : ''}`} />
-            <span>{syncing ? 'Syncing...' : 'Sync Live Flights (Sajid Travels)'}</span>
+            <span>{syncing ? 'Syncing...' : 'Sync Live Flights'}</span>
           </button>
-          <button onClick={handleOpenAddModal} className="px-5 py-2.5 bg-primary text-primary-foreground font-bold rounded-xl hover:bg-primary/90 transition shadow-md shadow-primary/20 inline-flex items-center gap-2 text-sm">
+          <button 
+            onClick={handleOpenAddModal} 
+            className="px-4 py-2 sm:px-5 sm:py-2.5 bg-primary text-primary-foreground font-bold rounded-xl hover:bg-primary/90 transition shadow-md shadow-primary/20 inline-flex items-center gap-2 text-xs sm:text-sm shrink-0 whitespace-nowrap"
+          >
             <Plus className="w-4 h-4" />
             <span>Add Flight</span>
           </button>
@@ -481,12 +484,12 @@ export default function AdminFlightsPage() {
       )}
 
       {/* Tabs and Add Category */}
-      <div className="flex flex-col sm:flex-row justify-between gap-4 items-start sm:items-center bg-card p-4 rounded-2xl border border-border">
-        <div className="flex overflow-x-auto pb-2 sm:pb-0 scrollbar-hide w-full sm:w-auto gap-2">
+      <div className="flex flex-col lg:flex-row justify-between gap-4 items-stretch lg:items-center bg-card p-3 sm:p-4 rounded-2xl border border-border w-full min-w-0">
+        <div className="flex-1 min-w-0 overflow-x-auto pb-2 lg:pb-0 flex items-center gap-2 scrollbar-thin">
           <button
             onClick={() => setActiveCategory('All Types')}
-            className={`px-4 py-2 rounded-xl text-sm font-bold whitespace-nowrap transition-colors ${
-              activeCategory === 'All Types' ? 'bg-primary text-primary-foreground' : 'bg-muted/50 text-muted-foreground hover:text-foreground hover:bg-muted'
+            className={`px-3.5 py-2 rounded-xl text-xs sm:text-sm font-bold whitespace-nowrap transition-colors shrink-0 ${
+              activeCategory === 'All Types' ? 'bg-primary text-primary-foreground shadow-sm' : 'bg-muted/50 text-muted-foreground hover:text-foreground hover:bg-muted'
             }`}
           >
             All Types ({flights.length})
@@ -501,8 +504,8 @@ export default function AdminFlightsPage() {
               <div key={catName} className="relative group flex items-center shrink-0">
                 <button
                   onClick={() => setActiveCategory(catName)}
-                  className={`px-4 py-2 rounded-xl text-sm font-bold whitespace-nowrap transition-colors ${catObj ? 'pr-8' : ''} ${
-                    activeCategory === catName ? 'bg-primary text-primary-foreground' : 'bg-muted/50 text-muted-foreground hover:text-foreground hover:bg-muted'
+                  className={`px-3.5 py-2 rounded-xl text-xs sm:text-sm font-bold whitespace-nowrap transition-colors shrink-0 ${catObj ? 'pr-8' : ''} ${
+                    activeCategory === catName ? 'bg-primary text-primary-foreground shadow-sm' : 'bg-muted/50 text-muted-foreground hover:text-foreground hover:bg-muted'
                   }`}
                 >
                   {catName} ({count})
@@ -523,15 +526,15 @@ export default function AdminFlightsPage() {
           })}
         </div>
 
-        <form onSubmit={handleAddCategory} className="flex gap-2 w-full sm:w-auto shrink-0">
+        <form onSubmit={handleAddCategory} className="flex gap-2 w-full lg:w-auto shrink-0">
           <input
             type="text"
             placeholder="New Category"
             value={newCategoryName}
             onChange={(e) => setNewCategoryName(e.target.value)}
-            className="w-full sm:w-40 px-3 py-2 rounded-xl border border-input bg-background text-sm focus:outline-none focus:ring-2 focus:ring-primary/50"
+            className="w-full lg:w-40 px-3 py-2 rounded-xl border border-input bg-background text-sm focus:outline-none focus:ring-2 focus:ring-primary/50"
           />
-          <button type="submit" disabled={addingCategory || !newCategoryName.trim()} className="px-3 py-2 bg-slate-800 text-white rounded-xl text-sm font-bold hover:bg-slate-700 disabled:opacity-50 transition">
+          <button type="submit" disabled={addingCategory || !newCategoryName.trim()} className="px-3.5 py-2 bg-slate-800 text-white rounded-xl text-sm font-bold hover:bg-slate-700 disabled:opacity-50 transition whitespace-nowrap">
             Add
           </button>
         </form>
@@ -689,7 +692,7 @@ export default function AdminFlightsPage() {
       )}
 
       {/* Flights Table */}
-      <div className="bg-card rounded-2xl border border-border overflow-hidden shadow-sm">
+      <div className="bg-card rounded-2xl border border-border overflow-hidden shadow-sm w-full min-w-0">
         {loading ? (
           <div className="text-center py-16 text-muted-foreground font-bold">Loading...</div>
         ) : filteredFlights.length === 0 ? (
@@ -699,17 +702,17 @@ export default function AdminFlightsPage() {
             <p className="text-xs">Adjust your category filters or add a new flight.</p>
           </div>
         ) : (
-          <div className="w-full">
-            <table className="w-full text-left border-collapse text-xs sm:text-sm">
+          <div className="w-full overflow-x-auto min-w-0">
+            <table className="w-full min-w-[960px] text-left border-collapse text-xs sm:text-sm">
               <thead>
                 <tr className="border-b border-border bg-muted/40 text-[11px] uppercase font-bold text-muted-foreground">
-                  <th className="px-3 py-3">Status & Flight #</th>
-                  <th className="px-3 py-3">Airline & Route</th>
-                  <th className="px-3 py-3">Category</th>
-                  <th className="px-3 py-3">Schedule (Dep / Arr)</th>
-                  <th className="px-3 py-3">Seats & Baggage</th>
-                  <th className="px-3 py-3">Fare & Tiers</th>
-                  <th className="px-3 py-3 text-right">Actions</th>
+                  <th className="px-3.5 py-3.5 w-[160px]">Status & Flight #</th>
+                  <th className="px-3.5 py-3.5 w-[180px]">Airline & Route</th>
+                  <th className="px-3.5 py-3.5 w-[150px]">Category</th>
+                  <th className="px-3.5 py-3.5 w-[170px]">Schedule (Dep / Arr)</th>
+                  <th className="px-3.5 py-3.5 w-[160px]">Seats & Baggage</th>
+                  <th className="px-3.5 py-3.5 w-[140px]">Fare & Tiers</th>
+                  <th className="px-3.5 py-3.5 text-right w-[100px]">Actions</th>
                 </tr>
               </thead>
               <tbody className="divide-y divide-border/60">
