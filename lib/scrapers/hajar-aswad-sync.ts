@@ -5,13 +5,13 @@
 import {
   syncSajidTravelsFlightsToDB,
   fetchLiveSajidTravelsFlights,
-  ScrapedFlight,
+  type ScrapedFlight,
   cleanCityName,
   determineFlightCategory,
 } from './sajid-travels-sync';
 
+export type { ScrapedFlight };
 export {
-  ScrapedFlight,
   cleanCityName,
   determineFlightCategory,
 };
