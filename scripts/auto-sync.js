@@ -6,6 +6,8 @@ if (typeof dns.setDefaultResultOrder === 'function') {
 
 const { PrismaClient } = require('@prisma/client');
 const cheerio = require('cheerio');
+const fs = require('fs');
+const path = require('path');
 
 let prisma;
 const tursoUrl = process.env.TURSO_DATABASE_URL;
@@ -102,9 +104,9 @@ function determineFlightCategory(depCity, arrCity, targetFinalCode, rawSectorStr
   return `${arrCity} Direct Flight`;
 }
 
-async function main() {
+async function scrapeAndSync() {
   const targetUrl = 'https://groups.sajidtravels.pk/';
-  console.log(`🌐 Fetching live flight schedules & wholesale prices from ${targetUrl} ...`);
+  console.log(`\n[${new Date().toISOString()}] 🌐 Fetching live schedules & fares from ${targetUrl} ...`);
 
   const response = await fetch(targetUrl, {
     headers: {
@@ -234,86 +236,82 @@ async function main() {
     } catch (e) {}
   });
 
-  console.log(`✈️ Successfully scraped ${flights.length} live flights.`);
+  console.log(`✈️ Parsed ${flights.length} flights from Sajid Travels portal.`);
   if (flights.length === 0) return;
-
-  // Pre-fetch all existing flights for fast in-memory matching
-  const existingFlights = await prisma.flight.findMany({
-    select: { id: true, flightNumber: true, departureCity: true, arrivalCity: true, departureTime: true, pnr: true }
-  });
-  const existingMap = new Map();
-  for (const ef of existingFlights) {
-    const key = `${ef.flightNumber}__${ef.departureCity}__${ef.arrivalCity}__${ef.departureTime.toISOString().slice(0, 10)}`;
-    existingMap.set(key, ef);
-  }
 
   const activeSyncedIds = new Set();
   const categoriesToEnsure = new Set();
   let created = 0, updated = 0;
 
-  const CHUNK_SIZE = 15;
-  for (let i = 0; i < flights.length; i += CHUNK_SIZE) {
-    const chunk = flights.slice(i, i + CHUNK_SIZE);
-    await Promise.all(chunk.map(async (f) => {
-      if (f.category) categoriesToEnsure.add(f.category);
+  for (const f of flights) {
+    if (f.category) categoriesToEnsure.add(f.category);
 
-      const dateKey = f.departureTime.toISOString().slice(0, 10);
-      const matchKey = `${f.flightNumber}__${f.departureCity}__${f.arrivalCity}__${dateKey}`;
-      const existing = existingMap.get(matchKey);
+    const startOfDay = new Date(f.departureTime);
+    startOfDay.setUTCHours(0, 0, 0, 0);
+    const endOfDay = new Date(f.departureTime);
+    endOfDay.setUTCHours(23, 59, 59, 999);
 
-      const tierConfig = JSON.stringify([
-        { upToSeat: Math.round(f.totalSeats * 0.5), price: f.pricePerSeat },
-        { upToSeat: f.totalSeats, price: Math.round(f.pricePerSeat * 1.05) },
-      ]);
+    const existing = await prisma.flight.findFirst({
+      where: {
+        flightNumber: f.flightNumber,
+        departureCity: f.departureCity,
+        arrivalCity: f.arrivalCity,
+        departureTime: { gte: startOfDay, lte: endOfDay },
+      },
+    });
 
-      if (existing) {
-        const up = await prisma.flight.update({
-          where: { id: existing.id },
-          data: {
-            departureTime: f.departureTime,
-            arrivalTime: f.arrivalTime,
-            duration: f.duration,
-            totalSeats: f.totalSeats,
-            availableSeats: f.availableSeats,
-            pricePerSeat: f.pricePerSeat, // SYNC EXACT LIVE PRICE
-            fareTiers: tierConfig,
-            baggage: f.baggage,
-            meal: f.meal,
-            airline: f.airline,
-            departureCity: f.departureCity,
-            arrivalCity: f.arrivalCity,
-            category: f.category,
-            status: 'active',
-          },
-        });
-        activeSyncedIds.add(up.id);
-        updated++;
-      } else {
-        const cr = await prisma.flight.create({
-          data: {
-            flightNumber: f.flightNumber,
-            pnr: f.pnr,
-            airline: f.airline,
-            departureCity: f.departureCity,
-            arrivalCity: f.arrivalCity,
-            departureTime: f.departureTime,
-            arrivalTime: f.arrivalTime,
-            duration: f.duration,
-            totalSeats: f.totalSeats,
-            availableSeats: f.availableSeats,
-            pricePerSeat: f.pricePerSeat, // SYNC EXACT LIVE PRICE
-            fareTiers: tierConfig,
-            currency: 'PKR',
-            baggage: f.baggage,
-            meal: f.meal,
-            category: f.category,
-            status: 'active',
-          },
-        });
-        activeSyncedIds.add(cr.id);
-        created++;
-      }
-    }));
+    const tierConfig = JSON.stringify([
+      { upToSeat: Math.round(f.totalSeats * 0.5), price: f.pricePerSeat },
+      { upToSeat: f.totalSeats, price: Math.round(f.pricePerSeat * 1.05) },
+    ]);
+
+    if (existing) {
+      const up = await prisma.flight.update({
+        where: { id: existing.id },
+        data: {
+          departureTime: f.departureTime,
+          arrivalTime: f.arrivalTime,
+          duration: f.duration,
+          totalSeats: f.totalSeats,
+          availableSeats: f.availableSeats,
+          pricePerSeat: f.pricePerSeat, // SYNC EXACT LIVE PRICE
+          fareTiers: tierConfig,
+          baggage: f.baggage,
+          meal: f.meal,
+          airline: f.airline,
+          departureCity: f.departureCity,
+          arrivalCity: f.arrivalCity,
+          category: f.category,
+          status: 'active',
+        },
+      });
+      activeSyncedIds.add(up.id);
+      updated++;
+    } else {
+      const cr = await prisma.flight.create({
+        data: {
+          flightNumber: f.flightNumber,
+          pnr: f.pnr,
+          airline: f.airline,
+          departureCity: f.departureCity,
+          arrivalCity: f.arrivalCity,
+          departureTime: f.departureTime,
+          arrivalTime: f.arrivalTime,
+          duration: f.duration,
+          totalSeats: f.totalSeats,
+          availableSeats: f.availableSeats,
+          pricePerSeat: f.pricePerSeat, // SYNC EXACT LIVE PRICE
+          fareTiers: tierConfig,
+          currency: 'PKR',
+          baggage: f.baggage,
+          meal: f.meal,
+          category: f.category,
+          status: 'active',
+        },
+      });
+      activeSyncedIds.add(cr.id);
+      created++;
+    }
   }
 
   for (const cat of categoriesToEnsure) {
@@ -345,6 +343,24 @@ async function main() {
   console.log(`✅ Sync complete: ${created} created, ${updated} updated with live prices, ${deleted} obsolete deleted, ${deactivated} cancelled.`);
 }
 
-main()
-  .catch(console.error)
-  .finally(() => prisma.$disconnect());
+const FIVE_HOURS_MS = 5 * 60 * 60 * 1000;
+
+async function runDaemon() {
+  console.log('🚀 Starting Sajid Travels Auto-Sync Daemon (5-Hour Cycle) ...');
+  try {
+    await scrapeAndSync();
+  } catch (err) {
+    console.error('Initial sync error:', err);
+  }
+
+  console.log(`⏳ Next sync will trigger automatically in 5 hours (${(FIVE_HOURS_MS / (1000 * 60 * 60))}h).`);
+  setInterval(async () => {
+    try {
+      await scrapeAndSync();
+    } catch (err) {
+      console.error('Recurring sync error:', err);
+    }
+  }, FIVE_HOURS_MS);
+}
+
+runDaemon();

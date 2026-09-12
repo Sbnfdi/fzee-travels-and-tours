@@ -51,6 +51,14 @@ function formatCityHelper(name: string): string {
 
 function getCategoryMeta(categoryName: string) {
   const cat = (categoryName || '').toLowerCase();
+  if (cat.includes('umrah') && cat.includes('return')) {
+    return {
+      icon: '🕋 🔄',
+      color: 'text-emerald-700 dark:text-emerald-400 bg-emerald-50 dark:bg-emerald-950/40 border-emerald-200 dark:border-emerald-800/60',
+      badgeBg: 'bg-emerald-600 text-white',
+      accent: 'border-emerald-500',
+    };
+  }
   if (cat.includes('umrah')) {
     return {
       icon: '🕋',
@@ -89,6 +97,22 @@ function getCategoryMeta(categoryName: string) {
       color: 'text-purple-700 dark:text-purple-400 bg-purple-50 dark:bg-purple-950/40 border-purple-200 dark:border-purple-800/60',
       badgeBg: 'bg-purple-600 text-white',
       accent: 'border-purple-500',
+    };
+  }
+  if (cat.includes('bahrain')) {
+    return {
+      icon: '🇧🇭',
+      color: 'text-red-700 dark:text-red-400 bg-red-50 dark:bg-red-950/40 border-red-200 dark:border-red-800/60',
+      badgeBg: 'bg-red-600 text-white',
+      accent: 'border-red-500',
+    };
+  }
+  if (cat.includes('kuwait')) {
+    return {
+      icon: '🇰🇼',
+      color: 'text-indigo-700 dark:text-indigo-400 bg-indigo-50 dark:bg-indigo-950/40 border-indigo-200 dark:border-indigo-800/60',
+      badgeBg: 'bg-indigo-600 text-white',
+      accent: 'border-indigo-500',
     };
   }
   if (cat.includes('uk')) {
@@ -151,11 +175,14 @@ export function FlightsTable() {
     });
 
     const standardOrder = [
+      'Umrah Return Flight',
       'Umrah Direct Flight',
       'UAE Direct Flight',
       'Saudi Direct Flight',
       'Muscat Direct Flight',
       'Qatar Direct Flight',
+      'Bahrain Direct Flight',
+      'Kuwait Direct Flight',
       'UK Direct Flight',
     ];
 

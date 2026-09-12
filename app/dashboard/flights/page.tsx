@@ -80,9 +80,10 @@ export default function AdminFlightsPage() {
 
   const fetchData = async () => {
     try {
-      const [flightsRes, categoriesRes] = await Promise.all([
+      const [flightsRes, categoriesRes, syncRes] = await Promise.all([
         fetch('/api/flights'),
-        fetch('/api/flights/categories')
+        fetch('/api/flights/categories'),
+        fetch('/api/admin/flights/sync').catch(() => null),
       ]);
       
       if (flightsRes.ok) {
@@ -96,6 +97,13 @@ export default function AdminFlightsPage() {
         const catData = await categoriesRes.json();
         if (catData.success && Array.isArray(catData.categories)) {
           setCategories(catData.categories);
+        }
+      }
+
+      if (syncRes && syncRes.ok) {
+        const syncData = await syncRes.json();
+        if (syncData.scheduler) {
+          setSyncScheduler(syncData.scheduler);
         }
       }
     } catch (err) {
@@ -215,15 +223,32 @@ export default function AdminFlightsPage() {
   };
 
   const [syncing, setSyncing] = useState(false);
+  const [syncScheduler, setSyncScheduler] = useState<{
+    intervalHours?: number;
+    nextSyncInMinutes?: number;
+    nextSyncAt?: string;
+    status?: {
+      lastSyncTime?: string | null;
+      syncedCount?: number;
+      createdCount?: number;
+      updatedCount?: number;
+      status?: string;
+      message?: string;
+      sourceUrl?: string;
+    };
+  } | null>(null);
 
   const handleSyncLiveFlights = async () => {
     setSyncing(true);
-    setMessage('Syncing live flights from Hajar Aswad website...');
+    setMessage('Syncing live flights & wholesale fares from Sajid Travels (groups.sajidtravels.pk)...');
     try {
-      const res = await fetch('/api/admin/flights/sync');
+      const res = await fetch('/api/admin/flights/sync', { method: 'POST' });
       const data = await res.json();
       if (res.ok && data.success) {
-        setMessage(data.message || 'Live flights synced successfully!');
+        setMessage(data.message || 'Live flights & fares synced successfully from Sajid Travels!');
+        if (data.scheduler) {
+          setSyncScheduler(data.scheduler);
+        }
         fetchData();
       } else {
         setMessage(data.error || 'Failed to sync live flights');
@@ -233,7 +258,7 @@ export default function AdminFlightsPage() {
       setMessage('Error syncing live flights');
     } finally {
       setSyncing(false);
-      setTimeout(() => setMessage(''), 6000);
+      setTimeout(() => setMessage(''), 7000);
     }
   };
 
@@ -320,16 +345,32 @@ export default function AdminFlightsPage() {
       <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 border-b border-border pb-6">
         <div>
           <h1 className="text-3xl font-black text-foreground tracking-tight">Flight Schedules</h1>
-          <p className="text-muted-foreground mt-1">Manage airline ticket blocks, dynamic fare tiers, and live auto-synced flight schedules</p>
+          <p className="text-muted-foreground mt-1">Manage wholesale ticket blocks, dynamic fare tiers, and live auto-synced flight schedules</p>
         </div>
-        <div className="flex items-center gap-3 shrink-0">
+        <div className="flex flex-wrap items-center gap-3 shrink-0">
+          <div className="hidden lg:flex items-center gap-2 px-3.5 py-2 rounded-xl bg-emerald-50 dark:bg-emerald-950/40 border border-emerald-200 dark:border-emerald-800/60 text-emerald-800 dark:text-emerald-300 text-xs font-semibold shadow-xs">
+            <span className="relative flex h-2 w-2">
+              <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-emerald-400 opacity-75"></span>
+              <span className="relative inline-flex rounded-full h-2 w-2 bg-emerald-500"></span>
+            </span>
+            <span>Auto-Sync: <strong>Every 5h</strong></span>
+            <span className="text-emerald-600/40 dark:text-emerald-400/40">|</span>
+            <span className="font-mono text-[11px]">groups.sajidtravels.pk</span>
+            {syncScheduler?.status?.lastSyncTime && (
+              <>
+                <span className="text-emerald-600/40 dark:text-emerald-400/40">|</span>
+                <span>Last: {new Date(syncScheduler.status.lastSyncTime).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}</span>
+              </>
+            )}
+          </div>
+
           <button 
             onClick={handleSyncLiveFlights}
             disabled={syncing}
-            className="px-4 py-2.5 bg-card border border-primary/40 text-primary font-bold rounded-xl hover:bg-rose-50 dark:hover:bg-rose-950/30 transition shadow-xs inline-flex items-center gap-2 text-sm disabled:opacity-50"
+            className="px-4 py-2.5 bg-card border border-primary/40 text-primary font-bold rounded-xl hover:bg-rose-50 dark:hover:bg-rose-950/30 transition shadow-xs inline-flex items-center gap-2 text-sm disabled:opacity-50 cursor-pointer"
           >
             <RotateCcw className={`w-4 h-4 ${syncing ? 'animate-spin' : ''}`} />
-            <span>{syncing ? 'Syncing...' : 'Sync Live Flights (Hajar Aswad)'}</span>
+            <span>{syncing ? 'Syncing...' : 'Sync Live Flights (Sajid Travels)'}</span>
           </button>
           <button onClick={handleOpenAddModal} className="px-5 py-2.5 bg-primary text-primary-foreground font-bold rounded-xl hover:bg-primary/90 transition shadow-md shadow-primary/20 inline-flex items-center gap-2 text-sm">
             <Plus className="w-4 h-4" />

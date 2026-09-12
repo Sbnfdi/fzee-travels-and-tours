@@ -128,8 +128,13 @@ export function calculateTotalFlightFare(
   }
 }
 
+import { startAutoSyncScheduler } from '@/lib/scrapers/scheduler';
+
 export async function GET(req: NextRequest) {
   try {
+    // Ensure 5-hour auto-sync background scheduler is running
+    startAutoSyncScheduler();
+
     const { searchParams } = new URL(req.url);
     const category = searchParams.get('category');
 

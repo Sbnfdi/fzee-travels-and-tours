@@ -1,0 +1,13 @@
+{
+  "lastSyncTime": "2026-09-12T06:48:32.575Z",
+  "lastSyncDurationMs": 4200,
+  "syncedCount": 398,
+  "createdCount": 398,
+  "updatedCount": 0,
+  "deletedCount": 0,
+  "deactivatedCount": 0,
+  "status": "success",
+  "message": "Successfully synchronized 398 live flights and wholesale fares from Sajid Travels (groups.sajidtravels.pk).",
+  "sourceUrl": "https://groups.sajidtravels.pk/",
+  "intervalHours": 5
+}
