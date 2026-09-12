@@ -4,8 +4,17 @@ import { withRole } from '@/lib/middleware';
 
 export async function GET(req: NextRequest) {
   try {
+    // Only return categories that have active flights
+    const activeCategories = await prisma.flight.findMany({
+      where: { category: { not: null } },
+      select: { category: true },
+      distinct: ['category'],
+    });
+    const validCategoryNames = activeCategories.map((f) => f.category).filter(Boolean) as string[];
+
     const categories = await prisma.flightCategory.findMany({
-      orderBy: { createdAt: 'asc' }
+      where: { name: { in: validCategoryNames } },
+      orderBy: { createdAt: 'asc' },
     });
     return NextResponse.json({ success: true, categories });
   } catch (error) {

@@ -1,6 +1,6 @@
 'use client';
 
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useMemo } from 'react';
 import { Plane, Plus, Trash2, CheckCircle2, TrendingUp, X, Edit, Ban, RotateCcw } from 'lucide-react';
 
 interface FareTier {
@@ -26,11 +26,39 @@ interface FlightItem {
   meal: boolean;
   category: string | null;
   status: string;
+  updatedAt?: string;
 }
 
 interface CategoryItem {
   id: string;
   name: string;
+}
+
+function formatTimeAgo(dateString: string | null | undefined, now: number): string | null {
+  if (!dateString) return null;
+  const ms = now - new Date(dateString).getTime();
+  if (ms < 0) return 'Just now';
+  const mins = Math.floor(ms / 60000);
+  if (mins < 1) return 'Just now';
+  if (mins < 60) return `${mins}m ago`;
+  const hours = Math.floor(mins / 60);
+  const remMins = mins % 60;
+  if (hours < 24) {
+    return remMins > 0 ? `${hours}h ${remMins}m ago` : `${hours}h ago`;
+  }
+  const days = Math.floor(hours / 24);
+  return `${days}d ago`;
+}
+
+function formatNextCountdown(nextIso: string | null | undefined, now: number): string | null {
+  if (!nextIso) return null;
+  const diffMs = new Date(nextIso).getTime() - now;
+  if (diffMs <= 0) return 'Due now';
+  const totalMins = Math.floor(diffMs / 60000);
+  const hours = Math.floor(totalMins / 60);
+  const mins = totalMins % 60;
+  if (hours > 0) return `${hours}h ${mins}m`;
+  return `${mins}m`;
 }
 
 export default function AdminFlightsPage() {
@@ -39,13 +67,42 @@ export default function AdminFlightsPage() {
   const [activeCategory, setActiveCategory] = useState<string>('All Types');
   const [loading, setLoading] = useState(true);
   const [showModal, setShowModal] = useState(false);
+  const [now, setNow] = useState<number>(Date.now());
 
-  const allCategoryNames = Array.from(
-    new Set([
-      ...categories.map(c => c.name),
-      ...flights.map(f => f.category).filter(Boolean) as string[],
-    ])
-  );
+  // Tick live timer every 10 seconds
+  useEffect(() => {
+    const timer = setInterval(() => {
+      setNow(Date.now());
+    }, 10000);
+    return () => clearInterval(timer);
+  }, []);
+
+  // Distinct category names that strictly have at least 1 flight (never show 0-flight categories)
+  const allCategoryNames = useMemo(() => {
+    const counts: Record<string, number> = {};
+    flights.forEach(f => {
+      if (f.category) counts[f.category] = (counts[f.category] || 0) + 1;
+    });
+
+    const standardOrder = [
+      'Umrah Return Flight',
+      'Umrah Direct Flight',
+      'Saudi Direct Flight',
+      'UAE Direct Flight',
+      'Muscat Direct Flight',
+      'Bahrain Direct Flight',
+      'Kuwait Direct Flight',
+      'UK Direct Flight',
+    ];
+
+    const validWithFlights = Object.keys(counts).filter(cat => (counts[cat] || 0) > 0);
+    const sorted = [
+      ...standardOrder.filter(c => validWithFlights.includes(c)),
+      ...validWithFlights.filter(c => !standardOrder.includes(c)).sort(),
+    ];
+
+    return sorted;
+  }, [flights]);
   const [editingFlightId, setEditingFlightId] = useState<string | null>(null);
   const [message, setMessage] = useState('');
   const [saving, setSaving] = useState(false);
@@ -338,6 +395,30 @@ export default function AdminFlightsPage() {
     try { return JSON.parse(tiersStr); } catch { return []; }
   };
 
+  const effectiveLastSync = useMemo(() => {
+    if (syncScheduler?.status?.lastSyncTime) {
+      return syncScheduler.status.lastSyncTime;
+    }
+    if (flights.length > 0) {
+      let maxTime = '';
+      for (const f of flights as any[]) {
+        if (f.updatedAt && (!maxTime || f.updatedAt > maxTime)) {
+          maxTime = f.updatedAt;
+        }
+      }
+      return maxTime || null;
+    }
+    return null;
+  }, [syncScheduler, flights]);
+
+  const nextSyncIso = useMemo(() => {
+    if (syncScheduler?.nextSyncAt) return syncScheduler.nextSyncAt;
+    if (effectiveLastSync) {
+      return new Date(new Date(effectiveLastSync).getTime() + 5 * 60 * 60 * 1000).toISOString();
+    }
+    return null;
+  }, [syncScheduler, effectiveLastSync]);
+
   const filteredFlights = flights.filter(f => activeCategory === 'All Types' || f.category === activeCategory);
 
   return (
@@ -348,18 +429,31 @@ export default function AdminFlightsPage() {
           <p className="text-muted-foreground mt-1">Manage wholesale ticket blocks, dynamic fare tiers, and live auto-synced flight schedules</p>
         </div>
         <div className="flex flex-wrap items-center gap-3 shrink-0">
-          <div className="hidden lg:flex items-center gap-2 px-3.5 py-2 rounded-xl bg-emerald-50 dark:bg-emerald-950/40 border border-emerald-200 dark:border-emerald-800/60 text-emerald-800 dark:text-emerald-300 text-xs font-semibold shadow-xs">
+          <div className="hidden sm:flex items-center gap-2.5 px-3.5 py-2 rounded-xl bg-emerald-50 dark:bg-emerald-950/40 border border-emerald-200 dark:border-emerald-800/60 text-emerald-800 dark:text-emerald-300 text-xs font-semibold shadow-xs">
             <span className="relative flex h-2 w-2">
               <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-emerald-400 opacity-75"></span>
               <span className="relative inline-flex rounded-full h-2 w-2 bg-emerald-500"></span>
             </span>
             <span>Auto-Sync: <strong>Every 5h</strong></span>
             <span className="text-emerald-600/40 dark:text-emerald-400/40">|</span>
-            <span className="font-mono text-[11px]">groups.sajidtravels.pk</span>
-            {syncScheduler?.status?.lastSyncTime && (
+            <span className="font-mono text-[11px] hidden md:inline">groups.sajidtravels.pk</span>
+            {effectiveLastSync && (
               <>
                 <span className="text-emerald-600/40 dark:text-emerald-400/40">|</span>
-                <span>Last: {new Date(syncScheduler.status.lastSyncTime).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}</span>
+                <span title={new Date(effectiveLastSync).toLocaleString()}>
+                  Last: <strong>{formatTimeAgo(effectiveLastSync, now)}</strong>
+                  <span className="opacity-75 font-normal ml-1 hidden xl:inline">
+                    ({new Date(effectiveLastSync).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })})
+                  </span>
+                </span>
+              </>
+            )}
+            {nextSyncIso && (
+              <>
+                <span className="text-emerald-600/40 dark:text-emerald-400/40">|</span>
+                <span className="text-emerald-700 dark:text-emerald-400 font-medium">
+                  Next in: <strong>{formatNextCountdown(nextSyncIso, now)}</strong>
+                </span>
               </>
             )}
           </div>
@@ -401,6 +495,7 @@ export default function AdminFlightsPage() {
           {allCategoryNames.map(catName => {
             const catObj = categories.find(c => c.name === catName);
             const count = flights.filter(f => f.category === catName).length;
+            if (count === 0) return null; // Never display category with 0 flights
 
             return (
               <div key={catName} className="relative group flex items-center shrink-0">

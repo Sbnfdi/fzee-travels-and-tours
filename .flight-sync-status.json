@@ -1,13 +1,13 @@
 {
-  "lastSyncTime": "2026-09-12T06:48:32.575Z",
-  "lastSyncDurationMs": 4200,
-  "syncedCount": 398,
-  "createdCount": 398,
-  "updatedCount": 0,
-  "deletedCount": 0,
+  "lastSyncTime": "2026-09-12T07:20:57.521Z",
+  "lastSyncDurationMs": 76117,
+  "syncedCount": 404,
+  "createdCount": 2,
+  "updatedCount": 402,
+  "deletedCount": 1,
   "deactivatedCount": 0,
   "status": "success",
-  "message": "Successfully synchronized 398 live flights and wholesale fares from Sajid Travels (groups.sajidtravels.pk).",
+  "message": "Successfully synced 404 flights from Sajid Travels (2 added, 402 updated with live prices, 1 obsolete deleted in 76.1s).",
   "sourceUrl": "https://groups.sajidtravels.pk/",
   "intervalHours": 5
 }

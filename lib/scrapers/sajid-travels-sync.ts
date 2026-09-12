@@ -197,72 +197,77 @@ export function parseSajidDate(str: string): Date {
 }
 
 /**
- * Accurately categorize flight by destination & round-trip status
+ * Accurately categorize flight by true destination & round-trip status
  */
 export function determineFlightCategory(
-  depCity: string,
+  destCode: string,
   arrCity: string,
-  finalDestCode: string,
-  sectorStr: string,
   isRoundTrip: boolean
 ): string {
-  const finalCode = (finalDestCode || '').toUpperCase();
-  const s = (sectorStr || '').toUpperCase();
+  const code = (destCode || '').toUpperCase();
   const arr = (arrCity || '').toUpperCase();
 
-  // Round trips to Jeddah / Madinah are Umrah Return Flights
   if (isRoundTrip) {
-    if (finalCode === 'JED' || finalCode === 'MED' || arr.includes('JEDDAH') || arr.includes('MADINAH') || s.includes('JED') || s.includes('MED')) {
+    if (code === 'JED' || code === 'MED' || arr.includes('JEDDAH') || arr.includes('MADINAH')) {
       return 'Umrah Return Flight';
     }
-    return `${arrCity} Return Flight`;
+    if (code === 'LHR' || code === 'MAN' || code === 'LGW' || code === 'STN' || code === 'BHX' ||
+        arr.includes('LONDON') || arr.includes('MANCHESTER')) {
+      return 'UK Return Flight';
+    }
+    if (code === 'DXB' || code === 'SHJ' || code === 'AUH' || code === 'RKT' ||
+        arr.includes('DUBAI') || arr.includes('SHARJAH') || arr.includes('ABU DHABI')) {
+      return 'UAE Return Flight';
+    }
+    if (code === 'RUH' || code === 'DMM' || code === 'AHB' || code === 'ELQ' || code === 'GIZ' ||
+        arr.includes('RIYADH') || arr.includes('DAMMAM')) {
+      return 'Saudi Return Flight';
+    }
+    if (code === 'BAH' || arr.includes('BAHRAIN')) {
+      return 'Bahrain Return Flight';
+    }
+    if (code === 'KWI' || arr.includes('KUWAIT')) {
+      return 'Kuwait Return Flight';
+    }
+    if (code === 'MCT' || code === 'SLL' || arr.includes('MUSCAT')) {
+      return 'Muscat Return Flight';
+    }
+    if (code === 'DOH' || arr.includes('DOHA')) {
+      return 'Qatar Return Flight';
+    }
+    return `${cleanCityName(code)} Return Flight`;
   }
 
-  // UK destinations
-  if (finalCode === 'LHR' || finalCode === 'MAN' || finalCode === 'LGW' || finalCode === 'STN' || finalCode === 'BHX' ||
-      arr.includes('LONDON') || arr.includes('MANCHESTER') || arr.includes('HEATHROW')) {
-    return 'UK Direct Flight';
-  }
-
-  // Umrah one-way destinations
-  if (finalCode === 'JED' || finalCode === 'MED' || arr.includes('JEDDAH') || arr.includes('MADINAH')) {
+  // One way
+  if (code === 'JED' || code === 'MED' || arr.includes('JEDDAH') || arr.includes('MADINAH')) {
     return 'Umrah Direct Flight';
   }
-
-  // UAE destinations
-  if (finalCode === 'DXB' || finalCode === 'SHJ' || finalCode === 'AUH' || finalCode === 'RKT' || finalCode === 'FJR' ||
-      arr.includes('DUBAI') || arr.includes('SHARJAH') || arr.includes('ABU DHABI') || arr.includes('RAS AL KHAIMAH')) {
+  if (code === 'LHR' || code === 'MAN' || code === 'LGW' || code === 'STN' || code === 'BHX' ||
+      arr.includes('LONDON') || arr.includes('MANCHESTER')) {
+    return 'UK Direct Flight';
+  }
+  if (code === 'DXB' || code === 'SHJ' || code === 'AUH' || code === 'RKT' ||
+      arr.includes('DUBAI') || arr.includes('SHARJAH') || arr.includes('ABU DHABI')) {
     return 'UAE Direct Flight';
   }
-
-  // Saudi Arabia Other (Riyadh, Dammam, Abha, Gassim, etc.)
-  if (finalCode === 'RUH' || finalCode === 'DMM' || finalCode === 'AHB' || finalCode === 'ELQ' || finalCode === 'GIZ' ||
-      finalCode === 'TUU' || finalCode === 'TIF' || finalCode === 'HAS' ||
-      arr.includes('RIYADH') || arr.includes('DAMMAM') || arr.includes('ABHA') || arr.includes('GASSIM')) {
+  if (code === 'RUH' || code === 'DMM' || code === 'AHB' || code === 'ELQ' || code === 'GIZ' ||
+      code === 'TUU' || code === 'TIF' || arr.includes('RIYADH') || arr.includes('DAMMAM')) {
     return 'Saudi Direct Flight';
   }
-
-  // Muscat / Oman
-  if (finalCode === 'MCT' || finalCode === 'SLL' || arr.includes('MUSCAT') || arr.includes('SALALAH')) {
+  if (code === 'MCT' || code === 'SLL' || arr.includes('MUSCAT')) {
     return 'Muscat Direct Flight';
   }
-
-  // Qatar (Doha)
-  if (finalCode === 'DOH' || arr.includes('DOHA') || arr.includes('QATAR')) {
+  if (code === 'DOH' || arr.includes('DOHA')) {
     return 'Qatar Direct Flight';
   }
-
-  // Bahrain
-  if (finalCode === 'BAH' || arr.includes('BAHRAIN')) {
+  if (code === 'BAH' || arr.includes('BAHRAIN')) {
     return 'Bahrain Direct Flight';
   }
-
-  // Kuwait
-  if (finalCode === 'KWI' || arr.includes('KUWAIT')) {
+  if (code === 'KWI' || arr.includes('KUWAIT')) {
     return 'Kuwait Direct Flight';
   }
 
-  return `${arrCity} Direct Flight`;
+  return `${cleanCityName(code)} Direct Flight`;
 }
 
 /**
@@ -275,7 +280,7 @@ export async function fetchLiveSajidTravelsFlights(): Promise<ScrapedFlight[]> {
       headers: {
         'User-Agent':
           'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0.0.0 Safari/537.36',
-        Accept: 'text/html,application/xhtml+xml,application/xml;q=0.9,image/avif,image/webp,*/*;q=0.8',
+        Accept: 'text/html,application/xhtml+xml,application/xml;q=0.9,*/*;q=0.8',
         'Accept-Language': 'en-US,en;q=0.9',
       },
       cache: 'no-store',
@@ -336,46 +341,52 @@ export async function fetchLiveSajidTravelsFlights(): Promise<ScrapedFlight[]> {
         const firstSector = sectors[0] || 'ISB-AUH';
         const lastSector = sectors[sectors.length - 1] || firstSector;
 
-        const firstParts = firstSector.split('-');
-        const lastParts = lastSector.split('-');
-
-        const depCode = firstParts[0] || 'ISB';
-        const initialArrCode = firstParts[1] || 'AUH';
-        const finalArrCode = lastParts[1] || lastParts[0] || initialArrCode;
+        const originCode = firstSector.split('-')[0] || 'ISB';
+        const lastDestCode = lastSector.split('-')[1] || lastSector.split('-')[0];
 
         // Determine round-trip status
+        const pakistanAirports = new Set(['ISB', 'LHE', 'KHI', 'PEW', 'MUX', 'SKT', 'LYP', 'FSD', 'UET', 'BHW', 'RYK']);
         let isRoundTrip = false;
         if (sectors.length >= 2) {
-          if (firstParts[0] === lastParts[1] && firstParts[1] === lastParts[0]) {
-            isRoundTrip = true;
-          } else if (
-            sectors.some((s: string) =>
-              s.includes('JED-ISB') ||
-              s.includes('JED-LHE') ||
-              s.includes('JED-KHI') ||
-              s.includes('JED-MUX') ||
-              s.includes('JED-PEW') ||
-              s.includes('JED-LYP') ||
-              s.includes('MED-ISB') ||
-              s.includes('MED-LHE')
-            )
-          ) {
+          if (originCode === lastDestCode || (pakistanAirports.has(originCode) && pakistanAirports.has(lastDestCode))) {
             isRoundTrip = true;
           }
         }
 
-        const depCity = cleanCityName(depCode);
-        let arrCity = cleanCityName(isRoundTrip ? initialArrCode : finalArrCode);
+        let finalDestCode = '';
+        let transitCity = '';
+        let arrCity = '';
 
-        // Clarify arrival display for return and connecting flights
         if (isRoundTrip) {
-          arrCity = `${arrCity} (Return)`;
-        } else if (sectors.length > 1) {
-          const transitCode = initialArrCode;
-          if (transitCode && transitCode !== finalArrCode) {
-            arrCity = `${cleanCityName(finalArrCode)} (via ${transitCode})`;
+          // In round trip, the turnaround destination is the middle point
+          const turnaroundIndex = Math.floor(sectors.length / 2) - 1;
+          const turnaroundSector = sectors[turnaroundIndex] || firstSector;
+          finalDestCode = turnaroundSector.split('-')[1] || turnaroundSector.split('-')[0];
+
+          // Check if there was an outbound transit
+          if (turnaroundIndex > 0) {
+            const transitCode = firstSector.split('-')[1];
+            if (transitCode && transitCode !== finalDestCode) {
+              transitCity = cleanCityName(transitCode);
+            }
           }
+
+          const destName = cleanCityName(finalDestCode);
+          arrCity = transitCity ? `${destName} (via ${transitCity} Return)` : `${destName} (Return)`;
+        } else {
+          // One way: final sector destination
+          finalDestCode = lastDestCode;
+          if (sectors.length > 1) {
+            const transitCode = firstSector.split('-')[1];
+            if (transitCode && transitCode !== finalDestCode) {
+              transitCity = cleanCityName(transitCode);
+            }
+          }
+          const destName = cleanCityName(finalDestCode);
+          arrCity = transitCity ? `${destName} (via ${transitCity})` : destName;
         }
+
+        const depCity = cleanCityName(originCode);
 
         // Parse Departure Date & Time
         const depDate = parseSajidDate(dates[0]);
@@ -422,11 +433,11 @@ export async function fetchLiveSajidTravelsFlights(): Promise<ScrapedFlight[]> {
           price = parseInt(fareCellText, 10) || 75000;
         }
 
-        const targetFinalCode = isRoundTrip ? initialArrCode : finalArrCode;
-        const category = determineFlightCategory(depCity, arrCity, targetFinalCode, rawSectorStr, isRoundTrip);
+        const category = determineFlightCategory(finalDestCode, arrCity, isRoundTrip);
         const flightNumber = flightNos.length > 0 ? flightNos.join(' / ') : rawFlightNo || 'PA-101';
         const baggage = bags.length > 0 ? bags.join(' | ') : rawBaggage || '20+7 KG';
         const meal = (rawMeal || '').toUpperCase().includes('YES');
+        const pnr = rawPnr ? `SAJ-${rawPnr.trim()}` : `SAJ-${Math.floor(10000 + Math.random() * 90000)}`;
 
         flights.push({
           flightNumber,
@@ -442,7 +453,7 @@ export async function fetchLiveSajidTravelsFlights(): Promise<ScrapedFlight[]> {
           baggage,
           meal,
           category,
-          pnr: rawPnr ? `SAJ-${rawPnr}` : `SAJ-${Math.floor(10000 + Math.random() * 90000)}`,
+          pnr,
           sectorRaw: rawSectorStr,
           isRoundTrip,
         });
@@ -494,15 +505,36 @@ export function getStoredSyncStatus(): SyncStatus {
   };
 }
 
+// In-memory mutex to prevent concurrent sync operations from causing locking/timeouts
+let isSyncInProgress = false;
+let activeSyncPromise: Promise<any> | null = null;
+
 /**
- * Sync live scraped flights from Sajid Travels into Prisma database:
- * 1. Upserts live flights with EXACT wholesale prices & schedules
- * 2. Updates pricePerSeat and dynamic fareTiers for all synced flights
- * 3. Deletes obsolete unbooked flights and marks obsolete booked flights cancelled
- * 4. Ensures all unique flight categories are present in FlightCategory table
- * 5. Records sync timestamp and metrics for the 5-hour recurrence scheduler
+ * High-speed synchronization engine:
+ * 1. Concurrency Mutex: queues/shares concurrent sync calls.
+ * 2. Scrapes live flights & exact wholesale group prices from groups.sajidtravels.pk.
+ * 3. In-memory diff checking against existing DB flights: only writes flights that actually changed.
+ * 4. High-performance LibSQL batching / transactions for bulk updates and creations in 1-2 network round trips.
+ * 5. Instant bulk deletion of obsolete flights and bulk category insertion.
  */
 export async function syncSajidTravelsFlightsToDB() {
+  if (isSyncInProgress && activeSyncPromise) {
+    return activeSyncPromise;
+  }
+
+  isSyncInProgress = true;
+  activeSyncPromise = doSyncFlights();
+
+  try {
+    const result = await activeSyncPromise;
+    return result;
+  } finally {
+    isSyncInProgress = false;
+    activeSyncPromise = null;
+  }
+}
+
+async function doSyncFlights() {
   const startTime = Date.now();
   saveSyncStatus({
     ...getStoredSyncStatus(),
@@ -531,86 +563,232 @@ export async function syncSajidTravelsFlightsToDB() {
     };
   }
 
-  // Purge any old malformed city name flights with no bookings
-  await prisma.flight.deleteMany({
-    where: {
-      OR: [
-        { departureCity: { contains: 'MCT MCT' } },
-        { arrivalCity: { contains: 'MCT MCT' } },
-        { departureCity: { contains: 'DOH DOH' } },
-        { arrivalCity: { contains: 'DOH DOH' } },
-      ],
-      bookings: { none: {} },
-    },
-  });
+  // Check if Turso LibSQL client is available for direct high-speed batching
+  const tursoUrl = process.env.TURSO_DATABASE_URL;
+  const tursoAuthToken = process.env.TURSO_AUTH_TOKEN;
+  let directLibsqlClient: any = null;
+  if (tursoUrl && tursoAuthToken) {
+    try {
+      const { createClient } = require('@libsql/client');
+      directLibsqlClient = createClient({ url: tursoUrl, authToken: tursoAuthToken });
+    } catch {}
+  }
 
-  // Pre-fetch all existing flights for instant in-memory lookup
-  const existingFlights = await prisma.flight.findMany({
-    select: {
-      id: true,
-      flightNumber: true,
-      departureCity: true,
-      arrivalCity: true,
-      departureTime: true,
-      pnr: true,
-    },
-  });
+  // Fast bulk fetch of all existing flights
+  let existingFlights: Array<{
+    id: string;
+    flightNumber: string;
+    pnr: string | null;
+    departureCity: string;
+    arrivalCity: string;
+    departureTime: Date;
+    arrivalTime: Date;
+    pricePerSeat: number;
+    category: string | null;
+    status: string;
+    baggage: string | null;
+    meal: boolean;
+    availableSeats: number;
+  }> = [];
 
+  if (directLibsqlClient) {
+    const selectRes = await directLibsqlClient.execute(
+      'SELECT id, flightNumber, pnr, departureCity, arrivalCity, departureTime, arrivalTime, pricePerSeat, category, status, baggage, meal, availableSeats FROM Flight'
+    );
+    existingFlights = selectRes.rows.map((r: any) => ({
+      id: r.id,
+      flightNumber: r.flightNumber,
+      pnr: r.pnr,
+      departureCity: r.departureCity,
+      arrivalCity: r.arrivalCity,
+      departureTime: new Date(r.departureTime),
+      arrivalTime: new Date(r.arrivalTime),
+      pricePerSeat: Number(r.pricePerSeat),
+      category: r.category,
+      status: r.status,
+      baggage: r.baggage,
+      meal: Boolean(r.meal),
+      availableSeats: Number(r.availableSeats),
+    }));
+  } else {
+    existingFlights = await prisma.flight.findMany({
+      select: {
+        id: true,
+        flightNumber: true,
+        pnr: true,
+        departureCity: true,
+        arrivalCity: true,
+        departureTime: true,
+        arrivalTime: true,
+        pricePerSeat: true,
+        category: true,
+        status: true,
+        baggage: true,
+        meal: true,
+        availableSeats: true,
+      },
+    });
+  }
+
+  // 100% Unique Match Key Map
   const existingMap = new Map<string, typeof existingFlights[0]>();
   for (const ef of existingFlights) {
-    const key = `${ef.flightNumber}__${ef.departureCity}__${ef.arrivalCity}__${ef.departureTime.toISOString().slice(0, 10)}`;
+    const key = `${ef.flightNumber}__${ef.departureCity}__${ef.departureTime.toISOString()}__${ef.pnr || ''}`;
     existingMap.set(key, ef);
   }
 
   const activeSyncedIds = new Set<string>();
   const categoriesToEnsure = new Set<string>();
+  const toUpdate: { id: string; flight: ScrapedFlight; tierConfig: string }[] = [];
+  const toCreate: { flight: ScrapedFlight; tierConfig: string }[] = [];
+  let unchangedCount = 0;
+
+  for (const f of scrapedFlights) {
+    if (f.category) categoriesToEnsure.add(f.category);
+
+    const matchKey = `${f.flightNumber}__${f.departureCity}__${f.departureTime.toISOString()}__${f.pnr || ''}`;
+    const existing = existingMap.get(matchKey);
+
+    const tierConfig = JSON.stringify([
+      { upToSeat: Math.round(f.totalSeats * 0.5), price: f.pricePerSeat },
+      { upToSeat: f.totalSeats, price: Math.round(f.pricePerSeat * 1.05) },
+    ]);
+
+    if (existing) {
+      activeSyncedIds.add(existing.id);
+
+      // Fast diff checking to skip unnecessary DB writes
+      const priceDiff = Math.abs(existing.pricePerSeat - f.pricePerSeat) > 0;
+      const catDiff = existing.category !== f.category;
+      const arrDiff = existing.arrivalCity !== f.arrivalCity;
+      const depDiff = existing.departureCity !== f.departureCity;
+      const statusDiff = existing.status !== 'active';
+      const bagDiff = existing.baggage !== f.baggage;
+      const mealDiff = existing.meal !== f.meal;
+
+      if (!priceDiff && !catDiff && !arrDiff && !depDiff && !statusDiff && !bagDiff && !mealDiff) {
+        unchangedCount++;
+        continue;
+      }
+
+      toUpdate.push({ id: existing.id, flight: f, tierConfig });
+    } else {
+      toCreate.push({ flight: f, tierConfig });
+    }
+  }
 
   let createdCount = 0;
   let updatedCount = 0;
 
-  // Process in chunks of 15 for optimal concurrency without socket exhaustion
-  const CHUNK_SIZE = 15;
-  for (let i = 0; i < scrapedFlights.length; i += CHUNK_SIZE) {
-    const chunk = scrapedFlights.slice(i, i + CHUNK_SIZE);
-    await Promise.all(
-      chunk.map(async (f) => {
-        if (f.category) {
-          categoriesToEnsure.add(f.category);
-        }
+  // Execute updates and creates with maximum speed
+  if (directLibsqlClient && (toUpdate.length > 0 || toCreate.length > 0)) {
+    const writeStatements: Array<{ sql: string; args: any[] }> = [];
 
-        const dateKey = f.departureTime.toISOString().slice(0, 10);
-        const matchKey = `${f.flightNumber}__${f.departureCity}__${f.arrivalCity}__${dateKey}`;
-        const existing = existingMap.get(matchKey);
+    for (const item of toUpdate) {
+      const f = item.flight;
+      writeStatements.push({
+        sql: `UPDATE "Flight" SET 
+          "departureTime" = ?, "arrivalTime" = ?, "duration" = ?, "totalSeats" = ?, "availableSeats" = ?,
+          "pricePerSeat" = ?, "fareTiers" = ?, "baggage" = ?, "meal" = ?, "airline" = ?,
+          "departureCity" = ?, "arrivalCity" = ?, "category" = ?, "pnr" = ?, "status" = 'active', "updatedAt" = CURRENT_TIMESTAMP
+          WHERE "id" = ?`,
+        args: [
+          f.departureTime.toISOString(),
+          f.arrivalTime.toISOString(),
+          f.duration,
+          f.totalSeats,
+          f.availableSeats,
+          f.pricePerSeat,
+          item.tierConfig,
+          f.baggage,
+          f.meal ? 1 : 0,
+          f.airline,
+          f.departureCity,
+          f.arrivalCity,
+          f.category,
+          f.pnr,
+          item.id,
+        ],
+      });
+      updatedCount++;
+    }
 
-        const tierConfig = JSON.stringify([
-          { upToSeat: Math.round(f.totalSeats * 0.5), price: f.pricePerSeat },
-          { upToSeat: f.totalSeats, price: Math.round(f.pricePerSeat * 1.05) },
-        ]);
+    for (const item of toCreate) {
+      const f = item.flight;
+      const id = `cm_${Date.now()}_${Math.random().toString(36).slice(2, 9)}`;
+      activeSyncedIds.add(id);
+      writeStatements.push({
+        sql: `INSERT INTO "Flight" (
+          "id", "flightNumber", "pnr", "airline", "departureCity", "arrivalCity",
+          "departureTime", "arrivalTime", "duration", "totalSeats", "availableSeats",
+          "pricePerSeat", "fareTiers", "currency", "baggage", "meal", "category", "status",
+          "createdAt", "updatedAt"
+        ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, 'PKR', ?, ?, ?, 'active', CURRENT_TIMESTAMP, CURRENT_TIMESTAMP)`,
+        args: [
+          id,
+          f.flightNumber,
+          f.pnr,
+          f.airline,
+          f.departureCity,
+          f.arrivalCity,
+          f.departureTime.toISOString(),
+          f.arrivalTime.toISOString(),
+          f.duration,
+          f.totalSeats,
+          f.availableSeats,
+          f.pricePerSeat,
+          item.tierConfig,
+          f.baggage,
+          f.meal ? 1 : 0,
+          f.category,
+        ],
+      });
+      createdCount++;
+    }
 
-        if (existing) {
-          const updated = await prisma.flight.update({
-            where: { id: existing.id },
+    const BATCH_SIZE = 50;
+    for (let i = 0; i < writeStatements.length; i += BATCH_SIZE) {
+      const batch = writeStatements.slice(i, i + BATCH_SIZE);
+      await directLibsqlClient.batch(batch, 'write');
+    }
+  } else if (toUpdate.length > 0 || toCreate.length > 0) {
+    // Local development fallback via Prisma transactions
+    const CHUNK_SIZE = 30;
+    for (let i = 0; i < toUpdate.length; i += CHUNK_SIZE) {
+      const chunk = toUpdate.slice(i, i + CHUNK_SIZE);
+      await Promise.all(
+        chunk.map((item) => {
+          const f = item.flight;
+          return prisma.flight.update({
+            where: { id: item.id },
             data: {
               departureTime: f.departureTime,
               arrivalTime: f.arrivalTime,
               duration: f.duration,
               totalSeats: f.totalSeats,
               availableSeats: f.availableSeats,
-              pricePerSeat: f.pricePerSeat, // SYNC EXACT LIVE PRICE
-              fareTiers: tierConfig,
+              pricePerSeat: f.pricePerSeat,
+              fareTiers: item.tierConfig,
               baggage: f.baggage,
               meal: f.meal,
               airline: f.airline,
               departureCity: f.departureCity,
               arrivalCity: f.arrivalCity,
               category: f.category,
-              pnr: f.pnr || existing.pnr,
+              pnr: f.pnr,
               status: 'active',
             },
           });
-          activeSyncedIds.add(updated.id);
-          updatedCount++;
-        } else {
+        })
+      );
+      updatedCount += chunk.length;
+    }
+
+    for (let i = 0; i < toCreate.length; i += CHUNK_SIZE) {
+      const chunk = toCreate.slice(i, i + CHUNK_SIZE);
+      await Promise.all(
+        chunk.map(async (item) => {
+          const f = item.flight;
           const created = await prisma.flight.create({
             data: {
               flightNumber: f.flightNumber,
@@ -623,8 +801,8 @@ export async function syncSajidTravelsFlightsToDB() {
               duration: f.duration,
               totalSeats: f.totalSeats,
               availableSeats: f.availableSeats,
-              pricePerSeat: f.pricePerSeat, // SYNC EXACT LIVE PRICE
-              fareTiers: tierConfig,
+              pricePerSeat: f.pricePerSeat,
+              fareTiers: item.tierConfig,
               currency: 'PKR',
               baggage: f.baggage,
               meal: f.meal,
@@ -633,68 +811,88 @@ export async function syncSajidTravelsFlightsToDB() {
             },
           });
           activeSyncedIds.add(created.id);
-          createdCount++;
-        }
-      })
-    );
-  }
-
-  // Ensure all categories exist in FlightCategory table
-  for (const catName of categoriesToEnsure) {
-    try {
-      const catExists = await prisma.flightCategory.findUnique({
-        where: { name: catName },
-      });
-      if (!catExists) {
-        await prisma.flightCategory.create({
-          data: { name: catName },
-        });
-      }
-    } catch {}
-  }
-
-  // Obsolete flight management
-  const allCurrentDbFlights = await prisma.flight.findMany({
-    select: {
-      id: true,
-      flightNumber: true,
-      departureCity: true,
-      arrivalCity: true,
-      departureTime: true,
-      status: true,
-      _count: {
-        select: { bookings: true },
-      },
-    },
-  });
-
-  const obsoleteFlights = allCurrentDbFlights.filter((f) => !activeSyncedIds.has(f.id));
-  let deletedCount = 0;
-  let deactivatedCount = 0;
-
-  for (const obs of obsoleteFlights) {
-    if (obs._count.bookings > 0) {
-      if (obs.status !== 'cancelled') {
-        await prisma.flight.update({
-          where: { id: obs.id },
-          data: { status: 'cancelled' },
-        });
-        deactivatedCount++;
-      }
-    } else {
-      await prisma.flight.delete({
-        where: { id: obs.id },
-      });
-      deletedCount++;
+        })
+      );
+      createdCount += chunk.length;
     }
   }
 
-  const syncedCount = createdCount + updatedCount;
+  // Bulk obsolete flight management
+  const obsoleteFlights = existingFlights.filter((f) => !activeSyncedIds.has(f.id));
+  let deletedCount = 0;
+  let deactivatedCount = 0;
+
+  if (obsoleteFlights.length > 0) {
+    const obsoleteIds = obsoleteFlights.map((f) => f.id);
+    const booked = await prisma.booking.findMany({
+      where: { flightId: { in: obsoleteIds } },
+      select: { flightId: true },
+    });
+    const bookedFlightIds = new Set(booked.map((b) => b.flightId).filter(Boolean));
+
+    const toCancel: string[] = [];
+    const toDelete: string[] = [];
+
+    for (const obs of obsoleteFlights) {
+      if (bookedFlightIds.has(obs.id)) {
+        if (obs.status !== 'cancelled') toCancel.push(obs.id);
+      } else {
+        toDelete.push(obs.id);
+      }
+    }
+
+    if (toCancel.length > 0) {
+      await prisma.flight.updateMany({
+        where: { id: { in: toCancel } },
+        data: { status: 'cancelled' },
+      });
+      deactivatedCount = toCancel.length;
+    }
+
+    if (toDelete.length > 0) {
+      await prisma.flight.deleteMany({
+        where: { id: { in: toDelete } },
+      });
+      deletedCount = toDelete.length;
+    }
+  }
+
+  // Fast bulk ensure categories exist in FlightCategory table
+  try {
+    const existingCats = new Set(
+      (await prisma.flightCategory.findMany({ select: { name: true } })).map((c) => c.name)
+    );
+    const missingCats = [...categoriesToEnsure].filter((c) => !existingCats.has(c));
+    for (const catName of missingCats) {
+      try {
+        await prisma.flightCategory.create({ data: { name: catName } });
+      } catch {}
+    }
+
+    // Automatically prune any legacy categories from FlightCategory that have 0 active flights
+    if (directLibsqlClient) {
+      await directLibsqlClient.execute(
+        'DELETE FROM FlightCategory WHERE name NOT IN (SELECT DISTINCT category FROM Flight WHERE category IS NOT NULL)'
+      );
+    } else {
+      const activeCats = await prisma.flight.findMany({
+        where: { category: { not: null } },
+        select: { category: true },
+        distinct: ['category'],
+      });
+      const validNames = activeCats.map((f) => f.category).filter(Boolean) as string[];
+      await prisma.flightCategory.deleteMany({
+        where: { name: { notIn: validNames } },
+      });
+    }
+  } catch {}
+
+  const syncedCount = createdCount + updatedCount + unchangedCount;
   const durationMs = Date.now() - startTime;
-  let message = `Successfully synced ${scrapedFlights.length} flights from Sajid Travels (${createdCount} added, ${updatedCount} updated with live prices`;
+  let message = `Fast sync completed in ${(durationMs / 1000).toFixed(1)}s: ${scrapedFlights.length} live flights synchronized from Sajid Travels (${unchangedCount} verified, ${updatedCount} updated, ${createdCount} added`;
   if (deletedCount > 0) message += `, ${deletedCount} obsolete deleted`;
   if (deactivatedCount > 0) message += `, ${deactivatedCount} cancelled`;
-  message += ` in ${(durationMs / 1000).toFixed(1)}s).`;
+  message += ').';
 
   const successStatus: SyncStatus = {
     lastSyncTime: new Date().toISOString(),
