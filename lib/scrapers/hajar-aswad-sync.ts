@@ -495,6 +495,8 @@ export async function syncHajarAswadFlightsToDB() {
     ]);
 
     if (existing) {
+      // NOTE: As requested by the user, DO NOT update prices for existing flights during sync.
+      // Flight prices and fare tiers are set and managed manually by the admin.
       const updated = await prisma.flight.update({
         where: { id: existing.id },
         data: {
@@ -503,8 +505,8 @@ export async function syncHajarAswadFlightsToDB() {
           duration: f.duration,
           totalSeats: f.totalSeats,
           availableSeats: f.availableSeats,
-          pricePerSeat: f.pricePerSeat, // SYNC FARE
-          fareTiers: existing.fareTiers || tierConfig,
+          // pricePerSeat is omitted to preserve manual admin pricing
+          // fareTiers is omitted to preserve manual admin pricing
           baggage: f.baggage,
           meal: f.meal,
           airline: f.airline,
@@ -598,7 +600,7 @@ export async function syncHajarAswadFlightsToDB() {
   }
 
   const syncedCount = createdCount + updatedCount;
-  let message = `Sync complete: ${scrapedFlights.length} live flights on website (${createdCount} added, ${updatedCount} updated`;
+  let message = `Sync complete: ${scrapedFlights.length} live flights on website (${createdCount} added, ${updatedCount} updated, manual prices preserved`;
   if (deletedCount > 0) {
     message += `, ${deletedCount} obsolete deleted`;
   }

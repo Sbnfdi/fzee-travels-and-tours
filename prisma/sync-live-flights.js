@@ -387,6 +387,8 @@ async function main() {
     ]);
 
     if (existing) {
+      // NOTE: As requested by user, do NOT update prices for existing flights during sync.
+      // Admin will change and update flight prices manually.
       const up = await prisma.flight.update({
         where: { id: existing.id },
         data: {
@@ -395,8 +397,8 @@ async function main() {
           duration: f.duration,
           totalSeats: f.totalSeats,
           availableSeats: f.availableSeats,
-          pricePerSeat: f.pricePerSeat, // SYNC FARE
-          fareTiers: existing.fareTiers || tierConfig,
+          // pricePerSeat is omitted to preserve manual admin pricing
+          // fareTiers is omitted to preserve manual admin pricing
           baggage: f.baggage,
           meal: f.meal,
           airline: f.airline,

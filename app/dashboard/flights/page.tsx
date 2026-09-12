@@ -637,14 +637,24 @@ export default function AdminFlightsPage() {
 
                       {/* Pricing & Tiers */}
                       <td className="px-3 py-3 align-top text-xs">
-                        <div className="font-black text-primary text-sm sm:text-base">PKR {(f.currentFare || f.pricePerSeat)?.toLocaleString()}</div>
-                        {tiers.length > 0 ? (
-                          <div className="text-[10px] text-muted-foreground mt-0.5">
-                            <span className="font-bold text-emerald-600 dark:text-emerald-400">{tiers.length} Tier(s)</span> active
+                        <button
+                          type="button"
+                          onClick={() => handleEditFlight(f)}
+                          className="group text-left cursor-pointer hover:opacity-80 transition"
+                          title="Click to change and update price"
+                        >
+                          <div className="font-black text-primary text-sm sm:text-base flex items-center gap-1 group-hover:underline">
+                            <span>PKR {(f.currentFare || f.pricePerSeat)?.toLocaleString()}</span>
+                            <Edit className="w-3 h-3 text-muted-foreground opacity-60 group-hover:opacity-100 transition" />
                           </div>
-                        ) : (
-                          <span className="text-[10px] text-muted-foreground">Fixed Rate</span>
-                        )}
+                          {tiers.length > 0 ? (
+                            <div className="text-[10px] text-muted-foreground mt-0.5">
+                              <span className="font-bold text-emerald-600 dark:text-emerald-400">{tiers.length} Tier(s)</span> active
+                            </div>
+                          ) : (
+                            <span className="text-[10px] text-muted-foreground">Fixed Rate</span>
+                          )}
+                        </button>
                       </td>
 
                       {/* Actions */}
