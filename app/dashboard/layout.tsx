@@ -38,10 +38,10 @@ export default function DashboardLayout({
   ];
 
   return (
-    <div className="min-h-screen bg-background flex flex-col md:flex-row font-sans text-foreground">
+    <div className="h-screen bg-background flex flex-col md:flex-row font-sans text-foreground overflow-hidden">
       
       {/* Mobile Header */}
-      <div className="md:hidden flex items-center justify-between p-4 border-b border-border bg-card shadow-sm">
+      <div className="md:hidden flex items-center justify-between p-4 border-b border-border bg-card shadow-sm shrink-0">
         <Link href="/" className="flex items-center gap-3 font-black text-lg text-foreground group">
           <div className="relative w-9 h-9 rounded-full overflow-hidden shadow-md shadow-black/20 shrink-0 border border-primary/30">
             <Image 
@@ -75,8 +75,8 @@ export default function DashboardLayout({
 
       {/* Sidebar */}
       <aside className={`
-        fixed inset-y-0 left-0 z-50 border-r border-border bg-card shadow-sm flex flex-col justify-between
-        transform transition-all duration-300 ease-in-out md:static md:translate-x-0 shrink-0
+        fixed inset-y-0 left-0 z-50 border-r border-border bg-card shadow-sm flex flex-col
+        transform transition-all duration-300 ease-in-out md:sticky md:top-0 md:h-screen md:translate-x-0 shrink-0
         ${isCollapsed ? 'md:w-20' : 'md:w-64'}
         ${isMobileMenuOpen ? 'translate-x-0 w-64' : '-translate-x-full'}
       `}>
@@ -142,25 +142,26 @@ export default function DashboardLayout({
                 </Link>
               );
             })}
-          </nav>
-        </div>
 
-        <div className="p-3 border-t border-border shrink-0">
-          <Link
-            href="/login"
-            title={isCollapsed ? "Logout" : undefined}
-            className={`w-full flex items-center gap-3 px-3 py-2.5 rounded-xl hover:bg-rose-50 text-destructive font-bold transition-colors text-sm ${
-              isCollapsed ? 'justify-center' : ''
-            }`}
-          >
-            <LogOut className="w-5 h-5 shrink-0" />
-            {!isCollapsed && <span>Logout</span>}
-          </Link>
+            {/* Logout button grouped directly with navigation buttons */}
+            <div className="pt-2 mt-2 border-t border-border/80">
+              <Link
+                href="/login"
+                title={isCollapsed ? "Logout" : undefined}
+                className={`flex items-center gap-3 px-3 py-2.5 rounded-xl hover:bg-rose-50 text-destructive font-bold transition-colors text-sm ${
+                  isCollapsed ? 'justify-center' : ''
+                }`}
+              >
+                <LogOut className="w-5 h-5 shrink-0" />
+                {!isCollapsed && <span className="truncate">Logout</span>}
+              </Link>
+            </div>
+          </nav>
         </div>
       </aside>
 
       {/* Main Content */}
-      <main className="flex-1 min-w-0 overflow-x-hidden overflow-y-auto bg-background/50 w-full relative z-10">
+      <main className="flex-1 min-w-0 h-full overflow-x-hidden overflow-y-auto bg-background/50 w-full relative z-10">
         <div className="p-4 sm:p-6 lg:p-8 max-w-7xl mx-auto w-full min-w-0">
           {children}
         </div>
